@@ -161,6 +161,7 @@ let player = null;
 let startTime = null;
 let timerInterval = null;
 let scoreSubmitted = false;
+let _resizeCallCount = 0; // Safety net: cap resize ops per load to prevent infinite loops
 
 // ---- Mobile Menu ------------------------------------------
 function toggleMobileMenu() {
@@ -225,7 +226,8 @@ async function init() {
   document.getElementById('myBest').textContent = best !== null ? `Your best: ${best}%` : 'Not yet played';
 
 
-  // Load iframe
+  // Load iframe (reset resize counter for each fresh load)
+  _resizeCallCount = 0;
   document.getElementById('reviewerFrame').src = topic.file;
 
   // Timer
@@ -253,13 +255,19 @@ function onReviewerMessage(e) {
   if (!e.data || !e.data.type) return;
 
   if (e.data.type === 'RESIZE' && e.data.height) {
+    // Safety net: stop after 15 resize calls per page load.
+    // With the reviewer-helper.js fix this should never trigger,
+    // but guards against any future reviewer with problematic CSS.
+    _resizeCallCount++;
+    if (_resizeCallCount > 15) return;
+
     const frame = document.getElementById('reviewerFrame');
-    const newHeight = e.data.height + 30; // Extra padding
+    const newHeight = e.data.height + 20; // 20px padding
     const currentHeight = parseInt(frame.style.height) || 0;
-    
-    // #11: Always allow shrinking; only throttle upward growth to prevent infinite loops
+
+    // Allow shrinking freely; throttle growth only (prevents residual 1-2px loops)
     const isShrinking = newHeight < currentHeight;
-    if (isShrinking || Math.abs(currentHeight - newHeight) > 20) {
+    if (isShrinking || Math.abs(currentHeight - newHeight) > 10) {
       frame.style.height = newHeight + 'px';
     }
     return;
