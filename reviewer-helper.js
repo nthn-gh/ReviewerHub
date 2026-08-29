@@ -31,4 +31,15 @@
       '*'
     );
   };
+
+  // Auto-resize iframe (eliminates inner scrollbar)
+  if (window.parent !== window) {
+    var resizeObserver = new ResizeObserver(function () {
+      var h = document.documentElement.scrollHeight || document.body.scrollHeight;
+      window.parent.postMessage({ type: 'RESIZE', height: h }, '*');
+    });
+    window.addEventListener('load', function() {
+      resizeObserver.observe(document.body);
+    });
+  }
 })();

@@ -196,12 +196,20 @@ function updateTimer() {
 
 // ---- Score via postMessage (from reviewer iframe) --------
 function onReviewerMessage(e) {
-  if (!e.data || e.data.type !== 'QUIZ_COMPLETE') return;
-  const { score, total, timeSeconds } = e.data;
-  if (typeof score !== 'number' || typeof total !== 'number') return;
+  if (!e.data || !e.data.type) return;
 
-  const elapsed = timeSeconds || Math.round((Date.now() - startTime) / 1000);
-  triggerSubmit(score, total, elapsed);
+  if (e.data.type === 'RESIZE' && e.data.height) {
+    // Add a tiny bit of padding to ensure no scrollbar triggers
+    document.getElementById('reviewerFrame').style.minHeight = (e.data.height + 20) + 'px';
+    return;
+  }
+
+  if (e.data.type === 'QUIZ_COMPLETE') {
+    const { score, total, timeSeconds } = e.data;
+    if (typeof score !== 'number' || typeof total !== 'number') return;
+    const elapsed = timeSeconds || Math.round((Date.now() - startTime) / 1000);
+    triggerSubmit(score, total, elapsed);
+  }
 }
 
 
