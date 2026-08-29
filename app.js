@@ -223,7 +223,7 @@ async function pushToShared(player) {
     if (idx >= 0) lb[idx] = entry; else lb.push(entry);
     lb.sort((a, b) => b.xp - a.xp);
 
-    await saveSharedData({ weekKey, leaderboard: lb });
+    await saveSharedData({ ...remote, weekKey, leaderboard: lb });
   } catch (e) {
     console.warn('Shared leaderboard update failed (offline?):', e);
   }
@@ -252,7 +252,8 @@ async function resetSharedLeaderboard() {
     return true;
   }
   try {
-    await saveSharedData({ weekKey: getWeekKey(), leaderboard: [] });
+    const remote = await fetchSharedData();
+    await saveSharedData({ ...remote, weekKey: getWeekKey(), leaderboard: [] });
     localStorage.removeItem(KEYS.LEADERBOARD);
     return true;
   } catch (e) {
