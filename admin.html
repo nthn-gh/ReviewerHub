@@ -179,6 +179,11 @@ function hideForm() {
   document.getElementById('topicFormCard').style.display = 'none';
 }
 
+function editTopic(id) {
+  const t = customTopics.find(x => x.id === id);
+  if (t) showForm(t);
+}
+
 function getSubjectColor(subj) {
   const map = {
     'Science': '#22d3ee', 'Math': '#a78bfa', 'Filipino': '#f59e0b', 'AP': '#f59e0b',
