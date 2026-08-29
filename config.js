@@ -13,11 +13,11 @@
 //  5. Paste both below and save this file, then push to GitHub
 // ============================================================
 window.CONFIG = {
-  JSONBIN_API_KEY: '',      // ← paste your Master Key here  e.g. '$2a$10$abc...'
-  JSONBIN_BIN_ID:  '',      // ← paste your Bin ID here      e.g. '66d1a2b3e41b4d34f...'
+  JSONBIN_API_KEY: '$2a$10$uPFrzjSu3jTNpIA/GNP9ue91.Pf5mnAbQ7UOn9i10XvMChZpjaZua',      // ← paste your Master Key here  e.g. '$2a$10$abc...'
+  JSONBIN_BIN_ID:  '6a92cef1f5f4af5e29516ce5',      // ← paste your Bin ID here      e.g. '66d1a2b3e41b4d34f...'
 
   WEEKLY_RESET: true,       // set to false to disable weekly resets
 
   // Password for the "Reset Leaderboard" button on the leaderboard page
-  RESET_PASSWORD: 'teacher2024',  // ← CHANGE THIS!
+  RESET_PASSWORD: 'Nathan2026',  // ← CHANGE THIS!
 };
