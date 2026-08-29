@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Fractions & Decimals Reviewer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0f1528;color:#f8fafc;min-height:100vh;padding:1.5rem}
+  h2{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:.5rem}
+  .progress-bar{height:8px;border-radius:999px;background:rgba(255,255,255,0.08);margin-bottom:1.5rem;overflow:hidden}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#a78bfa,#f59e0b);transition:width .5s ease}
+  .question{font-size:1.05rem;font-weight:500;margin-bottom:1.25rem;line-height:1.5}
+  .choices{display:flex;flex-direction:column;gap:.65rem}
+  .choice-btn{
+    padding:.85rem 1.1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05);color:#f8fafc;font-size:.95rem;
+    cursor:pointer;text-align:left;transition:all .2s ease;font-family:'Inter',sans-serif;
+  }
+  .choice-btn:hover:not(:disabled){background:rgba(167,139,250,0.25);border-color:rgba(167,139,250,0.5)}
+  .choice-btn.correct{background:rgba(16,185,129,0.2);border-color:#10b981;color:#10b981}
+  .choice-btn.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ef4444}
+  .choice-btn:disabled{cursor:not-allowed}
+  .feedback{margin-top:1rem;padding:.75rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none}
+  .feedback.show{display:block}
+  .feedback.correct{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+  .feedback.wrong{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+  .next-btn{
+    margin-top:1.25rem;padding:.7rem 1.75rem;border-radius:10px;
+    background:linear-gradient(135deg,#a78bfa,#f59e0b);color:#fff;
+    font-weight:700;font-size:.95rem;cursor:pointer;border:none;display:none;
+    font-family:'Outfit',sans-serif;transition:transform .2s;
+  }
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:inline-flex;align-items:center;gap:.4rem}
+  .meta{display:flex;justify-content:space-between;font-size:.82rem;color:#64748b;margin-bottom:.75rem}
+  .score-display{text-align:center;padding:2rem 1rem}
+  .score-big{font-family:'Outfit',sans-serif;font-size:4rem;font-weight:900;color:#a78bfa}
+  .score-label{color:#64748b;font-size:.95rem;margin:.5rem 0 1.5rem}
+  .play-again{padding:.7rem 2rem;border-radius:10px;background:linear-gradient(135deg,#a78bfa,#f59e0b);
+    color:#fff;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;font-size:1rem}
+  .math-q{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:700;
+    padding:.75rem 1rem;border-radius:8px;background:rgba(167,139,250,0.1);
+    border:1px solid rgba(167,139,250,0.2);margin-bottom:1rem;text-align:center;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<div id="quizArea">
+  <div class="meta">
+    <span>🔢 Fractions & Decimals</span>
+    <span id="qCounter">Question 1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+  <div class="math-q" id="mathExpression"></div>
+  <h2 id="questionText"></h2>
+  <div class="choices" id="choicesArea"></div>
+  <div class="feedback" id="feedbackEl"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next ›</button>
+</div>
+<div id="resultsArea" style="display:none">
+  <div class="score-display">
+    <div style="font-size:3rem;margin-bottom:.5rem" id="resultEmoji">🎉</div>
+    <div class="score-big" id="finalScore">0/10</div>
+    <div class="score-label" id="finalMsg">Here's your score!</div>
+    <div style="font-size:.85rem;color:#64748b;margin-bottom:1.5rem" id="finalSub"></div>
+    <button class="play-again" onclick="restartQuiz()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {expr:"1/2 + 1/4 = ?",q:"What is one-half plus one-fourth?",choices:["1/2","3/4","2/6","1/4"],correct:1,exp:"1/2 = 2/4, so 2/4 + 1/4 = 3/4."},
+  {expr:"3/4 − 1/4 = ?",q:"What is three-fourths minus one-fourth?",choices:["1/4","2/4 = 1/2","3/8","1"],correct:1,exp:"3/4 − 1/4 = 2/4, which simplifies to 1/2."},
+  {expr:"0.5 + 0.25 = ?",q:"What is 0.5 plus 0.25?",choices:["0.55","0.7","0.75","0.8"],correct:2,exp:"0.5 + 0.25 = 0.75 (or 3/4)."},
+  {expr:"2/3 × 3/4 = ?",q:"What is two-thirds times three-fourths?",choices:["5/7","6/12 = 1/2","2/4","3/7"],correct:1,exp:"(2×3)/(3×4) = 6/12 = 1/2."},
+  {expr:"1.2 × 3 = ?",q:"What is 1.2 multiplied by 3?",choices:["3.2","3.6","4.2","36"],correct:1,exp:"1.2 × 3 = 3.6. Think: 12 × 3 = 36, then move decimal → 3.6."},
+  {expr:"3/5 = ?",q:"What is 3/5 as a decimal?",choices:["0.35","0.53","0.6","0.3"],correct:2,exp:"3 ÷ 5 = 0.6."},
+  {expr:"0.75 = ?",q:"What fraction is equivalent to 0.75?",choices:["1/4","2/3","3/5","3/4"],correct:3,exp:"0.75 = 75/100 = 3/4."},
+  {expr:"5/10 = ?",q:"Simplify 5/10 to its lowest terms.",choices:["2/5","1/2","5/5","3/5"],correct:1,exp:"Both 5 and 10 are divisible by 5: 5/10 = 1/2."},
+  {expr:"1.5 ÷ 0.5 = ?",q:"What is 1.5 divided by 0.5?",choices:["1","0.5","3","2"],correct:2,exp:"1.5 ÷ 0.5 = 3. (Multiply both by 2: 3 ÷ 1 = 3.)"},
+  {expr:"2 1/4 + 1 3/4 = ?",q:"What is 2 and 1/4 plus 1 and 3/4?",choices:["3 4/8","3 1/2","4","3 3/4"],correct:2,exp:"1/4 + 3/4 = 4/4 = 1. So 2 + 1 + 1 = 4."},
+];
+
+let current = 0, score = 0, answered = false, startTime = Date.now();
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  document.getElementById('qCounter').textContent = `Question ${current+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = ((current+1)/questions.length*100)+'%';
+  document.getElementById('mathExpression').textContent = q.expr;
+  document.getElementById('questionText').textContent = q.q;
+  const fb = document.getElementById('feedbackEl');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const area = document.getElementById('choicesArea');
+  area.innerHTML = q.choices.map((c,i) =>
+    `<button class="choice-btn" onclick="selectAnswer(${i})" id="choice-${i}">${String.fromCharCode(65+i)}. ${c}</button>`
+  ).join('');
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const fb = document.getElementById('feedbackEl');
+
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  if (idx === q.correct) {
+    score++;
+    document.getElementById('choice-'+idx).className = 'choice-btn correct';
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correct! ' + q.exp;
+  } else {
+    document.getElementById('choice-'+idx).className = 'choice-btn wrong';
+    document.getElementById('choice-'+q.correct).className = 'choice-btn correct';
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Not quite. ' + q.exp;
+  }
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) showResults();
+  else loadQuestion();
+}
+
+function showResults() {
+  const timeSeconds = Math.round((Date.now() - startTime) / 1000);
+  const pct = Math.round(score/questions.length*100);
+  document.getElementById('quizArea').style.display = 'none';
+  document.getElementById('resultsArea').style.display = 'block';
+  document.getElementById('finalScore').textContent = score + '/' + questions.length;
+  const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'👍':'📖';
+  const msg = pct===100?'Perfect Score!':pct>=80?'Excellent work!':pct>=60?'Good job!':'Keep practicing!';
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('finalSub').textContent = `You answered ${score} out of ${questions.length} correctly.`;
+
+  try {
+    window.parent.postMessage({ type:'QUIZ_COMPLETE', score, total:questions.length, timeSeconds }, '*');
+  } catch(e) {}
+}
+
+function restartQuiz() {
+  current = 0; score = 0; startTime = Date.now();
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('resultsArea').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ReviewerHub — Topic</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+  .submit-panel{
+    background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
+    padding:1.5rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;
+    margin-top:1.25rem;
+  }
+  .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-top:1.5rem}
+  .new-badge-chip{
+    display:inline-flex;align-items:center;gap:.4rem;
+    padding:.35rem .9rem;border-radius:999px;font-size:.82rem;font-weight:600;
+    background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--gold);
+    animation:pop .4s cubic-bezier(.175,.885,.32,1.275) forwards;
+  }
+  @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  #timerDisplay{
+    font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--text2);
+    display:flex;align-items:center;gap:.35rem;
+  }
+</style>
+</head>
+<body>
+<div class="page-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:.5rem"><span>🎮</span> ReviewerHub</a></div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">← Topics</a>
+    <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+  </div>
+  <div id="navPlayer" class="nav-player">
+    <div class="nav-avatar" id="navAvatar">?</div>
+    <span id="navName">Player</span>
+    <span id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+  </div>
+</nav>
+
+<main class="page-content">
+  <!-- Breadcrumb -->
+  <div style="font-size:.85rem;color:var(--text2);margin-bottom:1.25rem;display:flex;align-items:center;gap:.4rem">
+    <a href="index.html" style="color:var(--purple-l)">Topics</a>
+    <span>›</span>
+    <span id="breadcrumbTitle">Loading...</span>
+  </div>
+
+  <!-- Topic Header -->
+  <div style="display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap">
+    <div id="topicIconBig" style="font-size:3.5rem;line-height:1">📋</div>
+    <div style="flex:1">
+      <div id="topicSubjectChip" class="topic-badge" style="margin-bottom:.5rem">Subject</div>
+      <h1 id="topicTitle" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;line-height:1.2;margin-bottom:.4rem">
+        Loading...
+      </h1>
+      <p id="topicDesc" style="color:var(--text2);font-size:.9rem;max-width:600px"></p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;align-items:flex-end">
+      <div id="topicDiffBadge" class="difficulty-badge">—</div>
+      <div id="timerDisplay">⏱ 00:00</div>
+      <div id="myBest" style="font-size:.8rem;color:var(--text2)">Your best: —</div>
+    </div>
+  </div>
+
+  <!-- Reviewer iframe -->
+  <div class="reviewer-frame-wrap">
+    <div id="frameLoader" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+        background:var(--bg2);z-index:10;flex-direction:column;gap:.75rem">
+      <div style="font-size:2rem">⏳</div>
+      <div style="font-size:.9rem;color:var(--text2)">Loading reviewer...</div>
+    </div>
+    <iframe id="reviewerFrame" class="reviewer-frame" sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Reviewer content" onload="frameLoaded()"></iframe>
+  </div>
+
+  <!-- Submit Panel -->
+  <div class="submit-panel" id="submitPanel">
+    <div style="flex:1">
+      <div style="font-weight:600;margin-bottom:.2rem">✅ Done with the reviewer?</div>
+      <div style="font-size:.82rem;color:var(--text2)">
+        If the reviewer sent your score automatically, it'll appear below. Or enter it manually.
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <input id="scoreInput" type="number" min="0" placeholder="Score"
+          style="width:90px;padding:.55rem .75rem;border-radius:8px;border:1px solid var(--border);
+                 background:var(--bg3);color:var(--white);font-size:.95rem;outline:none;text-align:center"
+          onfocus="this.style.borderColor='var(--purple-l)'"
+          onblur="this.style.borderColor='var(--border)'"/>
+        <span style="color:var(--text2)">out of</span>
+        <input id="totalInput" type="number" min="1" placeholder="Total"
+          style="width:90px;padding:.55rem .75rem;border-radius:8px;border:1px solid var(--border);
+                 background:var(--bg3);color:var(--white);font-size:.95rem;outline:none;text-align:center"
+          onfocus="this.style.borderColor='var(--purple-l)'"
+          onblur="this.style.borderColor='var(--border)'"/>
+      </div>
+      <button class="btn btn-primary" onclick="manualSubmit()" id="submitBtn">
+        🏆 Submit Score
+      </button>
+    </div>
+    <p id="submitError" style="color:var(--red);font-size:.8rem;width:100%;display:none">
+      Please enter a valid score.
+    </p>
+  </div>
+</main>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal" style="max-width:480px">
+    <div style="text-align:center">
+      <div id="resultEmoji" style="font-size:3.5rem;margin-bottom:.5rem">🎉</div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:.25rem" id="resultTitle">Great job!</h2>
+      <p style="color:var(--text2);font-size:.9rem" id="resultSubtitle">Here's how you did:</p>
+
+      <!-- Score Ring -->
+      <div class="score-ring" style="margin:1.5rem auto" id="scoreRing">
+        <div class="score-num" id="resultPct">0%</div>
+        <div class="score-total" id="resultFraction">0 / 0</div>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="result-grid">
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-label">XP Earned</div>
+          <div class="stat-value" id="resultXP" style="color:var(--purple-l)">+0</div>
+        </div>
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-label">Time</div>
+          <div class="stat-value" id="resultTime" style="font-size:1.2rem">—</div>
+        </div>
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-label">Total XP</div>
+          <div class="stat-value" id="resultTotalXP">0</div>
+        </div>
+      </div>
+
+      <!-- Level up banner -->
+      <div id="levelUpBanner" style="display:none;margin-top:1rem;padding:.75rem;border-radius:10px;
+           background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(168,85,247,.2));
+           border:1px solid rgba(124,58,237,.4);font-family:'Outfit',sans-serif;font-weight:700">
+        🎊 LEVEL UP! You're now a <span id="levelUpName">Scholar</span>!
+      </div>
+
+      <!-- New badges -->
+      <div id="newBadgesWrap" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center"></div>
+
+      <div style="display:flex;gap:.75rem;margin-top:1.5rem;justify-content:center">
+        <button class="btn btn-secondary" onclick="retryTopic()">🔄 Try Again</button>
+        <button class="btn btn-primary" onclick="goHome()">🏠 Back to Topics</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="topics.js"></script>
+<script src="app.js"></script>
+<script>
+let topic = null;
+let player = null;
+let startTime = null;
+let timerInterval = null;
+let scoreSubmitted = false;
+
+// ---- Init -----------------------------------------------
+function init() {
+  player = Game.getPlayer();
+  if (!player) { window.location.href = 'index.html'; return; }
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  topic = window.TOPICS.find(t => t.id === id);
+  if (!topic) { window.location.href = 'index.html'; return; }
+
+  // Nav
+  document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
+  document.getElementById('navName').textContent = player.name;
+  document.getElementById('navXP').textContent = player.xp + ' XP';
+
+  // Header
+  document.getElementById('breadcrumbTitle').textContent = topic.title;
+  document.getElementById('topicIconBig').textContent = topic.icon;
+  document.getElementById('topicTitle').textContent = topic.title;
+  document.getElementById('topicDesc').textContent = topic.description;
+  document.title = topic.title + ' — ReviewerHub';
+
+  const subj = document.getElementById('topicSubjectChip');
+  subj.textContent = topic.subject;
+  subj.style.color = topic.color;
+  subj.style.borderColor = topic.color + '44';
+
+  const diffEl = document.getElementById('topicDiffBadge');
+  diffEl.textContent = topic.difficulty;
+  diffEl.className = 'difficulty-badge diff-' + Game.getDifficultyClass(topic.difficulty);
+
+  const best = Game.getBestScore(player, topic.id);
+  document.getElementById('myBest').textContent = best !== null ? `Your best: ${best}%` : 'Not yet played';
+
+  // Set total input
+  if (topic.questions) document.getElementById('totalInput').value = topic.questions;
+
+  // Load iframe
+  document.getElementById('reviewerFrame').src = topic.file;
+
+  // Timer
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+
+  // Listen for postMessage from reviewer
+  window.addEventListener('message', onReviewerMessage);
+}
+
+function frameLoaded() {
+  document.getElementById('frameLoader').style.display = 'none';
+}
+
+function updateTimer() {
+  const sec = Math.round((Date.now() - startTime) / 1000);
+  const m = String(Math.floor(sec / 60)).padStart(2,'0');
+  const s = String(sec % 60).padStart(2,'0');
+  document.getElementById('timerDisplay').innerHTML = `⏱ ${m}:${s}`;
+}
+
+// ---- Score via postMessage (from reviewer iframe) --------
+function onReviewerMessage(e) {
+  if (!e.data || e.data.type !== 'QUIZ_COMPLETE') return;
+  const { score, total, timeSeconds } = e.data;
+  if (typeof score !== 'number' || typeof total !== 'number') return;
+
+  document.getElementById('scoreInput').value = score;
+  document.getElementById('totalInput').value = total;
+  const elapsed = timeSeconds || Math.round((Date.now() - startTime) / 1000);
+  triggerSubmit(score, total, elapsed);
+}
+
+// ---- Manual Submit ---------------------------------------
+function manualSubmit() {
+  const score = parseInt(document.getElementById('scoreInput').value);
+  const total = parseInt(document.getElementById('totalInput').value);
+  const err = document.getElementById('submitError');
+
+  if (isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) {
+    err.style.display = 'block'; return;
+  }
+  err.style.display = 'none';
+  const elapsed = Math.round((Date.now() - startTime) / 1000);
+  triggerSubmit(score, total, elapsed);
+}
+
+// ---- Core submit logic -----------------------------------
+function triggerSubmit(score, total, timeSeconds) {
+  if (scoreSubmitted) return;
+  scoreSubmitted = true;
+  clearInterval(timerInterval);
+
+  const result = Game.submitScore(topic.id, score, total, timeSeconds);
+  player = Game.getPlayer();
+
+  showResultModal(score, total, timeSeconds, result);
+  if (result.pct >= 70) Game.launchConfetti();
+}
+
+// ---- Result Modal ----------------------------------------
+function showResultModal(score, total, timeSeconds, result) {
+  const pct = result.pct;
+
+  const emoji = pct === 100 ? '🏆' : pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📖';
+  const title = pct === 100 ? 'Perfect Score!' : pct >= 80 ? 'Excellent!' : pct >= 60 ? 'Good Job!' : 'Keep Practicing!';
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultPct').textContent = pct + '%';
+  document.getElementById('resultFraction').textContent = `${score} / ${total}`;
+  document.getElementById('resultXP').textContent = '+' + result.xpEarned;
+  document.getElementById('resultTotalXP').textContent = player.xp;
+
+  // Time
+  const m = String(Math.floor(timeSeconds / 60)).padStart(2,'0');
+  const s = String(timeSeconds % 60).padStart(2,'0');
+  document.getElementById('resultTime').textContent = `${m}:${s}`;
+
+  // Score ring color
+  const ring = document.getElementById('scoreRing');
+  const ringColor = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--gold)' : 'var(--red)';
+  ring.style.setProperty('--target-pct', pct + '%');
+  ring.style.setProperty('--purple-l', ringColor);
+
+  // Level up
+  if (result.leveledUp) {
+    document.getElementById('levelUpBanner').style.display = 'block';
+    document.getElementById('levelUpName').textContent = result.newLevel.icon + ' ' + result.newLevel.title;
+  }
+
+  // New badges
+  if (result.newBadges.length) {
+    const wrap = document.getElementById('newBadgesWrap');
+    wrap.innerHTML = '<div style="width:100%;font-size:.82rem;color:var(--text2);margin-bottom:.25rem">🏅 New badge(s) earned!</div>' +
+      result.newBadges.map(id => {
+        const b = Game.BADGES.find(x => x.id === id);
+        return b ? `<div class="new-badge-chip">${b.icon} ${b.label}</div>` : '';
+      }).join('');
+  }
+
+  document.getElementById('resultModal').classList.add('show');
+}
+
+function retryTopic() {
+  scoreSubmitted = false;
+  document.getElementById('resultModal').classList.remove('show');
+  document.getElementById('reviewerFrame').src = topic.file;
+  document.getElementById('frameLoader').style.display = 'flex';
+  document.getElementById('scoreInput').value = '';
+  document.getElementById('newBadgesWrap').innerHTML = '';
+  document.getElementById('levelUpBanner').style.display = 'none';
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+function goHome() { window.location.href = 'index.html'; }
+
+init();
+</script>
+</body>
+</html>

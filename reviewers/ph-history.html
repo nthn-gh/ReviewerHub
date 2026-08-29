@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Philippine History Reviewer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0f1528;color:#f8fafc;min-height:100vh;padding:1.5rem}
+  h2{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:.5rem}
+  .progress-bar{height:8px;border-radius:999px;background:rgba(255,255,255,0.08);margin-bottom:1.5rem;overflow:hidden}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#f59e0b,#ef4444);transition:width .5s ease}
+  .choices{display:flex;flex-direction:column;gap:.65rem}
+  .choice-btn{
+    padding:.85rem 1.1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05);color:#f8fafc;font-size:.95rem;
+    cursor:pointer;text-align:left;transition:all .2s ease;font-family:'Inter',sans-serif;
+  }
+  .choice-btn:hover:not(:disabled){background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.5)}
+  .choice-btn.correct{background:rgba(16,185,129,0.2);border-color:#10b981;color:#10b981}
+  .choice-btn.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ef4444}
+  .choice-btn:disabled{cursor:not-allowed}
+  .feedback{margin-top:1rem;padding:.75rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none}
+  .feedback.show{display:block}
+  .feedback.correct{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+  .feedback.wrong{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+  .next-btn{margin-top:1.25rem;padding:.7rem 1.75rem;border-radius:10px;
+    background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;
+    font-weight:700;font-size:.95rem;cursor:pointer;border:none;display:none;
+    font-family:'Outfit',sans-serif;transition:transform .2s}
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:inline-flex;align-items:center;gap:.4rem}
+  .meta{display:flex;justify-content:space-between;font-size:.82rem;color:#64748b;margin-bottom:.75rem}
+  .score-display{text-align:center;padding:2rem 1rem}
+  .score-big{font-family:'Outfit',sans-serif;font-size:4rem;font-weight:900;color:#f59e0b}
+  .score-label{color:#64748b;font-size:.95rem;margin:.5rem 0 1.5rem}
+  .play-again{padding:.7rem 2rem;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#ef4444);
+    color:#fff;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;font-size:1rem}
+  .question{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:1rem;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="quizArea">
+  <div class="meta">
+    <span>🇵🇭 Philippine History</span>
+    <span id="qCounter">Question 1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+  <div class="question" id="questionText">Loading...</div>
+  <div class="choices" id="choicesArea"></div>
+  <div class="feedback" id="feedbackEl"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next ›</button>
+</div>
+<div id="resultsArea" style="display:none">
+  <div class="score-display">
+    <div style="font-size:3rem;margin-bottom:.5rem" id="resultEmoji">🎉</div>
+    <div class="score-big" id="finalScore">0/10</div>
+    <div class="score-label" id="finalMsg">Here's your score!</div>
+    <div style="font-size:.85rem;color:#64748b;margin-bottom:1.5rem" id="finalSub"></div>
+    <button class="play-again" onclick="restartQuiz()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {q:"Who is known as the 'Father of the Philippine Nation'?",choices:["Andres Bonifacio","Emilio Aguinaldo","Jose Rizal","Apolinario Mabini"],correct:2,exp:"Jose Rizal is considered the national hero and Father of the Philippine Nation for his writings that inspired the revolution."},
+  {q:"What year did the Philippines declare independence from Spain?",choices:["1895","1896","1898","1901"],correct:2,exp:"The Philippines declared independence on June 12, 1898, in Kawit, Cavite."},
+  {q:"What was the name of the secret revolutionary society founded by Andres Bonifacio?",choices:["Katipunan","Ilustrado","Propaganda Movement","Magdiwang"],correct:0,exp:"The Katipunan (KKK) was founded by Andres Bonifacio in 1892 to fight for independence."},
+  {q:"Who was the first President of the Philippine Republic?",choices:["Jose Rizal","Andres Bonifacio","Manuel Quezon","Emilio Aguinaldo"],correct:3,exp:"Emilio Aguinaldo was proclaimed the first President of the Philippine Republic in 1899."},
+  {q:"Which country colonized the Philippines for 333 years?",choices:["Portugal","England","Spain","United States"],correct:2,exp:"Spain colonized the Philippines from 1565 to 1898 — a total of 333 years."},
+  {q:"What was the Propaganda Movement primarily aimed at?",choices:["Armed revolution","Requesting reforms from Spain","Overthrowing the church","Building an army"],correct:1,exp:"The Propaganda Movement sought reforms — equal rights, representation in Spanish Cortes, and an end to abuses."},
+  {q:"Jose Rizal wrote two famous novels. One was Noli Me Tangere. What was the other?",choices:["El Filibusterismo","La Solidaridad","Mi Ultimo Adios","Florante at Laura"],correct:0,exp:"El Filibusterismo (The Reign of Greed) was Rizal's second novel, published in 1891."},
+  {q:"The EDSA People Power Revolution happened in what year?",choices:["1972","1983","1986","1991"],correct:2,exp:"The EDSA Revolution took place February 22–25, 1986, restoring democracy under Corazon Aquino."},
+  {q:"Who signed the proclamation of Philippine Independence in 1898?",choices:["Jose Rizal","Emilio Aguinaldo","Andres Bonifacio","Antonio Luna"],correct:1,exp:"Emilio Aguinaldo read and signed the Declaration of Philippine Independence on June 12, 1898."},
+  {q:"What is the significance of August 21, 1983 in Philippine history?",choices:["Martial Law was declared","EDSA Revolution began","Ninoy Aquino was assassinated","The Philippine Commonwealth was established"],correct:2,exp:"Benigno 'Ninoy' Aquino Jr. was assassinated at Manila International Airport on August 21, 1983, sparking the movement that led to the EDSA Revolution."},
+];
+
+let current=0,score=0,answered=false,startTime=Date.now();
+
+function loadQuestion(){
+  answered=false;
+  const q=questions[current];
+  document.getElementById('qCounter').textContent=`Question ${current+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width=((current+1)/questions.length*100)+'%';
+  document.getElementById('questionText').textContent=q.q;
+  const fb=document.getElementById('feedbackEl');
+  fb.className='feedback';fb.textContent='';
+  document.getElementById('nextBtn').className='next-btn';
+  const area=document.getElementById('choicesArea');
+  area.innerHTML=q.choices.map((c,i)=>`<button class="choice-btn" onclick="selectAnswer(${i})" id="choice-${i}">${String.fromCharCode(65+i)}. ${c}</button>`).join('');
+}
+
+function selectAnswer(idx){
+  if(answered)return;answered=true;
+  const q=questions[current];const fb=document.getElementById('feedbackEl');
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  if(idx===q.correct){score++;document.getElementById('choice-'+idx).className='choice-btn correct';fb.className='feedback correct show';fb.textContent='✅ Correct! '+q.exp;}
+  else{document.getElementById('choice-'+idx).className='choice-btn wrong';document.getElementById('choice-'+q.correct).className='choice-btn correct';fb.className='feedback wrong show';fb.textContent='❌ Not quite. '+q.exp;}
+  document.getElementById('nextBtn').className='next-btn show';
+}
+
+function nextQuestion(){current++;if(current>=questions.length)showResults();else loadQuestion();}
+
+function showResults(){
+  const timeSeconds=Math.round((Date.now()-startTime)/1000);
+  const pct=Math.round(score/questions.length*100);
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('resultsArea').style.display='block';
+  document.getElementById('finalScore').textContent=score+'/'+questions.length;
+  const emoji=pct===100?'🏆':pct>=80?'🌟':pct>=60?'👍':'📖';
+  document.getElementById('resultEmoji').textContent=emoji;
+  document.getElementById('finalMsg').textContent=pct===100?'Perfect Score!':pct>=80?'Excellent!':pct>=60?'Good Job!':'Keep Studying!';
+  document.getElementById('finalSub').textContent=`You got ${score} out of ${questions.length} correct.`;
+  try{window.parent.postMessage({type:'QUIZ_COMPLETE',score,total:questions.length,timeSeconds},'*');}catch(e){}
+}
+
+function restartQuiz(){current=0;score=0;startTime=Date.now();document.getElementById('quizArea').style.display='block';document.getElementById('resultsArea').style.display='none';loadQuestion();}
+loadQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Leaderboard — ReviewerHub</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="page-bg"></div>
+
+<nav>
+  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:.5rem"><span>🎮</span> ReviewerHub</a></div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Topics</a>
+    <a href="leaderboard.html" class="nav-link active">🏆 Leaderboard</a>
+  </div>
+  <div id="navPlayer" class="nav-player">
+    <div class="nav-avatar" id="navAvatar">?</div>
+    <span id="navName">Player</span>
+    <span id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+  </div>
+</nav>
+
+<main class="page-content">
+  <div style="margin-bottom:2rem">
+    <h1 class="section-heading">🏆 Leaderboard</h1>
+    <p class="section-sub">Top players ranked by total XP earned across all topics.</p>
+  </div>
+
+  <!-- Tab bar -->
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:1rem">
+    <button class="btn btn-sm" id="tab-overall" onclick="setTab('overall')"
+      style="background:var(--purple-g);color:#fff">Overall</button>
+    <div id="topicTabs" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+  </div>
+
+  <!-- Podium (top 3) -->
+  <div id="podium" style="display:flex;align-items:flex-end;justify-content:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap"></div>
+
+  <!-- Rest of leaderboard -->
+  <div id="lbList"></div>
+
+  <!-- Empty -->
+  <div id="lbEmpty" style="display:none;text-align:center;padding:4rem 2rem;color:var(--text2)">
+    <div style="font-size:3rem;margin-bottom:.75rem">🏅</div>
+    <div style="font-size:1.1rem;font-weight:600;margin-bottom:.3rem">No scores yet for this topic</div>
+    <div style="font-size:.9rem">Be the first to play! <a href="index.html" style="color:var(--purple-l)">Go to Topics →</a></div>
+  </div>
+
+  <!-- Your stats card -->
+  <div id="myStatsCard" style="margin-top:2.5rem;display:none">
+    <div class="section-heading" style="font-size:1.1rem;margin-bottom:.75rem">📊 Your Stats</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem">
+      <div class="stat-card">
+        <div class="stat-label">Your Rank</div>
+        <div class="stat-value" id="myRank">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total XP</div>
+        <div class="stat-value" id="myXP">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Level</div>
+        <div class="stat-value" id="myLevel" style="font-size:1.1rem">Novice</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Topics Done</div>
+        <div class="stat-value" id="myTopics">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Badges</div>
+        <div class="stat-value" id="myBadgesCount">0</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem" id="myXPBarWrap"></div>
+  </div>
+</main>
+
+<script src="topics.js"></script>
+<script src="app.js"></script>
+<script>
+let player = null;
+let currentTab = 'overall';
+
+function init() {
+  player = Game.getPlayer();
+  if (player) {
+    document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
+    document.getElementById('navName').textContent = player.name;
+    document.getElementById('navXP').textContent = player.xp + ' XP';
+    renderMyStats();
+  }
+  buildTopicTabs();
+  renderLeaderboard('overall');
+}
+
+function buildTopicTabs() {
+  const container = document.getElementById('topicTabs');
+  container.innerHTML = window.TOPICS.map(t =>
+    `<button class="btn btn-sm btn-secondary" id="tab-${t.id}" onclick="setTab('${t.id}')">
+      ${t.icon} ${t.title}
+    </button>`
+  ).join('');
+}
+
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('[id^="tab-"]').forEach(b => {
+    b.style.background = ''; b.style.color = '';
+  });
+  const active = document.getElementById('tab-' + tab);
+  if (active) { active.style.background = 'var(--purple-g)'; active.style.color = '#fff'; }
+  renderLeaderboard(tab);
+}
+
+function renderLeaderboard(tab) {
+  const lb = Game.getLeaderboard();
+  let entries = [];
+
+  if (tab === 'overall') {
+    entries = lb.map(p => ({
+      name: p.name,
+      xp: p.xp,
+      level: p.level,
+      sub: `${p.topicsCompleted} topic${p.topicsCompleted !== 1 ? 's' : ''} · ${p.badges} badge${p.badges !== 1 ? 's' : ''}`,
+    }));
+  } else {
+    entries = lb
+      .filter(p => p.scores && p.scores[tab])
+      .map(p => ({
+        name: p.name,
+        xp: p.scores[tab].pct,
+        displayXP: p.scores[tab].pct + '%',
+        level: p.level,
+        sub: `Score: ${p.scores[tab].score}/${p.scores[tab].total}`,
+      }))
+      .sort((a, b) => b.xp - a.xp);
+  }
+
+  const podiumEl = document.getElementById('podium');
+  const listEl = document.getElementById('lbList');
+  const emptyEl = document.getElementById('lbEmpty');
+
+  if (!entries.length) {
+    podiumEl.innerHTML = ''; listEl.innerHTML = '';
+    emptyEl.style.display = 'block'; return;
+  }
+  emptyEl.style.display = 'none';
+
+  // Podium (top 3)
+  const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd for visual
+  const podiumColors = ['#94a3b8', '#f59e0b', '#b45309'];
+  const podiumHeights = ['140px', '180px', '110px'];
+  const medals = ['🥈', '🥇', '🥉'];
+
+  podiumEl.innerHTML = podiumOrder
+    .filter(i => entries[i])
+    .map((i, pos) => {
+      const e = entries[i];
+      const isYou = player && e.name === player.name;
+      return `
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem">
+        <div style="font-size:2rem">${medals[pos]}</div>
+        <div class="nav-avatar" style="width:48px;height:48px;font-size:1.1rem;
+          ${isYou?'box-shadow:0 0 20px rgba(124,58,237,.6)':''}">
+          ${e.name.charAt(0).toUpperCase()}
+        </div>
+        <div style="font-size:.85rem;font-weight:700;max-width:80px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</div>
+        <div style="height:${podiumHeights[pos]};width:90px;border-radius:10px 10px 0 0;
+          background:${podiumColors[pos]}22;border:1px solid ${podiumColors[pos]}44;
+          display:flex;align-items:center;justify-content:center;
+          font-family:'Outfit',sans-serif;font-weight:800;color:${podiumColors[pos]}">
+          ${e.displayXP || e.xp + ' XP'}
+        </div>
+      </div>`;
+    }).join('');
+
+  // Rest of list (rank 4+)
+  const rest = entries.slice(3);
+  if (!rest.length) { listEl.innerHTML = ''; return; }
+
+  listEl.innerHTML = `<div style="margin-top:1.5rem">` +
+    rest.map((e, i) => {
+      const rank = i + 4;
+      const isYou = player && e.name === player.name;
+      return `<div class="lb-row ${isYou?'is-you':''}">
+        <div class="lb-rank" style="color:var(--text2)">${rank}</div>
+        <div class="lb-avatar">${e.name.charAt(0).toUpperCase()}</div>
+        <div class="lb-info">
+          <div class="lb-player-name">${e.name}${isYou?' <span style="font-size:.7rem;color:var(--purple-l)">(You)</span>':''}</div>
+          <div class="lb-sub">${e.sub}</div>
+        </div>
+        <div class="lb-xp">${e.displayXP || e.xp + ' XP'}</div>
+      </div>`;
+    }).join('') + '</div>';
+}
+
+function renderMyStats() {
+  if (!player) return;
+  const card = document.getElementById('myStatsCard');
+  card.style.display = 'block';
+
+  const lb = Game.getLeaderboard();
+  const rank = lb.findIndex(p => p.name === player.name) + 1;
+  const lv = Game.resolveLevel(player.xp);
+
+  document.getElementById('myRank').textContent = rank ? '#' + rank : '—';
+  document.getElementById('myXP').textContent = player.xp;
+  document.getElementById('myLevel').textContent = lv.icon + ' ' + lv.title;
+  document.getElementById('myTopics').textContent = Object.keys(player.scores).length;
+  document.getElementById('myBadgesCount').textContent = player.badges.length;
+  document.getElementById('myXPBarWrap').innerHTML = Game.renderXPBar(player);
+}
+
+init();
+</script>
+</body>
+</html>

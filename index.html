@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ReviewerHub — Study Smart, Level Up</title>
+<meta name="description" content="Gamified interactive reviewer site for students. Pick a topic, take the quiz, earn XP and badges, and climb the leaderboard!"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="page-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>🎮</span> ReviewerHub</div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link active">Topics</a>
+    <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+  </div>
+  <div id="navPlayer" class="nav-player" style="display:none">
+    <div class="nav-avatar" id="navAvatar">?</div>
+    <span id="navName">Player</span>
+    <span id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+  </div>
+</nav>
+
+<!-- NAME ENTRY MODAL -->
+<div class="modal-overlay show" id="nameModal">
+  <div class="modal">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:3rem;margin-bottom:.75rem">🎮</div>
+      <h1 style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:.4rem">Welcome to ReviewerHub!</h1>
+      <p style="color:var(--text2);font-size:.9rem">Enter your name to start earning XP and badges.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <input id="nameInput" type="text" placeholder="Your name (e.g. Juan Dela Cruz)"
+        style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
+               background:var(--bg3);color:var(--white);font-size:1rem;width:100%;
+               outline:none;transition:border-color var(--transition);font-family:'Inter',sans-serif"
+        onfocus="this.style.borderColor='var(--purple-l)'"
+        onblur="this.style.borderColor='var(--border)'"
+        maxlength="30"/>
+      <p id="nameError" style="color:var(--red);font-size:.8rem;display:none">Please enter your name to continue.</p>
+      <button class="btn btn-primary btn-lg" onclick="submitName()" id="startBtn">
+        🚀 Let's Go!
+      </button>
+    </div>
+    <p style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:1.2rem">
+      No account needed — your progress is saved on this device.
+    </p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+  <!-- HERO / PLAYER STATS -->
+  <div class="hero" id="heroSection" style="display:none">
+    <div class="hero-greeting">Welcome back,</div>
+    <div class="hero-name">Hello, <em id="heroName">Player</em>! 👋</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:1.5rem 0 1rem">
+      <div class="stat-card">
+        <div class="stat-label">Total XP</div>
+        <div class="stat-value" id="statXP">0</div>
+        <div class="stat-sub" id="statLevel">Novice</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Topics Done</div>
+        <div class="stat-value" id="statTopics">0</div>
+        <div class="stat-sub">keep exploring!</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Badges Earned</div>
+        <div class="stat-value" id="statBadges">0</div>
+        <div class="stat-sub" id="statBadgeNext">/ 8 total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Best Score</div>
+        <div class="stat-value" id="statBest">—</div>
+        <div class="stat-sub">personal record</div>
+      </div>
+    </div>
+
+    <div id="heroXPBar"></div>
+  </div>
+
+  <!-- TOPICS SECTION -->
+  <div class="page-content">
+    <!-- Search -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+      <div>
+        <div class="section-heading">📋 Choose a Topic</div>
+        <div class="section-sub">Pick a reviewer and start earning XP!</div>
+      </div>
+      <input id="searchInput" type="text" placeholder="🔍 Search topics..."
+        style="padding:.6rem 1rem;border-radius:10px;border:1px solid var(--border);
+               background:var(--glass);color:var(--white);font-size:.9rem;width:220px;
+               outline:none;transition:border-color var(--transition)"
+        oninput="filterTopics()"
+        onfocus="this.style.borderColor='var(--purple-l)'"
+        onblur="this.style.borderColor='var(--border)'"/>
+    </div>
+
+    <!-- Subject filter -->
+    <div id="filterBar" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem"></div>
+
+    <!-- Grid -->
+    <div class="topic-grid" id="topicGrid"></div>
+
+    <!-- Empty state -->
+    <div id="emptyState" style="display:none;text-align:center;padding:4rem 2rem;color:var(--text2)">
+      <div style="font-size:3rem;margin-bottom:.75rem">🔍</div>
+      <div style="font-size:1.1rem;font-weight:600;margin-bottom:.3rem">No topics found</div>
+      <div style="font-size:.9rem">Try a different search term.</div>
+    </div>
+
+    <!-- Badges section -->
+    <div style="margin-top:3rem">
+      <div class="section-heading" style="font-size:1.2rem;margin-bottom:.5rem">🏅 Achievements</div>
+      <div id="badgeGrid" style="display:flex;flex-wrap:wrap;gap:.6rem"></div>
+    </div>
+  </div>
+</main>
+
+<script src="topics.js"></script>
+<script src="app.js"></script>
+<script>
+// ---- Init -----------------------------------------------
+let player = null;
+let activeFilter = 'All';
+
+function init() {
+  player = Game.getPlayer();
+  if (player) {
+    closeNameModal();
+    renderPage();
+  } else {
+    document.getElementById('nameModal').classList.add('show');
+    setTimeout(() => document.getElementById('nameInput').focus(), 300);
+  }
+  buildFilterBar();
+  renderTopics();
+}
+
+// ---- Name Modal -----------------------------------------
+function submitName() {
+  const inp = document.getElementById('nameInput');
+  const name = inp.value.trim();
+  if (!name) {
+    document.getElementById('nameError').style.display = 'block';
+    inp.focus(); return;
+  }
+  document.getElementById('nameError').style.display = 'none';
+  player = Game.createPlayer(name);
+  Game.savePlayer(player);
+  Game.updateLeaderboard(player);
+  closeNameModal();
+  renderPage();
+  Game.showToast(`Welcome, ${name}! 🎉 Start a topic to earn your first XP!`);
+}
+
+function closeNameModal() {
+  const m = document.getElementById('nameModal');
+  m.classList.remove('show');
+  setTimeout(() => m.style.display = 'none', 300);
+}
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitName();
+});
+
+// ---- Render Page ----------------------------------------
+function renderPage() {
+  if (!player) return;
+  document.getElementById('heroSection').style.display = '';
+  document.getElementById('navPlayer').style.display = 'flex';
+  document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
+  document.getElementById('navName').textContent = player.name;
+  document.getElementById('navXP').textContent = player.xp + ' XP';
+  document.getElementById('heroName').textContent = player.name;
+
+  const lv = Game.resolveLevel(player.xp);
+  document.getElementById('statXP').textContent = player.xp;
+  document.getElementById('statLevel').textContent = lv.icon + ' ' + lv.title;
+  document.getElementById('statTopics').textContent = Object.keys(player.scores).length;
+  document.getElementById('statBadges').textContent = player.badges.length;
+
+  // Best score
+  const bests = Object.values(player.scores || {}).map(s => s.pct);
+  const best = bests.length ? Math.max(...bests) + '%' : '—';
+  document.getElementById('statBest').textContent = best;
+
+  document.getElementById('heroXPBar').innerHTML = Game.renderXPBar(player);
+
+  renderBadges();
+  renderTopics();
+}
+
+// ---- Topics ---------------------------------------------
+function buildFilterBar() {
+  const subjects = ['All', ...new Set(window.TOPICS.map(t => t.subject))];
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = subjects.map(s => `
+    <button class="btn btn-sm btn-secondary" id="filter-${s}"
+      onclick="setFilter('${s}')"
+      style="${s==='All'?'background:var(--glass-b);border-color:rgba(255,255,255,0.2)':''}"
+    >${s}</button>
+  `).join('');
+}
+
+function setFilter(subject) {
+  activeFilter = subject;
+  document.querySelectorAll('[id^="filter-"]').forEach(b => {
+    b.style.background = '';b.style.borderColor = '';
+  });
+  const active = document.getElementById('filter-' + subject);
+  if (active) { active.style.background='var(--glass-b)';active.style.borderColor='rgba(255,255,255,0.3)'; }
+  renderTopics();
+}
+
+function filterTopics() { renderTopics(); }
+
+function renderTopics() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const grid = document.getElementById('topicGrid');
+  const empty = document.getElementById('emptyState');
+
+  const filtered = window.TOPICS.filter(t => {
+    const matchSubject = activeFilter === 'All' || t.subject === activeFilter;
+    const matchQ = !q || t.title.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q);
+    return matchSubject && matchQ;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = ''; empty.style.display = '';
+  } else {
+    empty.style.display = 'none';
+    grid.innerHTML = filtered.map(t => topicCardHTML(t)).join('');
+  }
+}
+
+function topicCardHTML(t) {
+  const best = player ? Game.getBestScore(player, t.id) : null;
+  const diffClass = Game.getDifficultyClass(t.difficulty);
+  const bestLabel = best !== null
+    ? `Best: <span>${best}%</span>`
+    : `<span style="color:var(--text2)">Not yet played</span>`;
+
+  return `
+  <div class="card topic-card" style="--card-color:${t.color}"
+       onclick="goToTopic('${t.id}')" role="button" tabindex="0"
+       onkeydown="if(event.key==='Enter')goToTopic('${t.id}')">
+    <div class="topic-icon">${t.icon}</div>
+    <div class="topic-badge" style="color:${t.color};border-color:${t.color}33">
+      ${t.subject}
+    </div>
+    <div class="topic-title">${t.title}</div>
+    <div class="topic-desc">${t.description}</div>
+    <div class="topic-footer">
+      <div class="topic-best">${bestLabel}</div>
+      <span class="difficulty-badge diff-${diffClass}">${t.difficulty}</span>
+    </div>
+    <button class="btn btn-primary btn-sm" style="width:100%;margin-top:.5rem">
+      ${best !== null ? '🔄 Retry' : '▶ Start'} Reviewer
+    </button>
+  </div>`;
+}
+
+function goToTopic(id) {
+  if (!player) { Game.showToast('Please enter your name first!'); return; }
+  window.location.href = `topic.html?id=${id}`;
+}
+
+// ---- Badges ---------------------------------------------
+function renderBadges() {
+  const grid = document.getElementById('badgeGrid');
+  grid.innerHTML = Game.BADGES.map(b => {
+    const earned = player?.badges?.includes(b.id);
+    return `<div class="badge-chip ${earned?'earned':'locked'}" title="${b.desc}">
+      ${b.icon} ${b.label}
+    </div>`;
+  }).join('');
+}
+
+// ---- Start -----------------------------------------------
+init();
+</script>
+</body>
+</html>
