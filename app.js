@@ -137,6 +137,45 @@ function submitScore(topicId, score, total, timeSeconds) {
   return { xpEarned, leveledUp, newBadges, newLevel: newLevelObj, pct };
 }
 
+// ---- Weekly Reset Helper ----------------------------------
+function getWeekKey() {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday
+  const monday = new Date(now.getFullYear(), now.getMonth(), diff);
+  return monday.toISOString().split('T')[0]; // e.g. '2026-08-24'
+}
+
+// ---- JSONBin Helpers (shared leaderboard) -----------------
+const JSONBIN = 'https://api.jsonbin.io/v3';
+
+function jsonbinConfigured() {
+  const c = window.CONFIG;
+  return c && c.JSONBIN_API_KEY && c.JSONBIN_BIN_ID;
+}
+
+async function fetchSharedData() {
+  const { JSONBIN_API_KEY, JSONBIN_BIN_ID } = window.CONFIG;
+  const res = await fetch(`${JSONBIN}/b/${JSONBIN_BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+  });
+  if (!res.ok) throw new Error('JSONBin fetch failed');
+  const json = await res.json();
+  return json.record; // { weekKey, leaderboard: [] }
+}
+
+async function saveSharedData(data) {
+  const { JSONBIN_API_KEY, JSONBIN_BIN_ID } = window.CONFIG;
+  await fetch(`${JSONBIN}/b/${JSONBIN_BIN_ID}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_API_KEY,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 // ---- Leaderboard ------------------------------------------
 function getLeaderboard() {
   try { return JSON.parse(localStorage.getItem(KEYS.LEADERBOARD)) || []; }
@@ -144,9 +183,17 @@ function getLeaderboard() {
 }
 
 function updateLeaderboard(player) {
+  // Always update local cache
   const lb = getLeaderboard();
   const idx = lb.findIndex(p => p.name === player.name);
-  const entry = {
+  const entry = buildEntry(player);
+  if (idx >= 0) lb[idx] = entry; else lb.push(entry);
+  lb.sort((a, b) => b.xp - a.xp);
+  localStorage.setItem(KEYS.LEADERBOARD, JSON.stringify(lb));
+}
+
+function buildEntry(player) {
+  return {
     name: player.name,
     xp: player.xp,
     level: player.level,
@@ -154,10 +201,59 @@ function updateLeaderboard(player) {
     topicsCompleted: Object.keys(player.scores).length,
     scores: player.scores,
   };
-  if (idx >= 0) lb[idx] = entry;
-  else lb.push(entry);
-  lb.sort((a, b) => b.xp - a.xp);
-  localStorage.setItem(KEYS.LEADERBOARD, JSON.stringify(lb));
+}
+
+// Push score to shared JSONBin leaderboard (async, non-blocking)
+async function pushToShared(player) {
+  if (!jsonbinConfigured()) return;
+  try {
+    const remote = await fetchSharedData();
+    const weekKey = getWeekKey();
+    const cfg = window.CONFIG;
+
+    // Weekly reset
+    let lb = (cfg.WEEKLY_RESET && remote.weekKey !== weekKey) ? [] : (remote.leaderboard || []);
+
+    const entry = buildEntry(player);
+    const idx = lb.findIndex(p => p.name === player.name);
+    if (idx >= 0) lb[idx] = entry; else lb.push(entry);
+    lb.sort((a, b) => b.xp - a.xp);
+
+    await saveSharedData({ weekKey, leaderboard: lb });
+  } catch (e) {
+    console.warn('Shared leaderboard update failed (offline?):', e);
+  }
+}
+
+// Fetch the shared leaderboard for display (returns array)
+async function getSharedLeaderboard() {
+  if (!jsonbinConfigured()) return { entries: getLeaderboard(), shared: false };
+  try {
+    const remote = await fetchSharedData();
+    const weekKey = getWeekKey();
+    const cfg = window.CONFIG;
+    if (cfg.WEEKLY_RESET && remote.weekKey !== weekKey) {
+      return { entries: [], shared: true, resetThisLoad: true };
+    }
+    return { entries: remote.leaderboard || [], shared: true };
+  } catch (e) {
+    return { entries: getLeaderboard(), shared: false };
+  }
+}
+
+// Reset the shared leaderboard (teacher action)
+async function resetSharedLeaderboard() {
+  if (!jsonbinConfigured()) {
+    localStorage.removeItem(KEYS.LEADERBOARD);
+    return true;
+  }
+  try {
+    await saveSharedData({ weekKey: getWeekKey(), leaderboard: [] });
+    localStorage.removeItem(KEYS.LEADERBOARD);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 // ---- Confetti ---------------------------------------------
@@ -228,6 +324,8 @@ window.Game = {
   getPlayer, savePlayer, createPlayer, ensurePlayer,
   submitScore, calcXP, resolveLevel, nextLevel, xpProgress,
   checkBadges, getLeaderboard, updateLeaderboard,
+  pushToShared, getSharedLeaderboard, resetSharedLeaderboard,
+  getWeekKey, jsonbinConfigured,
   launchConfetti, showToast,
   renderLevelBadge, renderXPBar, getDifficultyClass, getBestScore,
   LEVELS, BADGES,

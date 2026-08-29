@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Leaderboard — ReviewerHub</title>
 <link rel="stylesheet" href="style.css"/>
+<script src="config.js"></script>
 </head>
 <body>
 <div class="page-bg"></div>
@@ -24,8 +25,23 @@
 
 <main class="page-content">
   <div style="margin-bottom:2rem">
-    <h1 class="section-heading">🏆 Leaderboard</h1>
-    <p class="section-sub">Top players ranked by total XP earned across all topics.</p>
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:.3rem">
+      <h1 class="section-heading" style="margin-bottom:0">🏆 Leaderboard</h1>
+      <span id="sharedBadge" style="display:none;padding:.2rem .75rem;border-radius:999px;font-size:.75rem;font-weight:600;
+        background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#10b981">🌐 Shared</span>
+      <span id="localBadge" style="display:none;padding:.2rem .75rem;border-radius:999px;font-size:.75rem;font-weight:600;
+        background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.3);color:#94a3b8">💾 This Device Only</span>
+    </div>
+    <p class="section-sub" id="lbSubtitle">Top players ranked by total XP earned across all topics.</p>
+    <div id="weekResetNotice" style="display:none;font-size:.82rem;color:var(--gold);margin-top:.3rem">🔄 Leaderboard was reset for a new week.</div>
+  </div>
+
+  <!-- Teacher Reset -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+    <button class="btn btn-sm btn-secondary" onclick="teacherReset()" id="resetBtn"
+      style="font-size:.78rem;color:var(--red);border-color:rgba(239,68,68,.3)">
+      🔒 Reset Leaderboard
+    </button>
   </div>
 
   <!-- Tab bar -->
@@ -35,7 +51,11 @@
     <div id="topicTabs" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
   </div>
 
-  <!-- Podium (top 3) -->
+  <!-- Loading -->
+  <div id="lbLoading" style="text-align:center;padding:3rem;color:var(--text2)">
+    <div style="font-size:2rem;margin-bottom:.5rem">⏳</div>
+    <div>Loading leaderboard...</div>
+  </div>
   <div id="podium" style="display:flex;align-items:flex-end;justify-content:center;gap:1rem;margin-bottom:2rem;flex-wrap:wrap"></div>
 
   <!-- Rest of leaderboard -->
@@ -83,7 +103,7 @@
 let player = null;
 let currentTab = 'overall';
 
-function init() {
+async function init() {
   player = Game.getPlayer();
   if (player) {
     document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
@@ -92,7 +112,7 @@ function init() {
     renderMyStats();
   }
   buildTopicTabs();
-  renderLeaderboard('overall');
+  await renderLeaderboard('overall');
 }
 
 function buildTopicTabs() {
@@ -114,39 +134,50 @@ function setTab(tab) {
   renderLeaderboard(tab);
 }
 
-function renderLeaderboard(tab) {
-  const lb = Game.getLeaderboard();
-  let entries = [];
+async function renderLeaderboard(tab) {
+  document.getElementById('lbLoading').style.display = 'block';
+  document.getElementById('podium').style.display = 'none';
+  document.getElementById('lbList').innerHTML = '';
 
+  const { entries, shared, resetThisLoad } = await Game.getSharedLeaderboard();
+
+  // Show shared/local badge
+  document.getElementById('sharedBadge').style.display = shared ? '' : 'none';
+  document.getElementById('localBadge').style.display = shared ? 'none' : '';
+  if (resetThisLoad) document.getElementById('weekResetNotice').style.display = '';
+
+  if (shared) {
+    document.getElementById('lbSubtitle').textContent = 'Live shared leaderboard — all students across all devices. Resets every Monday.';
+  }
+
+  let displayEntries = [];
   if (tab === 'overall') {
-    entries = lb.map(p => ({
-      name: p.name,
-      xp: p.xp,
-      level: p.level,
+    displayEntries = entries.map(p => ({
+      name: p.name, xp: p.xp, level: p.level,
       sub: `${p.topicsCompleted} topic${p.topicsCompleted !== 1 ? 's' : ''} · ${p.badges} badge${p.badges !== 1 ? 's' : ''}`,
     }));
   } else {
-    entries = lb
+    displayEntries = entries
       .filter(p => p.scores && p.scores[tab])
       .map(p => ({
-        name: p.name,
-        xp: p.scores[tab].pct,
-        displayXP: p.scores[tab].pct + '%',
-        level: p.level,
+        name: p.name, xp: p.scores[tab].pct,
+        displayXP: p.scores[tab].pct + '%', level: p.level,
         sub: `Score: ${p.scores[tab].score}/${p.scores[tab].total}`,
       }))
       .sort((a, b) => b.xp - a.xp);
   }
 
-  const podiumEl = document.getElementById('podium');
-  const listEl = document.getElementById('lbList');
-  const emptyEl = document.getElementById('lbEmpty');
+  document.getElementById('lbLoading').style.display = 'none';
+  buildPodiumAndList(displayEntries);
+}
 
   if (!entries.length) {
-    podiumEl.innerHTML = ''; listEl.innerHTML = '';
+    podiumEl.innerHTML = ''; podiumEl.style.display = 'none';
+    listEl.innerHTML = '';
     emptyEl.style.display = 'block'; return;
   }
   emptyEl.style.display = 'none';
+  podiumEl.style.display = 'flex';
 
   // Podium (top 3)
   const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd for visual
@@ -201,6 +232,7 @@ function renderMyStats() {
   const card = document.getElementById('myStatsCard');
   card.style.display = 'block';
 
+  // For rank, try to use cached local leaderboard
   const lb = Game.getLeaderboard();
   const rank = lb.findIndex(p => p.name === player.name) + 1;
   const lv = Game.resolveLevel(player.xp);
@@ -211,6 +243,27 @@ function renderMyStats() {
   document.getElementById('myTopics').textContent = Object.keys(player.scores).length;
   document.getElementById('myBadgesCount').textContent = player.badges.length;
   document.getElementById('myXPBarWrap').innerHTML = Game.renderXPBar(player);
+}
+
+async function teacherReset() {
+  const pw = prompt('Enter teacher password to reset the leaderboard:');
+  if (!pw) return;
+  if (pw !== (window.CONFIG?.RESET_PASSWORD || 'teacher2024')) {
+    Game.showToast('❌ Incorrect password.');
+    return;
+  }
+  const btn = document.getElementById('resetBtn');
+  btn.textContent = '⏳ Resetting...';
+  btn.disabled = true;
+  const ok = await Game.resetSharedLeaderboard();
+  if (ok) {
+    Game.showToast('✅ Leaderboard has been reset!');
+    await renderLeaderboard(currentTab);
+  } else {
+    Game.showToast('❌ Reset failed. Check your connection.');
+  }
+  btn.textContent = '🔒 Reset Leaderboard';
+  btn.disabled = false;
 }
 
 init();

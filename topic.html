@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ReviewerHub — Topic</title>
 <link rel="stylesheet" href="style.css"/>
+<script src="config.js"></script>
 <style>
   .submit-panel{
     background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
@@ -260,6 +261,8 @@ function triggerSubmit(score, total, timeSeconds) {
 
   const result = Game.submitScore(topic.id, score, total, timeSeconds);
   player = Game.getPlayer();
+  // Push to shared leaderboard (async, non-blocking)
+  Game.pushToShared(player);
 
   showResultModal(score, total, timeSeconds, result);
   if (result.pct >= 70) Game.launchConfetti();
