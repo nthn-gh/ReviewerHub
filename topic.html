@@ -7,11 +7,7 @@
 <link rel="stylesheet" href="style.css"/>
 <script src="config.js"></script>
 <style>
-  .submit-panel{
-    background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
-    padding:1.5rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;
-    margin-top:1.25rem;
-  }
+
   .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-top:1.5rem}
   .new-badge-chip{
     display:inline-flex;align-items:center;gap:.4rem;
@@ -79,36 +75,7 @@
       title="Reviewer content" onload="frameLoaded()"></iframe>
   </div>
 
-  <!-- Submit Panel -->
-  <div class="submit-panel" id="submitPanel">
-    <div style="flex:1">
-      <div style="font-weight:600;margin-bottom:.2rem">✅ Done with the reviewer?</div>
-      <div style="font-size:.82rem;color:var(--text2)">
-        If the reviewer sent your score automatically, it'll appear below. Or enter it manually.
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <input id="scoreInput" type="number" min="0" placeholder="Score"
-          style="width:90px;padding:.55rem .75rem;border-radius:8px;border:1px solid var(--border);
-                 background:var(--bg3);color:var(--white);font-size:.95rem;outline:none;text-align:center"
-          onfocus="this.style.borderColor='var(--purple-l)'"
-          onblur="this.style.borderColor='var(--border)'"/>
-        <span style="color:var(--text2)">out of</span>
-        <input id="totalInput" type="number" min="1" placeholder="Total"
-          style="width:90px;padding:.55rem .75rem;border-radius:8px;border:1px solid var(--border);
-                 background:var(--bg3);color:var(--white);font-size:.95rem;outline:none;text-align:center"
-          onfocus="this.style.borderColor='var(--purple-l)'"
-          onblur="this.style.borderColor='var(--border)'"/>
-      </div>
-      <button class="btn btn-primary" onclick="manualSubmit()" id="submitBtn">
-        🏆 Submit Score
-      </button>
-    </div>
-    <p id="submitError" style="color:var(--red);font-size:.8rem;width:100%;display:none">
-      Please enter a valid score.
-    </p>
-  </div>
+
 </main>
 
 <!-- RESULT MODAL -->
@@ -202,8 +169,6 @@ function init() {
   const best = Game.getBestScore(player, topic.id);
   document.getElementById('myBest').textContent = best !== null ? `Your best: ${best}%` : 'Not yet played';
 
-  // Set total input
-  if (topic.questions) document.getElementById('totalInput').value = topic.questions;
 
   // Load iframe
   document.getElementById('reviewerFrame').src = topic.file;
@@ -233,25 +198,11 @@ function onReviewerMessage(e) {
   const { score, total, timeSeconds } = e.data;
   if (typeof score !== 'number' || typeof total !== 'number') return;
 
-  document.getElementById('scoreInput').value = score;
-  document.getElementById('totalInput').value = total;
   const elapsed = timeSeconds || Math.round((Date.now() - startTime) / 1000);
   triggerSubmit(score, total, elapsed);
 }
 
-// ---- Manual Submit ---------------------------------------
-function manualSubmit() {
-  const score = parseInt(document.getElementById('scoreInput').value);
-  const total = parseInt(document.getElementById('totalInput').value);
-  const err = document.getElementById('submitError');
 
-  if (isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) {
-    err.style.display = 'block'; return;
-  }
-  err.style.display = 'none';
-  const elapsed = Math.round((Date.now() - startTime) / 1000);
-  triggerSubmit(score, total, elapsed);
-}
 
 // ---- Core submit logic -----------------------------------
 function triggerSubmit(score, total, timeSeconds) {
@@ -317,7 +268,6 @@ function retryTopic() {
   document.getElementById('resultModal').classList.remove('show');
   document.getElementById('reviewerFrame').src = topic.file;
   document.getElementById('frameLoader').style.display = 'flex';
-  document.getElementById('scoreInput').value = '';
   document.getElementById('newBadgesWrap').innerHTML = '';
   document.getElementById('levelUpBanner').style.display = 'none';
   startTime = Date.now();
