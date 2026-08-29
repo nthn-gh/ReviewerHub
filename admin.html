@@ -47,7 +47,7 @@
     <div id="topicFormCard" class="card" style="padding:2rem;display:none">
       <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;margin-bottom:1.5rem" id="formTitle">Add New Topic</h2>
       
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem" class="admin-form-grid">
         <div>
           <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Topic ID (no spaces)</label>
           <input type="text" id="tId" placeholder="e.g. grade8-science" class="form-input" />
@@ -103,16 +103,28 @@
     transition:border-color var(--transition);
   }
   .form-input:focus { border-color:var(--purple-l); }
+  @media(max-width:600px){
+    .admin-form-grid { grid-template-columns:1fr !important; }
+  }
 </style>
 
-<script src="app.js?v=2"></script>
+<script src="topics.js?v=3"></script>
+<script src="app.js?v=3"></script>
 <script>
 let customTopics = [];
 let editingId = null;
 
-function login() {
+// #1: Use hash comparison for admin login
+async function hashPassword(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+async function login() {
   const pw = document.getElementById('adminPw').value;
-  if (pw === (window.CONFIG?.RESET_PASSWORD || 'teacher2024')) {
+  const hash = await hashPassword(pw);
+  const expectedHash = window.CONFIG?.RESET_PASSWORD_HASH;
+  if (expectedHash && hash === expectedHash) {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('adminSection').style.display = 'block';
     loadTopics();

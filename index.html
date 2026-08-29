@@ -57,7 +57,10 @@
   <!-- HERO / PLAYER STATS -->
   <div class="hero" id="heroSection" style="display:none">
     <div class="hero-greeting">Welcome back,</div>
-    <div class="hero-name">Hello, <em id="heroName">Player</em>! 👋</div>
+    <div style="display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap">
+      <div class="hero-name">Hello, <em id="heroName">Player</em>! 👋</div>
+      <button onclick="changeName()" style="font-size:.78rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px" title="Change your name">Not you?</button>
+    </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin:1.5rem 0 1rem">
       <div class="stat-card">
@@ -123,8 +126,8 @@
   </div>
 </main>
 
-<script src="topics.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="topics.js?v=3"></script>
+<script src="app.js?v=3"></script>
 <script>
 // ---- Init -----------------------------------------------
 let player = null;
@@ -132,6 +135,13 @@ let activeFilter = 'All';
 let allTopics = [];
 
 async function init() {
+  // #10: Show loading skeleton immediately before async fetch
+  document.getElementById('topicGrid').innerHTML = `
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:60%"></div></div>
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .15s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:70%"></div></div>
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .3s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:50%"></div></div>
+  `;
+
   allTopics = await Game.getAllTopics();
 
   player = Game.getPlayer();
@@ -160,9 +170,22 @@ function submitName() {
   player = Game.createPlayer(name);
   Game.savePlayer(player);
   Game.updateLeaderboard(player);
+  // Sync new player to shared leaderboard if configured
+  Game.syncLocalToShared();
   closeNameModal();
   renderPage();
   Game.showToast(`Welcome, ${name}! 🎉 Start a topic to earn your first XP!`);
+}
+
+// #15: Change name feature
+function changeName() {
+  const newName = prompt('Enter your new name:', player?.name || '');
+  if (!newName || !newName.trim()) return;
+  player.name = newName.trim().slice(0, 30);
+  Game.savePlayer(player);
+  Game.updateLeaderboard(player);
+  renderPage();
+  Game.showToast(`Name updated to "${player.name}" ✅`);
 }
 
 function closeNameModal() {
@@ -198,20 +221,24 @@ function renderPage() {
 
   document.getElementById('heroXPBar').innerHTML = Game.renderXPBar(player);
 
+  buildFilterBar();
   renderBadges();
   renderTopics();
 }
 
 // ---- Topics ---------------------------------------------
+// #4: highlight the active filter correctly from the start
 function buildFilterBar() {
   const subjects = ['All', ...new Set(allTopics.map(t => t.subject))];
   const bar = document.getElementById('filterBar');
   bar.innerHTML = subjects.map(s => `
     <button class="btn btn-sm btn-secondary" id="filter-${s}"
       onclick="setFilter('${s}')"
-      style="${s==='All'?'background:var(--glass-b);border-color:rgba(255,255,255,0.2)':''}"
     >${s}</button>
   `).join('');
+  // Highlight the currently active filter
+  const active = document.getElementById('filter-' + activeFilter);
+  if (active) { active.style.background='var(--glass-b)'; active.style.borderColor='rgba(255,255,255,0.3)'; }
 }
 
 function setFilter(subject) {
@@ -245,11 +272,25 @@ function renderTopics() {
   }
 }
 
+// #12: Format last-played date as relative time
+function relativeDate(isoString) {
+  if (!isoString) return null;
+  const diff = Date.now() - new Date(isoString).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  if (days < 30) return `${Math.floor(days/7)}w ago`;
+  return `${Math.floor(days/30)}mo ago`;
+}
+
 function topicCardHTML(t) {
   const best = player ? Game.getBestScore(player, t.id) : null;
   const diffClass = Game.getDifficultyClass(t.difficulty);
+  const scoreData = player?.scores?.[t.id];
+  const lastPlayed = scoreData ? relativeDate(scoreData.date) : null;
   const bestLabel = best !== null
-    ? `Best: <span>${best}%</span>`
+    ? `Best: <span>${best}%</span>${lastPlayed ? ` <span style="color:var(--muted);font-size:.72rem">· ${lastPlayed}</span>` : ''}`
     : `<span style="color:var(--text2)">Not yet played</span>`;
 
   return `

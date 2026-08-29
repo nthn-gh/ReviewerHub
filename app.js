@@ -341,7 +341,6 @@ async function syncLocalToShared() {
   try {
     await pushToShared(player);
     localStorage.setItem(syncKey, '1');
-    console.log('[ReviewerHub] Local scores synced to shared leaderboard.');
   } catch (e) {
     // Silently fail — will retry next visit
   }

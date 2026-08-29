@@ -97,8 +97,8 @@
   </div>
 </main>
 
-<script src="topics.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="topics.js?v=3"></script>
+<script src="app.js?v=3"></script>
 <script>
 let player = null;
 let currentTab = 'overall';
@@ -111,7 +111,6 @@ async function init() {
     document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
     document.getElementById('navName').textContent = player.name;
     document.getElementById('navXP').textContent = player.xp + ' XP';
-    renderMyStats();
   }
   buildTopicTabs();
   await renderLeaderboard('overall');
@@ -146,7 +145,11 @@ async function renderLeaderboard(tab) {
   // Show shared/local badge
   document.getElementById('sharedBadge').style.display = shared ? '' : 'none';
   document.getElementById('localBadge').style.display = shared ? 'none' : '';
-  if (resetThisLoad) document.getElementById('weekResetNotice').style.display = '';
+  if (resetThisLoad) {
+    const notice = document.getElementById('weekResetNotice');
+    notice.style.display = '';
+    setTimeout(() => notice.style.display = 'none', 4000); // #18 auto-hide
+  }
 
   if (shared) {
     document.getElementById('lbSubtitle').textContent = 'Live shared leaderboard — all students across all devices. Resets every Monday.';
@@ -170,10 +173,10 @@ async function renderLeaderboard(tab) {
   }
 
   document.getElementById('lbLoading').style.display = 'none';
-  buildPodiumAndList(displayEntries);
+  buildPodiumAndList(displayEntries, entries); // #3 pass entries for rank calculation
 }
 
-function buildPodiumAndList(entries) {
+function buildPodiumAndList(entries, rawEntries) {
   const podiumEl = document.getElementById('podium');
   const listEl   = document.getElementById('lbList');
   const emptyEl  = document.getElementById('lbEmpty');
@@ -181,11 +184,28 @@ function buildPodiumAndList(entries) {
   if (!entries.length) {
     podiumEl.innerHTML = ''; podiumEl.style.display = 'none';
     listEl.innerHTML = '';
-    emptyEl.style.display = 'block'; return;
+    emptyEl.style.display = 'block';
+    // Also update rank display with no data
+    renderMyStats(rawEntries || []);
+    return;
   }
   emptyEl.style.display = 'none';
-  podiumEl.style.display = 'flex';
 
+  // #9: If only 1-2 players, show a note
+  if (entries.length < 3) {
+    podiumEl.style.display = 'none';
+    const note = entries.length === 1
+      ? `<div style="text-align:center;padding:1.5rem;color:var(--text2)">🥇 Only 1 player so far — be the first to challenge them!</div>`
+      : `<div style="text-align:center;padding:1.5rem;color:var(--text2)">🎉 ${entries.length} players competing — more to come!</div>`;
+    listEl.innerHTML = note + entries.map((e, i) => {
+      const isYou = player && e.name === player.name;
+      return `<div class="lb-row ${isYou?'is-you':''}"><div class="lb-rank rank-${i+1}">${['🥇','🥈'][i]}</div><div class="lb-avatar">${e.name.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-player-name">${e.name}${isYou?' <span style="font-size:.7rem;color:var(--purple-l)">(You)</span>':''}</div><div class="lb-sub">${e.sub}</div></div><div class="lb-xp">${e.displayXP || e.xp + ' XP'}</div></div>`;
+    }).join('');
+    renderMyStats(rawEntries || entries);
+    return;
+  }
+
+  podiumEl.style.display = 'flex';
   const podiumOrder  = [1, 0, 2];
   const podiumColors = ['#94a3b8', '#f59e0b', '#b45309'];
   const podiumHeights = ['clamp(90px,18vw,140px)', 'clamp(120px,23vw,180px)', 'clamp(70px,14vw,110px)'];
@@ -215,32 +235,35 @@ function buildPodiumAndList(entries) {
     }).join('');
 
   const rest = entries.slice(3);
-  if (!rest.length) { listEl.innerHTML = ''; return; }
-
-  listEl.innerHTML = `<div style="margin-top:1.5rem">` +
-    rest.map((e, i) => {
-      const rank = i + 4;
-      const isYou = player && e.name === player.name;
-      return `<div class="lb-row ${isYou?'is-you':''}">
-        <div class="lb-rank" style="color:var(--text2)">${rank}</div>
-        <div class="lb-avatar">${e.name.charAt(0).toUpperCase()}</div>
-        <div class="lb-info">
-          <div class="lb-player-name">${e.name}${isYou?' <span style="font-size:.7rem;color:var(--purple-l)">(You)</span>':''}</div>
-          <div class="lb-sub">${e.sub}</div>
-        </div>
-        <div class="lb-xp">${e.displayXP || e.xp + ' XP'}</div>
-      </div>`;
-    }).join('') + '</div>';
+  if (!rest.length) { listEl.innerHTML = ''; }
+  else {
+    listEl.innerHTML = `<div style="margin-top:1.5rem">` +
+      rest.map((e, i) => {
+        const rank = i + 4;
+        const isYou = player && e.name === player.name;
+        return `<div class="lb-row ${isYou?'is-you':''}">
+          <div class="lb-rank" style="color:var(--text2)">${rank}</div>
+          <div class="lb-avatar">${e.name.charAt(0).toUpperCase()}</div>
+          <div class="lb-info">
+            <div class="lb-player-name">${e.name}${isYou?' <span style="font-size:.7rem;color:var(--purple-l)">(You)</span>':''}</div>
+            <div class="lb-sub">${e.sub}</div>
+          </div>
+          <div class="lb-xp">${e.displayXP || e.xp + ' XP'}</div>
+        </div>`;
+      }).join('') + '</div>';
+  }
+  renderMyStats(rawEntries || entries); // #3 use shared data for rank
 }
 
-function renderMyStats() {
+// #3: Accept shared entries for accurate rank
+function renderMyStats(sharedEntries) {
   if (!player) return;
   const card = document.getElementById('myStatsCard');
   card.style.display = 'block';
 
-  // For rank, try to use cached local leaderboard
-  const lb = Game.getLeaderboard();
-  const rank = lb.findIndex(p => p.name === player.name) + 1;
+  // Use shared leaderboard for rank if available, otherwise local cache
+  const sourceArr = (sharedEntries && sharedEntries.length) ? sharedEntries : Game.getLeaderboard();
+  const rank = sourceArr.findIndex(p => p.name === player.name) + 1;
   const lv = Game.resolveLevel(player.xp);
 
   document.getElementById('myRank').textContent = rank ? '#' + rank : '—';
@@ -251,10 +274,18 @@ function renderMyStats() {
   document.getElementById('myXPBarWrap').innerHTML = Game.renderXPBar(player);
 }
 
+// #1: Hash-based password comparison (never compares plain text)
+async function hashPassword(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
 async function teacherReset() {
   const pw = prompt('Enter teacher password to reset the leaderboard:');
   if (!pw) return;
-  if (pw !== (window.CONFIG?.RESET_PASSWORD || 'teacher2024')) {
+  const hash = await hashPassword(pw);
+  const expectedHash = window.CONFIG?.RESET_PASSWORD_HASH;
+  if (!expectedHash || hash !== expectedHash) {
     Game.showToast('❌ Incorrect password.');
     return;
   }

@@ -126,8 +126,8 @@
   </div>
 </div>
 
-<script src="topics.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="topics.js?v=3"></script>
+<script src="app.js?v=3"></script>
 <script>
 let topic = null;
 let player = null;
@@ -203,8 +203,9 @@ function onReviewerMessage(e) {
     const newHeight = e.data.height + 30; // Extra padding
     const currentHeight = parseInt(frame.style.height) || 0;
     
-    // Only update if difference is significant to prevent infinite 100vh growth loops
-    if (Math.abs(currentHeight - newHeight) > 20) {
+    // #11: Always allow shrinking; only throttle upward growth to prevent infinite loops
+    const isShrinking = newHeight < currentHeight;
+    if (isShrinking || Math.abs(currentHeight - newHeight) > 20) {
       frame.style.height = newHeight + 'px';
     }
     return;

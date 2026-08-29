@@ -232,12 +232,19 @@ nav {
   100%{transform:translateY(100vh) rotate(720deg);opacity:0}
 }
 
+/* ---- Skeleton pulse animation (for loading state) ---- */
+@keyframes pulse {
+  0%,100%{opacity:.4} 50%{opacity:.7}
+}
+
 /* ---- Score Reveal ---- */
 .score-ring {
   width:140px;height:140px;border-radius:50%;
   border:6px solid var(--border);position:relative;display:flex;
   align-items:center;justify-content:center;flex-direction:column;margin:0 auto;
   background:var(--glass);
+  /* #17: Solid purple ring fallback for Safari / older browsers */
+  border-color:var(--purple);
 }
 .score-ring::before{
   content:'';position:absolute;inset:-6px;border-radius:50%;
