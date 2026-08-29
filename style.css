@@ -55,14 +55,14 @@ nav {
   position:sticky;top:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:0 clamp(1rem,4vw,2.5rem);height:64px;
-  background:rgba(8,12,24,0.8);
+  background:rgba(8,12,24,0.85);
   backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
 }
 .nav-logo {
   font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;
   background:var(--purple-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:flex;align-items:center;gap:.5rem;
+  display:flex;align-items:center;gap:.5rem;flex-shrink:0;
 }
 .nav-logo span{font-size:1.4rem;-webkit-text-fill-color:initial}
 .nav-links{display:flex;align-items:center;gap:.5rem}
@@ -80,6 +80,81 @@ nav {
   width:28px;height:28px;border-radius:50%;
   background:var(--purple-g);display:flex;align-items:center;justify-content:center;
   font-size:.75rem;font-weight:700;font-family:'Outfit',sans-serif;
+}
+.nav-right {
+  display:flex;align-items:center;gap:.6rem;
+}
+
+/* ---- Hamburger Button ---- */
+.nav-hamburger {
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  width:40px;height:40px;gap:5px;padding:0;
+  background:var(--glass);border:1px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all var(--transition);flex-shrink:0;
+}
+.nav-hamburger span {
+  display:block;width:18px;height:2px;background:var(--white);
+  border-radius:2px;transition:all .3s ease;transform-origin:center;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav-hamburger:hover{background:var(--glass-b);border-color:rgba(255,255,255,0.2)}
+
+/* ---- Mobile Menu Overlay ---- */
+.mobile-overlay {
+  display:none;position:fixed;inset:0;z-index:199;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);
+  opacity:0;transition:opacity .3s ease;
+}
+.mobile-overlay.open{display:block;opacity:1}
+
+/* ---- Mobile Slide Drawer ---- */
+.mobile-drawer {
+  position:fixed;top:0;right:0;
+  width:min(300px,85vw);height:100%;height:100dvh;
+  background:var(--bg2);border-left:1px solid var(--border);
+  z-index:200;padding:0;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.mobile-drawer.open{transform:translateX(0)}
+.mobile-drawer-header {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.mobile-drawer-close {
+  width:36px;height:36px;border-radius:8px;
+  background:var(--glass);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;cursor:pointer;color:var(--text2);
+  transition:all var(--transition);
+}
+.mobile-drawer-close:hover{color:var(--white);background:var(--glass-b)}
+.mobile-drawer-body {
+  padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.3rem;flex:1;
+}
+.mobile-drawer-player {
+  display:none;align-items:center;gap:.85rem;padding:.85rem 1rem;
+  background:var(--glass);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:.75rem;
+}
+.mobile-drawer-player .nav-avatar{
+  width:38px;height:38px;font-size:.9rem;flex-shrink:0;
+}
+.mobile-nav-link {
+  display:flex;align-items:center;gap:.75rem;
+  padding:.85rem 1rem;border-radius:10px;font-size:.95rem;font-weight:500;
+  color:var(--text2);transition:all var(--transition);
+  border:1px solid transparent;
+}
+.mobile-nav-link:hover,.mobile-nav-link.mob-active {
+  color:var(--white);background:var(--glass-b);border-color:var(--border);
+}
+.mobile-nav-link.mob-active{color:var(--purple-l)}
+.mobile-drawer-divider{
+  height:1px;background:var(--border);margin:.5rem 0;
 }
 
 /* ---- Buttons ---- */
@@ -300,30 +375,32 @@ nav {
 /* ---- Responsive ---- */
 .page-content{max-width:1200px;margin:0 auto;padding:2rem clamp(1rem,4vw,2.5rem)}
 
-/* --- 640px: tablets & large phones --- */
+/* --- 640px: tablets & large phones — hamburger replaces nav links --- */
 @media(max-width:640px){
+  .nav-links{display:none}          /* hide desktop links */
+  .nav-hamburger{display:flex}       /* show hamburger */
+  nav{padding:0 1rem}
   .topic-grid{grid-template-columns:1fr}
   .hero{padding:1.5rem 1rem 1rem}
   .modal{padding:1.5rem;border-radius:16px}
   .modal-overlay{align-items:flex-start;padding-top:1rem}
   .stat-value{font-size:1.3rem}
-  .lb-sub{display:none} /* hide secondary line on small LB rows */
+  .lb-sub{display:none}
   .lb-row{padding:.75rem 1rem;gap:.6rem}
 }
 
 /* --- 480px: small phones --- */
 @media(max-width:480px){
-  /* Nav: shrink to logo + avatar only */
-  .nav-link{padding:.4rem .6rem;font-size:.8rem}
   nav{height:56px;padding:0 .75rem}
-  .nav-player{gap:.35rem;padding:.25rem .6rem;font-size:.8rem}
-  #navXP{display:none}  /* hide XP in nav on very small screens */
+  .nav-player{gap:.3rem;padding:.2rem .45rem;font-size:.8rem}
+  /* On very small screens, hide name & XP — show only avatar + hamburger */
+  .nav-player-text{display:none}
 
   /* Hero */
   .hero-name{font-size:1.5rem}
   .section-heading{font-size:1.3rem}
 
-  /* Score ring: smaller on mobile */
+  /* Score ring */
   .score-ring{width:110px;height:110px}
   .score-num{font-size:1.8rem}
 
@@ -333,20 +410,20 @@ nav {
   /* Modal tighter */
   .modal{padding:1.25rem;border-radius:14px}
 
-  /* Reviewer iframe: shorter on mobile so it fits */
+  /* Reviewer iframe */
   .reviewer-frame{min-height:420px}
 
-  /* Buttons in modal: stack on very small screens */
+  /* Modal buttons: stack vertically */
   .modal-btn-row{flex-direction:column !important}
   .modal-btn-row .btn{width:100%;justify-content:center}
 
-  /* Leaderboard podium: scale down */
+  /* Leaderboard rows */
   .lb-row{gap:.5rem}
   .lb-rank{width:24px;font-size:.95rem}
   .lb-avatar{width:30px;height:30px;font-size:.75rem}
   .lb-xp{font-size:.95rem}
 
-  /* Toast: prevent overflow */
+  /* Toast */
   .toast{max-width:calc(100vw - 2rem);white-space:normal;text-align:center;font-size:.82rem}
 
   /* Topic header */

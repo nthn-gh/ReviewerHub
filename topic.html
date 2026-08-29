@@ -32,12 +32,39 @@
     <a href="index.html" class="nav-link">← Topics</a>
     <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
   </div>
-  <div id="navPlayer" class="nav-player">
-    <div class="nav-avatar" id="navAvatar">?</div>
-    <span id="navName">Player</span>
-    <span id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+  <div class="nav-right">
+    <div id="navPlayer" class="nav-player">
+      <div class="nav-avatar" id="navAvatar">?</div>
+      <span class="nav-player-text" id="navName">Player</span>
+      <span class="nav-player-text" id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+    </div>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- Mobile Drawer -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="mobile-drawer-header">
+    <div class="nav-logo"><span>🎮</span> ReviewerHub</div>
+    <button class="mobile-drawer-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+  </div>
+  <div class="mobile-drawer-body">
+    <div class="mobile-drawer-player" id="mobileDrawerPlayer">
+      <div class="nav-avatar" id="mobileDrawerAvatar">?</div>
+      <div>
+        <div style="font-weight:700;font-size:.95rem" id="mobileDrawerName">Player</div>
+        <div style="font-size:.78rem;color:var(--purple-l)" id="mobileDrawerXP">0 XP</div>
+      </div>
+    </div>
+    <a href="index.html" class="mobile-nav-link">📋 Topics</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+  </div>
+</div>
 
 <main class="page-content">
   <!-- Breadcrumb -->
@@ -135,6 +162,32 @@ let startTime = null;
 let timerInterval = null;
 let scoreSubmitted = false;
 
+// ---- Mobile Menu ------------------------------------------
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileOverlay');
+  const btn = document.getElementById('navHamburger');
+  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
+  drawer.classList.add('open'); overlay.classList.add('open');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+  const btn = document.getElementById('navHamburger');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+function updateMobileDrawerPlayer() {
+  if (!player) return;
+  const dp = document.getElementById('mobileDrawerPlayer');
+  dp.style.display = 'flex';
+  document.getElementById('mobileDrawerAvatar').textContent = player.name.charAt(0).toUpperCase();
+  document.getElementById('mobileDrawerName').textContent = player.name;
+  document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
+}
+
 // ---- Init -----------------------------------------------
 async function init() {
   player = Game.getPlayer();
@@ -181,6 +234,7 @@ async function init() {
 
   // Listen for postMessage from reviewer
   window.addEventListener('message', onReviewerMessage);
+  updateMobileDrawerPlayer();
 }
 
 function frameLoaded() {

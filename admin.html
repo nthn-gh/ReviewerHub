@@ -15,7 +15,29 @@
   <div class="nav-links">
     <a href="index.html" class="nav-link">← Back to Site</a>
   </div>
+  <div class="nav-right">
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- Mobile Drawer -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="mobile-drawer-header">
+    <div class="nav-logo"><span>🎮</span> ReviewerHub</div>
+    <button class="mobile-drawer-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+  </div>
+  <div class="mobile-drawer-body">
+    <a href="index.html" class="mobile-nav-link">📋 Topics</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <div class="mobile-drawer-divider"></div>
+    <a href="admin.html" class="mobile-nav-link mob-active">🛠️ Admin Panel</a>
+  </div>
+</div>
 
 <main class="page-content" style="max-width:800px">
   <div style="margin-bottom:2rem">
@@ -113,6 +135,24 @@
 <script>
 let customTopics = [];
 let editingId = null;
+
+// ---- Mobile Menu ------------------------------------------
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileOverlay');
+  const btn = document.getElementById('navHamburger');
+  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
+  drawer.classList.add('open'); overlay.classList.add('open');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+  const btn = document.getElementById('navHamburger');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
 
 // #1: Use hash comparison for admin login
 async function hashPassword(pw) {
