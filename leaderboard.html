@@ -171,6 +171,11 @@ async function renderLeaderboard(tab) {
   buildPodiumAndList(displayEntries);
 }
 
+function buildPodiumAndList(entries) {
+  const podiumEl = document.getElementById('podium');
+  const listEl   = document.getElementById('lbList');
+  const emptyEl  = document.getElementById('lbEmpty');
+
   if (!entries.length) {
     podiumEl.innerHTML = ''; podiumEl.style.display = 'none';
     listEl.innerHTML = '';
@@ -179,8 +184,7 @@ async function renderLeaderboard(tab) {
   emptyEl.style.display = 'none';
   podiumEl.style.display = 'flex';
 
-  // Podium (top 3)
-  const podiumOrder = [1, 0, 2]; // 2nd, 1st, 3rd for visual
+  const podiumOrder  = [1, 0, 2];
   const podiumColors = ['#94a3b8', '#f59e0b', '#b45309'];
   const podiumHeights = ['140px', '180px', '110px'];
   const medals = ['🥈', '🥇', '🥉'];
@@ -207,7 +211,6 @@ async function renderLeaderboard(tab) {
       </div>`;
     }).join('');
 
-  // Rest of list (rank 4+)
   const rest = entries.slice(3);
   if (!rest.length) { listEl.innerHTML = ''; return; }
 
