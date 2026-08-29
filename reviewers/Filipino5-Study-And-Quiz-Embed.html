@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filipino 5: Study & Quiz</title>
+<script src="../reviewer-helper.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #0d1225;
+        --glass-bg: rgba(255, 255, 255, 0.06);
+        --glass-bg-soft: rgba(255, 255, 255, 0.04);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --glass-border-hover: rgba(255, 255, 255, 0.28);
+        --text-main: #f2f4fb;
+        --text-muted: #9aa3c0;
+        --accent: #7c8cff;
+        --accent-glow: rgba(124, 140, 255, 0.45);
+        --accent-2: #a685ff;
+        --cyan: #38e0e0;
+        --cyan-glow: rgba(56, 224, 224, 0.35);
+        --green: #34d399;
+        --green-glow: rgba(52, 211, 153, 0.4);
+        --red: #f87171;
+        --red-glow: rgba(248, 113, 113, 0.4);
+        --gold: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body { max-width: 100%; overflow-x: hidden; }
+    body {
+        background: radial-gradient(circle at 15% 10%, rgba(124,140,255,0.14), transparent 45%),
+                    radial-gradient(circle at 90% 20%, rgba(56,224,224,0.10), transparent 45%),
+                    radial-gradient(circle at 50% 90%, rgba(166,133,255,0.12), transparent 50%),
+                    var(--bg-deep);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 32px 16px 60px;
+        line-height: 1.6;
+    }
+
+    .page-shell { max-width: 780px; margin: 0 auto; }
+
+    /* ---------- Header ---------- */
+    .page-header { text-align: center; margin-bottom: 34px; }
+    .page-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 0.76rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+        color: var(--accent-2); background: rgba(124,140,255,0.1); border: 1px solid rgba(124,140,255,0.25);
+        padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .page-title { font-size: 1.9rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .page-sub { color: var(--text-muted); font-size: 0.96rem; max-width: 520px; margin: 0 auto; }
+
+    /* ---------- Section labels ---------- */
+    .section-label {
+        display: flex; align-items: center; gap: 10px; margin: 38px 0 18px;
+    }
+    .section-label:first-of-type { margin-top: 0; }
+    .section-label .dot {
+        width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+        box-shadow: 0 0 10px var(--accent-glow); flex-shrink: 0;
+    }
+    .section-label h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+    .section-label .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--glass-border), transparent); }
+
+    /* ---------- Glass Card (shared) ---------- */
+    .glass-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 24px 24px;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        margin-bottom: 16px;
+    }
+    .glass-card.soft { background: var(--glass-bg-soft); }
+
+    /* ---------- Study material ---------- */
+    .topic-card { }
+    .topic-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .topic-num {
+        flex: none; width: 34px; height: 34px; border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 0.9rem; color: #0d1225;
+        box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .topic-head h3 { font-size: 1.08rem; font-weight: 700; color: var(--text-main); }
+    .topic-card p { color: #cdd3ea; font-size: 0.94rem; margin-bottom: 10px; }
+    .topic-card p:last-child { margin-bottom: 0; }
+    .topic-card strong { color: var(--cyan); font-weight: 600; }
+
+    .bullet-list { list-style: none; margin: 10px 0; }
+    .bullet-list li {
+        position: relative; padding: 5px 0 5px 20px; color: #cdd3ea; font-size: 0.92rem; line-height: 1.55;
+    }
+    .bullet-list li::before {
+        content: "▸"; position: absolute; left: 0; top: 5px; color: var(--accent); font-weight: 700;
+    }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }
+    .chip {
+        font-size: 0.82rem; font-weight: 600; color: var(--cyan);
+        background: rgba(56,224,224,0.08); border: 1px solid rgba(56,224,224,0.25);
+        padding: 5px 11px; border-radius: 999px;
+    }
+
+    .example-block {
+        background: rgba(124,140,255,0.06); border: 1px dashed rgba(124,140,255,0.3);
+        border-radius: 14px; padding: 12px 16px; margin-top: 10px; font-size: 0.9rem; color: #d7dcf5;
+    }
+    .example-block .ex-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent-2); margin-bottom: 6px; }
+    .example-block u { text-decoration-color: var(--cyan); }
+
+    .type-mini-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+    .type-mini {
+        background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 13px;
+    }
+    .type-mini .tname { font-weight: 700; font-size: 0.88rem; color: var(--text-main); }
+    .type-mini .tdesc { font-size: 0.83rem; color: var(--text-muted); margin-top: 2px; }
+    .type-mini.highlight { border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.06); }
+    .type-mini.highlight .tname { color: var(--gold); }
+
+    /* ---------- Quiz section ---------- */
+    .quiz-topbar {
+        display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
+    }
+    .quiz-count {
+        font-size: 0.85rem; font-weight: 600; color: var(--text-main); background: var(--glass-bg);
+        border: 1px solid var(--glass-border); padding: 5px 12px; border-radius: 999px;
+    }
+    .score-pill {
+        font-size: 0.85rem; font-weight: 700; color: var(--gold); background: rgba(251,191,36,0.1);
+        border: 1px solid rgba(251,191,36,0.3); padding: 5px 12px; border-radius: 999px;
+    }
+    .progress-track {
+        width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;
+        margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .progress-fill {
+        height: 100%; width: 0%; border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--cyan));
+        box-shadow: 0 0 12px var(--accent-glow); transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .qtag {
+        display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+        color: var(--accent-2); background: rgba(124,140,255,0.12); border: 1px solid rgba(124,140,255,0.25);
+        padding: 4px 11px; border-radius: 999px; margin-bottom: 14px;
+    }
+    .qtext { font-size: 1.15rem; font-weight: 600; line-height: 1.5; color: var(--text-main); margin-bottom: 22px; }
+    .options-list { display: flex; flex-direction: column; gap: 11px; }
+    .opt-btn {
+        display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text-main);
+        font-size: 0.96rem; font-weight: 500; padding: 14px 16px; border-radius: 14px; cursor: pointer;
+        transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .opt-btn:hover:not(.locked) {
+        transform: translateY(-2px); border-color: var(--glass-border-hover);
+        background: rgba(255,255,255,0.08); box-shadow: 0 6px 20px rgba(124,140,255,0.18);
+    }
+    .opt-btn:active:not(.locked) { transform: translateY(0); }
+    .opt-letter {
+        flex: none; width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,0.08);
+        border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center;
+        font-size: 0.78rem; font-weight: 700; color: var(--text-muted); transition: all 0.2s ease;
+    }
+    .opt-btn.locked { cursor: default; }
+    .opt-btn.dim { opacity: 0.35; }
+    .opt-btn.correct { border-color: var(--green); background: rgba(52,211,153,0.14); box-shadow: 0 0 24px var(--green-glow); }
+    .opt-btn.correct .opt-letter { background: var(--green); border-color: var(--green); color: #052e21; }
+    .opt-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.14); box-shadow: 0 0 24px var(--red-glow); }
+    .opt-btn.wrong .opt-letter { background: var(--red); border-color: var(--red); color: #3d0d0d; }
+
+    .feedback-line {
+        margin-top: 18px; padding: 12px 14px; border-radius: 12px; font-size: 0.86rem; line-height: 1.55;
+        display: none; border: 1px solid;
+    }
+    .feedback-line.show { display: block; animation: fadeSlide 0.25s ease; }
+    .feedback-line.right { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: #a7f3d4; }
+    .feedback-line.wrong-fb { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: #fecaca; }
+
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+
+    #completeScreen { display: none; text-align: center; padding: 40px 24px; }
+    .complete-icon {
+        width: 60px; height: 60px; margin: 0 auto 16px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--cyan));
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 30px var(--accent-glow); font-size: 1.6rem;
+    }
+    .complete-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+    .complete-sub { font-size: 0.88rem; color: var(--text-muted); }
+
+    @media (max-width: 480px) {
+        .glass-card { padding: 18px 16px; border-radius: 16px; }
+        .page-title { font-size: 1.5rem; }
+        .qtext { font-size: 1.02rem; }
+    }
+</style>
+</head>
+<body>
+
+<div class="page-shell">
+
+    <div class="page-header">
+        <span class="page-badge">📘 Filipino 5</span>
+        <div class="page-title">Filipino 5 Reviewer at Pagsusulit</div>
+        <p class="page-sub">Balikan ang mahahalagang paksa sa ibaba, pagkatapos ay subukan ang iyong kaalaman sa pagsusulit.</p>
+    </div>
+
+    <!-- ======================= STUDY MATERIAL ======================= -->
+    <div class="section-label">
+        <span class="dot"></span>
+        <h2>Study Material</h2>
+        <span class="line"></span>
+    </div>
+
+    <div class="glass-card topic-card">
+        <div class="topic-head"><div class="topic-num">1</div><h3>Pag-unawa sa Binasa</h3></div>
+        <p>Ang <strong>pag-unawa sa binasa</strong> ay ang kakayahang maintindihan, masuri, at mabigyang-kahulugan ang isang tekstong binasa.</p>
+        <p>Tumutulong ito sa mambabasa na malaman ang kahulugan ng teksto, ang layunin ng may-akda, at ang mensaheng nais iparating.</p>
+        <div class="chip-row">
+            <span class="chip">Pangunahing Kaisipan</span>
+            <span class="chip">Mga Detalye</span>
+            <span class="chip">Context Clues</span>
+            <span class="chip">Inference</span>
+        </div>
+        <p style="margin-top:12px;"><strong>Mga Hakbang:</strong> Basahin nang mabuti ang teksto → Unawain ang bawat pangungusap → Tukuyin ang mahahalagang detalye → Sagutin ang mga tanong batay sa binasa.</p>
+    </div>
+
+    <div class="glass-card topic-card">
+        <div class="topic-head"><div class="topic-num">2</div><h3>Pagsunod-sunod ng Pangyayari</h3></div>
+        <p>Ang <strong>pagsunod-sunod ng pangyayari</strong> ay tumutukoy sa tamang ayos kung paano naganap ang mga pangyayari sa isang kuwento o teksto — mula sa simula hanggang sa dulo.</p>
+        <p style="margin-bottom:6px;"><strong>Mga Panandang Salita:</strong></p>
+        <div class="chip-row">
+            <span class="chip">Una</span><span class="chip">Pangalawa</span><span class="chip">Pangatlo</span>
+            <span class="chip">Pagkatapos</span><span class="chip">Kasunod</span><span class="chip">Sa wakas</span>
+        </div>
+        <div class="example-block">
+            <div class="ex-label">Halimbawa</div>
+            <strong>Una:</strong> Gumising si Ana nang maaga.<br>
+            <strong>Pangalawa:</strong> Kumain siya ng almusal.<br>
+            <strong>Pangatlo:</strong> Naglakad siya papunta sa paaralan.<br>
+            <strong>Sa wakas:</strong> Dumating siya bago tumunog ang kampana.
+        </div>
+    </div>
+
+    <div class="glass-card topic-card">
+        <div class="topic-head"><div class="topic-num">3</div><h3>Ang Pang-uring Pamilang (Pahalaga)</h3></div>
+        <p>Ang <strong>pang-uring pamilang</strong> ay salitang nagsasabi ng bilang o dami. Ang <strong>pahalaga</strong> ay isang uri nito — ginagamit ito kapag sinasabi natin ang <strong>halaga ng pera o presyo</strong> ng isang bagay.</p>
+        <div class="type-mini-grid">
+            <div class="type-mini"><div class="tname">Patakaran</div><div class="tdesc">Ordinaryong bilang — Walo ang aso ni Rudy.</div></div>
+            <div class="type-mini"><div class="tname">Panunuran</div><div class="tdesc">Pang-ilan o ayos — Ikatlo si Sisa sa napili.</div></div>
+            <div class="type-mini"><div class="tname">Pamahagi</div><div class="tdesc">Bahagi ng buo — Kalahating tinapay lang.</div></div>
+            <div class="type-mini highlight"><div class="tname">Pahalaga ⭐</div><div class="tdesc">Halaga o presyo — Sampung pisong kendi.</div></div>
+            <div class="type-mini"><div class="tname">Palansak</div><div class="tdesc">Isahan o pangkat — Isa-isang pumasok.</div></div>
+            <div class="type-mini"><div class="tname">Patakda</div><div class="tdesc">Tiyak na bilang — Dalawahan lang sa traysikel.</div></div>
+        </div>
+    </div>
+
+    <div class="glass-card topic-card">
+        <div class="topic-head"><div class="topic-num">4</div><h3>Pang-abay na Kondisyonal</h3></div>
+        <p>Ang <strong>pang-abay na kondisyonal</strong> ay isang uri ng pang-abay na nagsasaad ng <strong>kondisyon</strong> upang maganap ang isang kilos o pangyayari.</p>
+        <div class="chip-row">
+            <span class="chip">kung</span><span class="chip">kapag</span><span class="chip">pag</span><span class="chip">pagka</span>
+        </div>
+        <div class="example-block">
+            <div class="ex-label">Halimbawa</div>
+            <u>Kung</u> mag-aaral ka nang mabuti, makakapasa ka sa pagsusulit.<br>
+            <u>Kapag</u> umulan, hindi kami makakalabas.
+        </div>
+    </div>
+
+    <div class="glass-card topic-card">
+        <div class="topic-head"><div class="topic-num">5</div><h3>Langkapang Pangungusap</h3></div>
+        <p>Ang <strong>Langkapan</strong> ay isang mahabang pangungusap na binubuo ng dalawa o higit pang maiikling pangungusap na pinagsama — pinagsamang <strong>Tambalan at Hugnayan</strong>.</p>
+        <ul class="bullet-list">
+            <li><strong>Payak</strong> — Isang maikling pangungusap lang.</li>
+            <li><strong>Tambalan</strong> — Dalawang pangungusap na pinagdugtong ng at, o, ngunit, pero.</li>
+            <li><strong>Hugnayan</strong> — May bahaging kumpleto at hindi kumpleto, gamit ang dahil, kung, nang, kapag.</li>
+            <li><strong>Langkapan</strong> — Pinagsamang Tambalan at Hugnayan, ang pinakamahaba sa apat na uri.</li>
+        </ul>
+        <div class="example-block">
+            <div class="ex-label">Halimbawa</div>
+            Nag-aral nang mabuti si Ana <u>dahil gusto niyang pumasa</u>, kaya siya ay nakakuha ng mataas na marka.
+        </div>
+    </div>
+
+    <!-- ======================= PRACTICE QUIZ ======================= -->
+    <div class="section-label">
+        <span class="dot" style="background:var(--cyan); box-shadow:0 0 10px var(--cyan-glow);"></span>
+        <h2>Practice Quiz</h2>
+        <span class="line"></span>
+    </div>
+
+    <div id="quizView">
+        <div class="quiz-topbar">
+            <span class="score-pill" id="scorePill">★ 0</span>
+            <span class="quiz-count" id="quizCount">Question 1 of 20</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div class="glass-card" id="cardHolder">
+            <!-- question injected here -->
+        </div>
+    </div>
+
+    <div id="completeScreen">
+        <div class="glass-card">
+            <div class="complete-icon">✓</div>
+            <div class="complete-title">Quiz Complete!</div>
+            <div class="complete-sub">Check your results above.</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* ============ QUIZ DATA (Filipino 5, 20 items) ============ */
+    const quizData = [
+        { tag:"Pag-unawa sa Binasa", question:"Ano ang layunin ng pag-unawa sa binasa?", options:["Bilangin ang mga salita","Maintindihan, masuri, at mabigyang-kahulugan ang teksto","Isulat muli ang teksto","Hanapin ang may-akda"], correct:1, explanation:"Ang pag-unawa sa binasa ay ang kakayahang maintindihan, masuri, at mabigyang-kahulugan ang isang tekstong binasa." },
+        { tag:"Pag-unawa sa Binasa", question:"Ano ang tinatawag na pinakamahalagang ideya sa buong teksto?", options:["Pangunahing kaisipan","Panandang salita","Rhyme scheme","Pahalaga"], correct:0, explanation:"Ang pangunahing kaisipan ang pinakamahalagang ideya na nais ipahayag ng may-akda sa buong teksto." },
+        { tag:"Pag-unawa sa Binasa", question:"Ano ang tawag sa paggamit ng kasunod na salita upang maunawaan ang kahulugan ng hindi pamilyar na salita?", options:["Context clues","Rhyme scheme","Panandang salita","Pahalaga"], correct:0, explanation:"Ang context clues ay ang paggamit ng mga kasunod o katabing salita upang maunawaan ang kahulugan ng hindi pamilyar na salita." },
+        { tag:"Pagsunod-sunod ng Pangyayari", question:"Ano ang pagsunod-sunod ng pangyayari?", options:["Ang tamang ayos kung paano naganap ang mga pangyayari sa kuwento","Ang bilang ng tauhan sa kuwento","Ang pamagat ng kuwento","Ang damdamin ng mambabasa"], correct:0, explanation:"Ang pagsunod-sunod ng pangyayari ay tumutukoy sa tamang ayos kung paano naganap ang mga pangyayari sa isang kuwento o teksto." },
+        { tag:"Pagsunod-sunod ng Pangyayari", question:"Alin sa mga sumusunod ang panandang salita na ginagamit sa pagsunod-sunod ng pangyayari?", options:["Una, pangalawa, sa wakas","Kung, kapag, pag","Ang, ng, sa","Maganda, mabait, masipag"], correct:0, explanation:"Ang mga salitang una, pangalawa, pagkatapos, at sa wakas ay tumutulong upang malaman ang ayos ng mga pangyayari." },
+        { tag:"Pagsunod-sunod ng Pangyayari", question:"Ano ang unang hakbang sa pagtukoy ng pagkakasunod-sunod ng pangyayari?", options:["Isulat ang mga pangyayari sa tamang ayos","Basahin ang buong teksto","Hanapin ang may-akda","Bilangin ang mga titik"], correct:1, explanation:"Ang unang hakbang ay basahin ang buong teksto upang maunawaan muna ang lahat ng pangyayari bago ayusin ang mga ito." },
+        { tag:"Pang-uring Pamilang", question:"Ang pang-uring pamilang na pahalaga ay tungkol saan?", options:["Ayos o pagkakasunod-sunod","Halaga o presyo ng bagay","Bahagi ng buo","Grupo ng tao"], correct:1, explanation:"Ang pahalaga ay tungkol sa halaga o presyo ng isang bagay." },
+        { tag:"Pang-uring Pamilang", question:"Alin sa mga sumusunod ang halimbawa ng pahalaga?", options:["Ikatlong upuan","Kalahating kilo","Sampung pisong kendi","Isa-isang pumasok"], correct:2, explanation:"Ang 'sampung pisong kendi' ay halimbawa ng pahalaga dahil tumutukoy ito sa presyo." },
+        { tag:"Pang-uring Pamilang", question:"Ilan lahat ang uri ng pang-uring pamilang?", options:["Apat","Lima","Anim","Pito"], correct:2, explanation:"Anim ang uri ng pang-uring pamilang: patakaran, panunuran, pamahagi, pahalaga, palansak, at patakda." },
+        { tag:"Pang-abay na Kondisyonal", question:"Ano ang pang-abay na kondisyonal?", options:["Pang-abay na nagsasaad ng kondisyon para maganap ang isang kilos","Pang-abay na naglalarawan ng lugar","Pang-abay na naglalarawan ng oras","Pang-abay na naglalarawan ng dami"], correct:0, explanation:"Ang pang-abay na kondisyonal ay pang-abay na nagsasaad ng kondisyon upang maganap ang isang kilos o pangyayari." },
+        { tag:"Pang-abay na Kondisyonal", question:"Alin sa mga sumusunod ang panandang salita ng pang-abay na kondisyonal?", options:["Kung, kapag, pag, pagka","Una, pangalawa, sa wakas","Maganda, mabait","Ang, ng, sa"], correct:0, explanation:"Ang mga salitang kung, kapag, pag, at pagka ay karaniwang ginagamit bilang panandang salita ng pang-abay na kondisyonal." },
+        { tag:"Pang-abay na Kondisyonal", question:"Sa pangungusap na 'Kung mag-aaral ka nang mabuti, makakapasa ka sa pagsusulit,' ano ang kondisyon?", options:["Makakapasa ka sa pagsusulit","Mag-aaral ka nang mabuti","Ang pagsusulit","Wala"], correct:1, explanation:"Ang kondisyon ay 'kung mag-aaral ka nang mabuti' — ito ang dapat mangyari muna bago matupad ang ikalawang bahagi." },
+        { tag:"Langkapang Pangungusap", question:"Ano ang Langkapan?", options:["Isang maikling pangungusap lang","Mahabang pangungusap na pinagsamang Tambalan at Hugnayan","Pangalan ng isang tauhan","Uri ng pang-uri"], correct:1, explanation:"Ang Langkapan ay isang mahabang pangungusap na binubuo ng dalawa o higit pang maiikling pangungusap na pinagsama — pinagsamang Tambalan at Hugnayan." },
+        { tag:"Langkapang Pangungusap", question:"Ang Langkapan ay pagsasama ng anong dalawang uri ng pangungusap?", options:["Payak at Tambalan","Tambalan at Hugnayan","Payak at Hugnayan","Dalawang Payak"], correct:1, explanation:"Ang Langkapan ay pagsasama ng Tambalan at Hugnayan." },
+        { tag:"Langkapang Pangungusap", question:"Ilan lahat ang uri ng pangungusap na natutunan natin?", options:["Dalawa","Tatlo","Apat","Lima"], correct:2, explanation:"May apat na uri ng pangungusap: Payak, Tambalan, Hugnayan, at Langkapan." },
+        { tag:"Langkapang Pangungusap", question:"Piliin ang pangungusap na Langkapan.", options:["Kumain si Ana.","Kumain si Ana at si Ben.","Kumain si Ana dahil gutom siya.","Nag-aral si Ana dahil gusto niyang pumasa, kaya nakakuha siya ng mataas na marka."], correct:3, explanation:"Ang huling pagpipilian ay Langkapan dahil pinagsama nito ang isang Hugnayan (dahil gusto niyang pumasa) at Tambalan (kaya nakakuha siya ng mataas na marka)." },
+        { tag:"Pag-unawa sa Binasa", question:"Ano ang tawag sa paggawa ng sariling pagpapasya batay sa mga pahiwatig na nasa teksto?", options:["Inference","Context clues","Panandang salita","Rhyme scheme"], correct:0, explanation:"Ang inference ay ang paggawa ng sariling pagpapasya batay sa mga pahiwatig na nasa teksto, kahit hindi ito direktang nakasulat." },
+        { tag:"Pagsunod-sunod ng Pangyayari", question:"Alin sa mga sumusunod ang HULING pangyayari batay sa halimbawang tala tungkol kay Ana?", options:["Gumising si Ana nang maaga","Kumain siya ng almusal","Dumating siya sa paaralan bago tumunog ang kampana","Naglakad siya papunta sa paaralan"], correct:2, explanation:"Ayon sa halimbawang pagkakasunod-sunod, ang huling pangyayari ay ang pagdating niya sa paaralan bago pa man tumunog ang kampana." },
+        { tag:"Pang-uring Pamilang", question:"Alin sa mga sumusunod ang HINDI uri ng pang-uring pamilang?", options:["Patakaran","Pahalaga","Panlarawan","Palansak"], correct:2, explanation:"Ang 'Panlarawan' ay hindi kabilang sa anim na uri ng pang-uring pamilang." },
+        { tag:"Pang-abay na Kondisyonal", question:"Alin sa mga sumusunod ang HALIMBAWA ng pangungusap na may pang-abay na kondisyonal?", options:["Maganda ang bulaklak.","Kapag umulan, hindi kami makakalabas.","Si Ana ay estudyante.","Mabilis siyang tumakbo."], correct:1, explanation:"Ang 'Kapag umulan, hindi kami makakalabas' ay may pang-abay na kondisyonal na 'kapag,' na nagsasaad ng kondisyon." }
+    ];
+
+    const TOTAL = quizData.length;
+    let currentIndex = 0;
+    let score = 0;
+    let locked = false;
+    const letters = ['A', 'B', 'C', 'D'];
+
+    function renderQuestion() {
+        locked = false;
+        const q = quizData[currentIndex];
+        const holder = document.getElementById('cardHolder');
+
+        document.getElementById('quizCount').innerText = `Question ${currentIndex + 1} of ${TOTAL}`;
+        document.getElementById('progressFill').style.width = (currentIndex / TOTAL * 100) + '%';
+
+        let optsHtml = q.options.map((opt, idx) => `
+            <button class="opt-btn" data-idx="${idx}" onclick="selectAnswer(${idx})">
+                <span class="opt-letter">${letters[idx]}</span>
+                <span>${opt}</span>
+            </button>
+        `).join('');
+
+        holder.innerHTML = `
+            <span class="qtag">${q.tag}</span>
+            <div class="qtext">${q.question}</div>
+            <div class="options-list" id="optionsList">${optsHtml}</div>
+            <div class="feedback-line" id="feedbackLine"></div>
+        `;
+    }
+
+    function selectAnswer(idx) {
+        if (locked) return;
+        locked = true;
+        const q = quizData[currentIndex];
+        const buttons = document.querySelectorAll('#optionsList .opt-btn');
+        const isCorrect = idx === q.correct;
+
+        if (isCorrect) score++;
+        document.getElementById('scorePill').innerText = '★ ' + score;
+
+        buttons.forEach((btn, i) => {
+            btn.classList.add('locked');
+            if (i === q.correct) {
+                btn.classList.add('correct');
+            } else if (i === idx) {
+                btn.classList.add('wrong');
+            } else {
+                btn.classList.add('dim');
+            }
+        });
+
+        const fb = document.getElementById('feedbackLine');
+        fb.classList.add('show', isCorrect ? 'right' : 'wrong-fb');
+        fb.innerHTML = (isCorrect ? '✅ Tama! ' : '❌ Hindi tama. ') + q.explanation;
+
+        setTimeout(() => {
+            currentIndex++;
+            if (currentIndex < TOTAL) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }, 1500);
+    }
+
+    function finishQuiz() {
+        document.getElementById('progressFill').style.width = '100%';
+        document.getElementById('quizView').style.display = 'none';
+        document.getElementById('completeScreen').style.display = 'block';
+
+        // Required integration call for the host platform
+        if (typeof ReviewerDone === 'function') {
+            ReviewerDone(score, TOTAL);
+        }
+    }
+
+    renderQuestion();
+</script>
+</body>
+</html>
