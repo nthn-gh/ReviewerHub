@@ -156,12 +156,16 @@ function jsonbinConfigured() {
 
 async function fetchSharedData() {
   const { JSONBIN_API_KEY, JSONBIN_BIN_ID } = window.CONFIG;
-  const res = await fetch(`${JSONBIN}/b/${JSONBIN_BIN_ID}/latest`, {
-    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+  const res = await fetch(`${JSONBIN}/b/${JSONBIN_BIN_ID}/latest?_t=${Date.now()}`, {
+    headers: { 
+      'X-Master-Key': JSONBIN_API_KEY,
+      'Cache-Control': 'no-cache'
+    },
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('JSONBin fetch failed');
   const json = await res.json();
-  return json.record; // { weekKey, leaderboard: [] }
+  return json.record; // { weekKey, leaderboard: [], customTopics: [] }
 }
 
 async function saveSharedData(data) {
