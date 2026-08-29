@@ -186,7 +186,8 @@ function buildPodiumAndList(entries) {
 
   const podiumOrder  = [1, 0, 2];
   const podiumColors = ['#94a3b8', '#f59e0b', '#b45309'];
-  const podiumHeights = ['140px', '180px', '110px'];
+  const podiumHeights = ['clamp(90px,18vw,140px)', 'clamp(120px,23vw,180px)', 'clamp(70px,14vw,110px)'];
+  const podiumWidths  = ['clamp(65px,16vw,90px)', 'clamp(65px,16vw,90px)', 'clamp(65px,16vw,90px)'];
   const medals = ['🥈', '🥇', '🥉'];
 
   podiumEl.innerHTML = podiumOrder
@@ -202,7 +203,7 @@ function buildPodiumAndList(entries) {
           ${e.name.charAt(0).toUpperCase()}
         </div>
         <div style="font-size:.85rem;font-weight:700;max-width:80px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.name}</div>
-        <div style="height:${podiumHeights[pos]};width:90px;border-radius:10px 10px 0 0;
+        <div style="height:${podiumHeights[pos]};width:${podiumWidths[pos]};border-radius:10px 10px 0 0;
           background:${podiumColors[pos]}22;border:1px solid ${podiumColors[pos]}44;
           display:flex;align-items:center;justify-content:center;
           font-family:'Outfit',sans-serif;font-weight:800;color:${podiumColors[pos]}">

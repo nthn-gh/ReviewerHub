@@ -184,10 +184,13 @@ nav {
 .modal-overlay.show{opacity:1;pointer-events:all}
 .modal {
   background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  padding:2.5rem;width:100%;max-width:440px;
+  padding:2rem;width:100%;max-width:440px;
   box-shadow:var(--shadow),var(--shadow-glow);
   transform:scale(.95) translateY(20px);transition:transform .3s ease;
   position:relative;
+  max-height:90vh;overflow-y:auto;
+  /* smooth scroll inside modal */
+  -webkit-overflow-scrolling:touch;
 }
 .modal-overlay.show .modal{transform:scale(1) translateY(0)}
 
@@ -261,7 +264,7 @@ nav {
   border:1px solid var(--border);background:var(--bg2);
   box-shadow:var(--shadow);
 }
-.reviewer-frame{width:100%;border:none;display:block;background:#fff;min-height:600px}
+.reviewer-frame{width:100%;border:none;display:block;background:#fff;min-height:500px}
 
 /* ---- Hero ---- */
 .hero {
@@ -289,8 +292,56 @@ nav {
 
 /* ---- Responsive ---- */
 .page-content{max-width:1200px;margin:0 auto;padding:2rem clamp(1rem,4vw,2.5rem)}
+
+/* --- 640px: tablets & large phones --- */
 @media(max-width:640px){
   .topic-grid{grid-template-columns:1fr}
-  .hero{padding:2rem 1rem 1.5rem}
-  .modal{padding:1.75rem}
+  .hero{padding:1.5rem 1rem 1rem}
+  .modal{padding:1.5rem;border-radius:16px}
+  .modal-overlay{align-items:flex-start;padding-top:1rem}
+  .stat-value{font-size:1.3rem}
+  .lb-sub{display:none} /* hide secondary line on small LB rows */
+  .lb-row{padding:.75rem 1rem;gap:.6rem}
+}
+
+/* --- 480px: small phones --- */
+@media(max-width:480px){
+  /* Nav: shrink to logo + avatar only */
+  .nav-link{padding:.4rem .6rem;font-size:.8rem}
+  nav{height:56px;padding:0 .75rem}
+  .nav-player{gap:.35rem;padding:.25rem .6rem;font-size:.8rem}
+  #navXP{display:none}  /* hide XP in nav on very small screens */
+
+  /* Hero */
+  .hero-name{font-size:1.5rem}
+  .section-heading{font-size:1.3rem}
+
+  /* Score ring: smaller on mobile */
+  .score-ring{width:110px;height:110px}
+  .score-num{font-size:1.8rem}
+
+  /* Result modal stats: 2 columns */
+  .result-grid{grid-template-columns:1fr 1fr !important}
+
+  /* Modal tighter */
+  .modal{padding:1.25rem;border-radius:14px}
+
+  /* Reviewer iframe: shorter on mobile so it fits */
+  .reviewer-frame{min-height:420px}
+
+  /* Buttons in modal: stack on very small screens */
+  .modal-btn-row{flex-direction:column !important}
+  .modal-btn-row .btn{width:100%;justify-content:center}
+
+  /* Leaderboard podium: scale down */
+  .lb-row{gap:.5rem}
+  .lb-rank{width:24px;font-size:.95rem}
+  .lb-avatar{width:30px;height:30px;font-size:.75rem}
+  .lb-xp{font-size:.95rem}
+
+  /* Toast: prevent overflow */
+  .toast{max-width:calc(100vw - 2rem);white-space:normal;text-align:center;font-size:.82rem}
+
+  /* Topic header */
+  .topic-header-inner{flex-wrap:wrap}
 }

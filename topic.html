@@ -48,11 +48,11 @@
   </div>
 
   <!-- Topic Header -->
-  <div style="display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap">
+  <div style="display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap" class="topic-header-inner">
     <div id="topicIconBig" style="font-size:3.5rem;line-height:1">📋</div>
     <div style="flex:1">
       <div id="topicSubjectChip" class="topic-badge" style="margin-bottom:.5rem">Subject</div>
-      <h1 id="topicTitle" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;line-height:1.2;margin-bottom:.4rem">
+      <h1 id="topicTitle" style="font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(1.3rem,4vw,1.8rem);line-height:1.2;margin-bottom:.4rem">
         Loading...
       </h1>
       <p id="topicDesc" style="color:var(--text2);font-size:.9rem;max-width:600px"></p>
@@ -118,7 +118,7 @@
       <!-- New badges -->
       <div id="newBadgesWrap" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center"></div>
 
-      <div style="display:flex;gap:.75rem;margin-top:1.5rem;justify-content:center">
+      <div style="display:flex;gap:.75rem;margin-top:1.5rem;justify-content:center;flex-wrap:wrap" class="modal-btn-row">
         <button class="btn btn-secondary" onclick="retryTopic()">🔄 Try Again</button>
         <button class="btn btn-primary" onclick="goHome()">🏠 Back to Topics</button>
       </div>
