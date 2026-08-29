@@ -199,8 +199,14 @@ function onReviewerMessage(e) {
   if (!e.data || !e.data.type) return;
 
   if (e.data.type === 'RESIZE' && e.data.height) {
-    // Add a tiny bit of padding to ensure no scrollbar triggers
-    document.getElementById('reviewerFrame').style.minHeight = (e.data.height + 20) + 'px';
+    const frame = document.getElementById('reviewerFrame');
+    const newHeight = e.data.height + 30; // Extra padding
+    const currentHeight = parseInt(frame.style.height) || 0;
+    
+    // Only update if difference is significant to prevent infinite 100vh growth loops
+    if (Math.abs(currentHeight - newHeight) > 20) {
+      frame.style.height = newHeight + 'px';
+    }
     return;
   }
 
