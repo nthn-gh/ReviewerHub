@@ -129,8 +129,11 @@
 // ---- Init -----------------------------------------------
 let player = null;
 let activeFilter = 'All';
+let allTopics = [];
 
-function init() {
+async function init() {
+  allTopics = await Game.getAllTopics();
+
   player = Game.getPlayer();
   if (player) {
     closeNameModal();
@@ -201,7 +204,7 @@ function renderPage() {
 
 // ---- Topics ---------------------------------------------
 function buildFilterBar() {
-  const subjects = ['All', ...new Set(window.TOPICS.map(t => t.subject))];
+  const subjects = ['All', ...new Set(allTopics.map(t => t.subject))];
   const bar = document.getElementById('filterBar');
   bar.innerHTML = subjects.map(s => `
     <button class="btn btn-sm btn-secondary" id="filter-${s}"
@@ -228,7 +231,7 @@ function renderTopics() {
   const grid = document.getElementById('topicGrid');
   const empty = document.getElementById('emptyState');
 
-  const filtered = window.TOPICS.filter(t => {
+  const filtered = allTopics.filter(t => {
     const matchSubject = activeFilter === 'All' || t.subject === activeFilter;
     const matchQ = !q || t.title.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q);
     return matchSubject && matchQ;

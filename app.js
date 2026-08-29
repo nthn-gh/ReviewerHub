@@ -342,6 +342,36 @@ async function syncLocalToShared() {
   }
 }
 
+// ---- Custom Topic Management (Admin Panel) ----------------
+async function getCustomTopics() {
+  if (!jsonbinConfigured()) return [];
+  try {
+    const data = await fetchSharedData();
+    return data.customTopics || [];
+  } catch { return []; }
+}
+
+async function getAllTopics() {
+  const custom = await getCustomTopics();
+  return [...(window.TOPICS || []), ...custom];
+}
+
+async function saveCustomTopic(topic) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const topics = data.customTopics || [];
+  const idx = topics.findIndex(t => t.id === topic.id);
+  if (idx >= 0) topics[idx] = topic; else topics.push(topic);
+  await saveSharedData({ ...data, customTopics: topics });
+}
+
+async function deleteCustomTopic(id) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const topics = (data.customTopics || []).filter(t => t.id !== id);
+  await saveSharedData({ ...data, customTopics: topics });
+}
+
 // Export to window
 window.Game = {
   getPlayer, savePlayer, createPlayer, ensurePlayer,
@@ -349,6 +379,7 @@ window.Game = {
   checkBadges, getLeaderboard, updateLeaderboard,
   pushToShared, getSharedLeaderboard, resetSharedLeaderboard,
   syncLocalToShared,
+  getCustomTopics, getAllTopics, saveCustomTopic, deleteCustomTopic,
   getWeekKey, jsonbinConfigured,
   launchConfetti, showToast,
   renderLevelBadge, renderXPBar, getDifficultyClass, getBestScore,

@@ -136,13 +136,15 @@ let timerInterval = null;
 let scoreSubmitted = false;
 
 // ---- Init -----------------------------------------------
-function init() {
+async function init() {
   player = Game.getPlayer();
   if (!player) { window.location.href = 'index.html'; return; }
 
+  const allTopics = await Game.getAllTopics();
+
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  topic = window.TOPICS.find(t => t.id === id);
+  topic = allTopics.find(t => t.id === id);
   if (!topic) { window.location.href = 'index.html'; return; }
 
   // Nav

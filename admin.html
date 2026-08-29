@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ReviewerHub — Admin Panel</title>
+<link rel="stylesheet" href="style.css"/>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="page-bg"></div>
+
+<nav>
+  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:.5rem"><span>🎮</span> ReviewerHub</a></div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">← Back to Site</a>
+  </div>
+</nav>
+
+<main class="page-content" style="max-width:800px">
+  <div style="margin-bottom:2rem">
+    <h1 class="section-heading">🛠️ Teacher Admin Panel</h1>
+    <p class="section-sub">Add new reviewers without editing code. Changes are saved instantly to the cloud.</p>
+  </div>
+
+  <div id="loginSection" class="card" style="padding:2rem;text-align:center;max-width:400px;margin:0 auto">
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;margin-bottom:1rem">Admin Login</h2>
+    <input type="password" id="adminPw" placeholder="Teacher Password" 
+      style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
+             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:1rem;outline:none" />
+    <button class="btn btn-primary" style="width:100%" onclick="login()">Unlock Panel</button>
+  </div>
+
+  <div id="adminSection" style="display:none">
+    
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem">Manage Reviewers</h2>
+      <button class="btn btn-primary btn-sm" onclick="showForm()">➕ Add New Topic</button>
+    </div>
+
+    <!-- Topic List -->
+    <div id="topicList" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
+      <!-- loaded dynamically -->
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div id="topicFormCard" class="card" style="padding:2rem;display:none">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;margin-bottom:1.5rem" id="formTitle">Add New Topic</h2>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Topic ID (no spaces)</label>
+          <input type="text" id="tId" placeholder="e.g. grade8-science" class="form-input" />
+        </div>
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Title</label>
+          <input type="text" id="tTitle" placeholder="e.g. Cell Biology" class="form-input" />
+        </div>
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Subject</label>
+          <input type="text" id="tSubject" placeholder="e.g. Science" class="form-input" />
+        </div>
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Difficulty</label>
+          <select id="tDiff" class="form-input">
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Total Questions</label>
+          <input type="number" id="tQuestions" placeholder="e.g. 10" class="form-input" />
+        </div>
+        <div>
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Icon (Emoji)</label>
+          <input type="text" id="tIcon" placeholder="e.g. 🧬" class="form-input" />
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Description</label>
+        <input type="text" id="tDesc" placeholder="Brief description of the quiz" class="form-input" />
+      </div>
+      
+      <div style="margin-bottom:1.5rem">
+        <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">HTML File Path</label>
+        <input type="text" id="tFile" placeholder="e.g. reviewers/my-quiz.html" class="form-input" />
+      </div>
+
+      <div style="display:flex;gap:1rem;justify-content:flex-end">
+        <button class="btn btn-secondary" onclick="hideForm()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTopic()" id="saveBtn">💾 Save Topic</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  .form-input {
+    width:100%;padding:.65rem 1rem;border-radius:8px;border:1px solid var(--border);
+    background:var(--bg3);color:var(--white);font-size:.95rem;outline:none;
+    transition:border-color var(--transition);
+  }
+  .form-input:focus { border-color:var(--purple-l); }
+</style>
+
+<script src="app.js"></script>
+<script>
+let customTopics = [];
+let editingId = null;
+
+function login() {
+  const pw = document.getElementById('adminPw').value;
+  if (pw === (window.CONFIG?.RESET_PASSWORD || 'teacher2024')) {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('adminSection').style.display = 'block';
+    loadTopics();
+  } else {
+    Game.showToast('❌ Incorrect password');
+  }
+}
+
+async function loadTopics() {
+  const list = document.getElementById('topicList');
+  list.innerHTML = '<div style="text-align:center;padding:2rem">Loading topics from cloud...</div>';
+  customTopics = await Game.getCustomTopics();
+  
+  if (customTopics.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text2);padding:1rem">No custom topics added yet.</div>';
+    return;
+  }
+
+  list.innerHTML = customTopics.map(t => `
+    <div class="lb-row" style="margin-bottom:0">
+      <div style="font-size:1.5rem;width:40px;text-align:center">${t.icon}</div>
+      <div style="flex:1">
+        <div style="font-weight:600">${t.title} <span style="font-size:.75rem;color:var(--text2)">(${t.id})</span></div>
+        <div style="font-size:.8rem;color:var(--text2)">${t.subject} · ${t.difficulty} · ${t.questions} Qs</div>
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-sm btn-secondary" onclick="editTopic('${t.id}')">✏️ Edit</button>
+        <button class="btn btn-sm btn-secondary" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="deleteTopic('${t.id}')">🗑️ Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showForm(topic = null) {
+  document.getElementById('topicFormCard').style.display = 'block';
+  if (topic) {
+    editingId = topic.id;
+    document.getElementById('formTitle').textContent = 'Edit Topic';
+    document.getElementById('tId').value = topic.id;
+    document.getElementById('tId').disabled = true; // don't change ID
+    document.getElementById('tTitle').value = topic.title;
+    document.getElementById('tSubject').value = topic.subject;
+    document.getElementById('tDesc').value = topic.description;
+    document.getElementById('tDiff').value = topic.difficulty;
+    document.getElementById('tQuestions').value = topic.questions;
+    document.getElementById('tIcon').value = topic.icon;
+    document.getElementById('tFile').value = topic.file;
+  } else {
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'Add New Topic';
+    document.getElementById('tId').value = '';
+    document.getElementById('tId').disabled = false;
+    document.getElementById('tTitle').value = '';
+    document.getElementById('tSubject').value = '';
+    document.getElementById('tDesc').value = '';
+    document.getElementById('tDiff').value = 'Medium';
+    document.getElementById('tQuestions').value = '10';
+    document.getElementById('tIcon').value = '📚';
+    document.getElementById('tFile').value = '';
+  }
+}
+
+function hideForm() {
+  document.getElementById('topicFormCard').style.display = 'none';
+}
+
+function getSubjectColor(subj) {
+  const map = {
+    'Science': '#22d3ee', 'Math': '#a78bfa', 'Filipino': '#f59e0b', 'AP': '#f59e0b',
+    'English': '#34d399', 'MAPEH': '#f472b6', 'TLE': '#fb923c'
+  };
+  return map[subj] || '#a855f7';
+}
+
+async function saveTopic() {
+  const id = document.getElementById('tId').value.trim();
+  if (!id) return Game.showToast('ID is required');
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '⏳ Saving...';
+  btn.disabled = true;
+
+  const topicObj = {
+    id: id,
+    title: document.getElementById('tTitle').value.trim(),
+    subject: document.getElementById('tSubject').value.trim(),
+    description: document.getElementById('tDesc').value.trim(),
+    difficulty: document.getElementById('tDiff').value,
+    questions: parseInt(document.getElementById('tQuestions').value) || 10,
+    icon: document.getElementById('tIcon').value.trim() || '📚',
+    file: document.getElementById('tFile').value.trim(),
+    color: getSubjectColor(document.getElementById('tSubject').value.trim())
+  };
+
+  try {
+    await Game.saveCustomTopic(topicObj);
+    Game.showToast('✅ Topic saved!');
+    hideForm();
+    loadTopics();
+  } catch (e) {
+    Game.showToast('❌ Failed to save. Check config.js JSONBin settings.');
+  }
+
+  btn.textContent = '💾 Save Topic';
+  btn.disabled = false;
+}
+
+async function deleteTopic(id) {
+  if (!confirm('Are you sure you want to delete this topic?')) return;
+  try {
+    await Game.deleteCustomTopic(id);
+    Game.showToast('🗑️ Topic deleted');
+    loadTopics();
+  } catch(e) {
+    Game.showToast('❌ Failed to delete');
+  }
+}
+</script>
+</body>
+</html>

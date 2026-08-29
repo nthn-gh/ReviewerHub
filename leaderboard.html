@@ -102,8 +102,10 @@
 <script>
 let player = null;
 let currentTab = 'overall';
+let allTopics = [];
 
 async function init() {
+  allTopics = await Game.getAllTopics();
   player = Game.getPlayer();
   if (player) {
     document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
@@ -117,7 +119,7 @@ async function init() {
 
 function buildTopicTabs() {
   const container = document.getElementById('topicTabs');
-  container.innerHTML = window.TOPICS.map(t =>
+  container.innerHTML = allTopics.map(t =>
     `<button class="btn btn-sm btn-secondary" id="tab-${t.id}" onclick="setTab('${t.id}')">
       ${t.icon} ${t.title}
     </button>`
