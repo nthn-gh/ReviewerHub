@@ -319,12 +319,36 @@ function getBestScore(player, topicId) {
   return s ? s.pct : null;
 }
 
+// ---- Sync existing local scores → shared leaderboard ---------
+// Called on page load. If JSONBin is now configured and the player
+// has local scores that were saved before the shared leaderboard
+// existed, this silently uploads them so they appear on the board.
+async function syncLocalToShared() {
+  if (!jsonbinConfigured()) return;        // JSONBin not set up yet
+  const player = getPlayer();
+  if (!player) return;                     // no player on this device
+  if (!Object.keys(player.scores || {}).length) return; // no scores to sync
+
+  // Check if already synced this session (avoid hammering the API)
+  const syncKey = 'rv_synced_' + getWeekKey();
+  if (localStorage.getItem(syncKey)) return;
+
+  try {
+    await pushToShared(player);
+    localStorage.setItem(syncKey, '1');
+    console.log('[ReviewerHub] Local scores synced to shared leaderboard.');
+  } catch (e) {
+    // Silently fail — will retry next visit
+  }
+}
+
 // Export to window
 window.Game = {
   getPlayer, savePlayer, createPlayer, ensurePlayer,
   submitScore, calcXP, resolveLevel, nextLevel, xpProgress,
   checkBadges, getLeaderboard, updateLeaderboard,
   pushToShared, getSharedLeaderboard, resetSharedLeaderboard,
+  syncLocalToShared,
   getWeekKey, jsonbinConfigured,
   launchConfetti, showToast,
   renderLevelBadge, renderXPBar, getDifficultyClass, getBestScore,

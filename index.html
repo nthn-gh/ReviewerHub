@@ -135,6 +135,8 @@ function init() {
   if (player) {
     closeNameModal();
     renderPage();
+    // Auto-sync any pre-existing local scores to shared leaderboard
+    Game.syncLocalToShared();
   } else {
     document.getElementById('nameModal').classList.add('show');
     setTimeout(() => document.getElementById('nameInput').focus(), 300);
