@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Rewards — ReviewerHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=3"/>
+<script src="config.js?v=3"></script>
+</head>
+<body>
+<div class="page-bg"></div>
+<nav>
+  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:.5rem"><span>🎮</span> ReviewerHub</a></div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">📋 Topics</a>
+    <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+    <a href="rewards.html" class="nav-link active">🎁 Rewards</a>
+  </div>
+  <div class="nav-right">
+    <div id="navPlayer" class="nav-player" style="display:none">
+      <div class="nav-avatar" id="navAvatar">?</div>
+      <span class="nav-player-text" id="navName">Player</span>
+      <span class="nav-player-text" id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+    </div>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="mobile-drawer-header">
+    <div class="nav-logo"><span>🎮</span> ReviewerHub</div>
+    <button class="mobile-drawer-close" onclick="closeMobileMenu()" aria-label="Close menu">&#x2715;</button>
+  </div>
+  <div class="mobile-drawer-body">
+    <div class="mobile-drawer-player" id="mobileDrawerPlayer">
+      <div class="nav-avatar" id="mobileDrawerAvatar">?</div>
+      <div>
+        <div style="font-weight:700;font-size:.95rem" id="mobileDrawerName">Player</div>
+        <div style="font-size:.78rem;color:var(--purple-l)" id="mobileDrawerXP">0 XP</div>
+      </div>
+    </div>
+    <a href="index.html" class="mobile-nav-link">📋 Topics</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="rewards.html" class="mobile-nav-link mob-active">🎁 Rewards</a>
+  </div>
+</div>
+<main class="page-content">
+  <div style="margin-bottom:2rem">
+    <h1 class="section-heading" style="margin-bottom:.3rem">🎁 Rewards Catalog</h1>
+    <p class="section-sub">Spend your XP to claim Robux rewards. Your teacher will review and approve each claim.</p>
+  </div>
+  <div id="playerBanner" style="display:none;margin-bottom:2rem">
+    <div class="card" style="padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;border-color:rgba(167,139,250,.3)">
+      <div class="nav-avatar" id="bannerAvatar" style="width:42px;height:42px;font-size:1.1rem;flex-shrink:0">?</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:.3rem" id="bannerName">Player</div>
+        <div id="bannerXPBar"></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:Outfit,sans-serif;font-size:1.75rem;font-weight:900;color:var(--purple-l);line-height:1" id="bannerXP">0</div>
+        <div style="font-size:.75rem;color:var(--text2);margin-top:.15rem">XP available</div>
+      </div>
+    </div>
+  </div>
+  <div id="noPlayerWarn" style="display:none;margin-bottom:2rem">
+    <div class="card" style="padding:1.25rem 1.5rem;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.05)">
+      <span style="color:var(--gold);font-size:.9rem">⚠️ Enter your name first. <a href="index.html" style="color:var(--gold);text-decoration:underline;font-weight:600">Go to Topics →</a></span>
+    </div>
+  </div>
+  <div id="catalogLoading" style="text-align:center;padding:4rem 2rem;color:var(--text2)">
+    <div style="font-size:2.5rem;margin-bottom:.75rem">⏳</div>
+    <div>Loading rewards...</div>
+  </div>
+  <div class="reward-grid" id="rewardGrid" style="display:none"></div>
+  <div id="rewardEmpty" style="display:none;text-align:center;padding:5rem 2rem">
+    <div style="font-size:3.5rem;margin-bottom:.75rem">🎁</div>
+    <div style="font-size:1.15rem;font-weight:700;margin-bottom:.35rem;color:var(--white)">No rewards yet</div>
+    <div style="font-size:.9rem;color:var(--text2)">Your teacher will add Robux rewards here soon!</div>
+  </div>
+  <div id="myClaimsSection" style="display:none;margin-top:3rem">
+    <h2 class="section-heading" style="font-size:1.2rem;margin-bottom:.75rem">📋 My Claims</h2>
+    <div id="myClaimsList"></div>
+  </div>
+</main>
+<script src="topics.js?v=3"></script>
+<script src="app.js?v=3"></script>
+<script>
+let player = null;
+let catalog = [];
+
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileOverlay');
+  const btn = document.getElementById('navHamburger');
+  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
+  drawer.classList.add('open'); overlay.classList.add('open');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+  const btn = document.getElementById('navHamburger');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+async function init() {
+  player = Game.getPlayer();
+  if (player) {
+    await Game.processRefunds();
+    player = Game.getPlayer();
+    document.getElementById('navPlayer').style.display = 'flex';
+    document.getElementById('navAvatar').textContent = player.name.charAt(0).toUpperCase();
+    document.getElementById('navName').textContent = player.name;
+    document.getElementById('navXP').textContent = player.xp + ' XP';
+    document.getElementById('playerBanner').style.display = '';
+    document.getElementById('bannerAvatar').textContent = player.name.charAt(0).toUpperCase();
+    document.getElementById('bannerName').textContent = player.name;
+    document.getElementById('bannerXP').textContent = player.xp.toLocaleString();
+    document.getElementById('bannerXPBar').innerHTML = Game.renderXPBar(player);
+    document.getElementById('mobileDrawerPlayer').style.display = 'flex';
+    document.getElementById('mobileDrawerAvatar').textContent = player.name.charAt(0).toUpperCase();
+    document.getElementById('mobileDrawerName').textContent = player.name;
+    document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
+  } else {
+    document.getElementById('noPlayerWarn').style.display = '';
+  }
+  catalog = await Game.getRewardsCatalog();
+  document.getElementById('catalogLoading').style.display = 'none';
+  renderCatalog();
+}
+
+function getMyClaimStatus(reward) {
+  if (!player) return null;
+  const claims = (reward.claims || []).filter(c => c.player === player.name);
+  return claims.length ? claims[claims.length - 1] : null;
+}
+
+function getStockRemaining(reward) {
+  if (!reward.stock) return null;
+  const active = (reward.claims || []).filter(c => c.status !== 'rejected').length;
+  return Math.max(0, reward.stock - active);
+}
+
+function renderCatalog() {
+  const grid = document.getElementById('rewardGrid');
+  const empty = document.getElementById('rewardEmpty');
+  if (!catalog.length) { grid.style.display = 'none'; empty.style.display = ''; return; }
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+  grid.innerHTML = catalog.map(rewardCardHTML).join('');
+  renderMyClaims();
+}
+
+function rewardCardHTML(r) {
+  const myClaim = getMyClaimStatus(r);
+  const stockLeft = getStockRemaining(r);
+  const outOfStock = stockLeft !== null && stockLeft === 0;
+  const canAfford = player && player.xp >= r.xpCost;
+  const isActiveClaim = myClaim && myClaim.status !== 'rejected';
+
+  let actionHTML = '';
+  if (isActiveClaim) {
+    const label = myClaim.status === 'pending' ? '⏳ Pending Approval' :
+                  myClaim.status === 'approved' ? '✅ Approved!' : '❌ Rejected';
+    actionHTML = '<span class="claim-status-chip ' + myClaim.status + '">' + label + '</span>';
+  } else if (outOfStock) {
+    actionHTML = '<button class="btn btn-secondary btn-sm" style="width:100%" disabled>🚫 Out of Stock</button>';
+  } else if (!player) {
+    actionHTML = '<button class="btn btn-secondary btn-sm" style="width:100%" disabled>Login to Claim</button>';
+  } else {
+    var label = canAfford ? '🎁 Claim Reward' : 'Need ' + (r.xpCost - player.xp).toLocaleString() + ' more XP';
+    actionHTML = '<button class="btn btn-primary btn-sm" style="width:100%" onclick="handleClaim(\'' + r.id + '\')" ' + (canAfford ? '' : 'disabled') + '>' + label + '</button>';
+  }
+
+  var stockHTML = stockLeft === null
+    ? '<span style="font-size:.75rem;color:var(--green)">&#x221e; Unlimited</span>'
+    : '<span style="font-size:.75rem;color:' + (stockLeft > 0 ? 'var(--text2)' : 'var(--red)') + '">' + (stockLeft > 0 ? stockLeft + ' remaining' : 'Out of stock') + '</span>';
+
+  return '<div class="reward-card" id="rcard-' + r.id + '">' +
+    '<div style="display:flex;align-items:center;gap:.85rem">' +
+      '<div class="reward-robux-icon">🎮</div>' +
+      '<div style="min-width:0">' +
+        '<div class="reward-robux-badge">' + r.robux + '<span style="font-size:.9rem;font-weight:600;color:var(--text2);margin-left:.25rem">R$</span></div>' +
+        '<div style="font-size:.85rem;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.title + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="padding-top:.75rem;border-top:1px solid var(--border)">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">' +
+        '<div class="reward-xp-cost">&#x26A1; ' + r.xpCost.toLocaleString() + ' XP</div>' +
+        stockHTML +
+      '</div>' +
+      actionHTML +
+    '</div>' +
+  '</div>';
+}
+
+async function handleClaim(rewardId) {
+  const card = document.getElementById('rcard-' + rewardId);
+  const btn = card ? card.querySelector('button') : null;
+  if (btn) { btn.textContent = '⏳ Claiming...'; btn.disabled = true; }
+  try {
+    const updatedPlayer = await Game.claimReward(rewardId);
+    player = updatedPlayer;
+    document.getElementById('bannerXP').textContent = player.xp.toLocaleString();
+    document.getElementById('bannerXPBar').innerHTML = Game.renderXPBar(player);
+    document.getElementById('navXP').textContent = player.xp + ' XP';
+    document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
+    catalog = await Game.getRewardsCatalog();
+    renderCatalog();
+    Game.showToast('🎁 Claimed! Waiting for teacher approval.');
+  } catch (err) {
+    Game.showToast('❌ ' + (err.message || 'Could not claim reward'));
+    if (btn) { btn.textContent = '🎁 Claim Reward'; btn.disabled = false; }
+  }
+}
+
+function renderMyClaims() {
+  if (!player) return;
+  const section = document.getElementById('myClaimsSection');
+  const list = document.getElementById('myClaimsList');
+  const myClaims = catalog.flatMap(r =>
+    (r.claims || []).filter(c => c.player === player.name).map(c => Object.assign({}, c, { rewardTitle: r.title, robux: r.robux }))
+  ).sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (!myClaims.length) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  list.innerHTML = myClaims.map(c => {
+    var label = c.status === 'pending' ? '⏳ Pending' :
+                c.status === 'approved' ? '✅ Approved' :
+                ('❌ Rejected' + (c.refunded ? ' (XP refunded)' : ''));
+    return '<div class="claim-row">' +
+      '<div style="font-size:1.5rem;flex-shrink:0">🎮</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:600;font-size:.92rem">' + c.robux + ' Robux &mdash; ' + c.rewardTitle + '</div>' +
+        '<div style="font-size:.75rem;color:var(--text2)">' + new Date(c.date).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}) + '</div>' +
+      '</div>' +
+      '<span class="claim-status-chip ' + c.status + '">' + label + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+init();
+</script>
+</body>
+</html>

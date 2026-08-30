@@ -372,6 +372,58 @@ nav {
 .lb-sub{font-size:.75rem;color:var(--text2)}
 .lb-xp{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.1rem;color:var(--purple-l)}
 
+/* ---- Reward Catalog ---- */
+.reward-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:1.25rem;
+}
+.reward-card {
+  position:relative;overflow:hidden;padding:1.5rem;
+  border:1px solid var(--border);border-radius:var(--radius);
+  background:var(--glass);backdrop-filter:blur(16px);
+  transition:all var(--transition);
+  display:flex;flex-direction:column;gap:.75rem;
+}
+.reward-card:hover {
+  border-color:rgba(78,205,120,.3);transform:translateY(-4px);
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(78,205,120,.08);
+}
+.reward-robux-icon {
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#4ecd78,#2ea854);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;box-shadow:0 0 16px rgba(78,205,120,.4);
+}
+.reward-robux-badge {
+  font-family:'Outfit',sans-serif;font-weight:900;font-size:1.9rem;
+  color:#4ecd78;line-height:1;
+}
+.reward-xp-cost {
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.85rem;font-weight:600;color:var(--purple-l);
+}
+.claim-status-chip {
+  display:inline-flex;align-items:center;gap:.35rem;
+  padding:.3rem .75rem;border-radius:999px;font-size:.78rem;font-weight:600;
+}
+.claim-status-chip.pending {
+  background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--gold);
+}
+.claim-status-chip.approved {
+  background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);color:var(--green);
+}
+.claim-status-chip.rejected {
+  background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);
+}
+.claim-row {
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:.85rem 1rem;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--glass);
+  margin-bottom:.5rem;
+}
+
+
 /* ---- Responsive ---- */
 .page-content{max-width:1200px;margin:0 auto;padding:2rem clamp(1rem,4vw,2.5rem)}
 

@@ -14,6 +14,7 @@
   <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:.5rem"><span>🎮</span> ReviewerHub</a></div>
   <div class="nav-links">
     <a href="index.html" class="nav-link">← Back to Site</a>
+    <a href="rewards.html" class="nav-link">🎁 Rewards</a>
   </div>
   <div class="nav-right">
     <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
@@ -34,6 +35,7 @@
   <div class="mobile-drawer-body">
     <a href="index.html" class="mobile-nav-link">📋 Topics</a>
     <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="rewards.html" class="mobile-nav-link">🎁 Rewards</a>
     <div class="mobile-drawer-divider"></div>
     <a href="admin.html" class="mobile-nav-link mob-active">🛠️ Admin Panel</a>
   </div>
@@ -54,69 +56,123 @@
   </div>
 
   <div id="adminSection" style="display:none">
-    
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem">Manage Reviewers</h2>
-      <button class="btn btn-primary btn-sm" onclick="showForm()">➕ Add New Topic</button>
+
+    <!-- Tab Bar -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1.75rem;border-bottom:1px solid var(--border);padding-bottom:1rem">
+      <button id="tabBtnReviewers" class="btn btn-primary btn-sm" onclick="switchTab('reviewers')">📋 Reviewers</button>
+      <button id="tabBtnRewards" class="btn btn-secondary btn-sm" onclick="switchTab('rewards')">🎁 Rewards</button>
     </div>
 
-    <!-- Topic List -->
-    <div id="topicList" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem">
-      <!-- loaded dynamically -->
-    </div>
-
-    <!-- Add/Edit Form -->
-    <div id="topicFormCard" class="card" style="padding:2rem;display:none">
-      <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;margin-bottom:1.5rem" id="formTitle">Add New Topic</h2>
-      
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem" class="admin-form-grid">
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Topic ID (no spaces)</label>
-          <input type="text" id="tId" placeholder="e.g. grade8-science" class="form-input" />
-        </div>
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Title</label>
-          <input type="text" id="tTitle" placeholder="e.g. Cell Biology" class="form-input" />
-        </div>
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Subject</label>
-          <input type="text" id="tSubject" placeholder="e.g. Science" class="form-input" />
-        </div>
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Difficulty</label>
-          <select id="tDiff" class="form-input">
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Total Questions</label>
-          <input type="number" id="tQuestions" placeholder="e.g. 10" class="form-input" />
-        </div>
-        <div>
-          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Icon (Emoji)</label>
-          <input type="text" id="tIcon" placeholder="e.g. 🧬" class="form-input" />
-        </div>
+    <!-- ===== REVIEWERS PANEL ===== -->
+    <div id="panelReviewers">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem">Manage Reviewers</h2>
+        <button class="btn btn-primary btn-sm" onclick="showForm()">➕ Add New Topic</button>
       </div>
-      
-      <div style="margin-bottom:1rem">
-        <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Description</label>
-        <input type="text" id="tDesc" placeholder="Brief description of the quiz" class="form-input" />
-      </div>
-      
-      <div style="margin-bottom:1.5rem">
-        <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">HTML File Path</label>
-        <input type="text" id="tFile" placeholder="e.g. reviewers/my-quiz.html" class="form-input" />
-      </div>
-
-      <div style="display:flex;gap:1rem;justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="hideForm()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveTopic()" id="saveBtn">💾 Save Topic</button>
+      <div id="topicList" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem"></div>
+      <div id="topicFormCard" class="card" style="padding:2rem;display:none">
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;margin-bottom:1.5rem" id="formTitle">Add New Topic</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem" class="admin-form-grid">
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Topic ID (no spaces)</label>
+            <input type="text" id="tId" placeholder="e.g. grade8-science" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Title</label>
+            <input type="text" id="tTitle" placeholder="e.g. Cell Biology" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Subject</label>
+            <input type="text" id="tSubject" placeholder="e.g. Science" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Difficulty</label>
+            <select id="tDiff" class="form-input">
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Total Questions</label>
+            <input type="number" id="tQuestions" placeholder="e.g. 10" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Icon (Emoji)</label>
+            <input type="text" id="tIcon" placeholder="e.g. 🧬" class="form-input" />
+          </div>
+        </div>
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Description</label>
+          <input type="text" id="tDesc" placeholder="Brief description of the quiz" class="form-input" />
+        </div>
+        <div style="margin-bottom:1.5rem">
+          <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">HTML File Path</label>
+          <input type="text" id="tFile" placeholder="e.g. reviewers/my-quiz.html" class="form-input" />
+        </div>
+        <div style="display:flex;gap:1rem;justify-content:flex-end">
+          <button class="btn btn-secondary" onclick="hideForm()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveTopic()" id="saveBtn">💾 Save Topic</button>
+        </div>
       </div>
     </div>
+
+    <!-- ===== REWARDS PANEL ===== -->
+    <div id="panelRewards" style="display:none">
+
+      <!-- Add / Edit Reward Form -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem">🎁 Rewards Catalog</h2>
+        <button class="btn btn-primary btn-sm" onclick="showRewardForm()">➕ Add Reward</button>
+      </div>
+
+      <div id="rewardFormCard" class="card" style="padding:2rem;display:none;margin-bottom:1.5rem">
+        <h3 style="font-family:'Outfit',sans-serif;font-size:1.15rem;margin-bottom:1.25rem" id="rewardFormTitle">New Reward</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem" class="admin-form-grid">
+          <div style="grid-column:1/-1">
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Reward Title</label>
+            <input type="text" id="rTitle" placeholder='e.g. "Class Champion Bundle"' class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Robux Amount (max 500)</label>
+            <input type="number" id="rRobux" placeholder="e.g. 100" min="1" max="500" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">XP Cost to Claim</label>
+            <input type="number" id="rXpCost" placeholder="e.g. 500" min="1" class="form-input" />
+          </div>
+          <div>
+            <label style="display:block;font-size:.85rem;color:var(--text2);margin-bottom:.3rem">Stock (0 = unlimited)</label>
+            <input type="number" id="rStock" placeholder="e.g. 3" min="0" value="0" class="form-input" />
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;justify-content:flex-end">
+          <button class="btn btn-secondary" onclick="hideRewardForm()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveReward()" id="saveRewardBtn">💾 Save Reward</button>
+        </div>
+      </div>
+
+      <!-- Rewards List -->
+      <div id="rewardAdminList" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:2.5rem">
+        <div style="text-align:center;padding:2.5rem;color:var(--text2)">⏳ Loading rewards...</div>
+      </div>
+
+      <!-- Pending Claims -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <h2 style="font-family:'Outfit',sans-serif;font-size:1.15rem">⏳ Pending Claims</h2>
+          <button class="btn btn-secondary btn-sm" onclick="loadRewardsPanel()">🔄 Refresh</button>
+        </div>
+        <div id="pendingClaimsList">
+          <div style="text-align:center;padding:2rem;color:var(--text2);font-size:.9rem">No pending claims.</div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </main>
+
 
 <style>
   .form-input {
@@ -287,6 +343,172 @@ async function deleteTopic(id) {
     Game.showToast('❌ Failed to delete');
   }
 }
+
+// ---- Tab switching ----------------------------------------
+function switchTab(tab) {
+  const isRewards = tab === 'rewards';
+  document.getElementById('panelReviewers').style.display = isRewards ? 'none' : '';
+  document.getElementById('panelRewards').style.display = isRewards ? '' : 'none';
+  document.getElementById('tabBtnReviewers').className = isRewards ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm';
+  document.getElementById('tabBtnRewards').className = isRewards ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+  if (isRewards) loadRewardsPanel();
+}
+
+// ---- Rewards Admin ----------------------------------------
+let rewardCatalog = [];
+let editingRewardId = null;
+
+async function loadRewardsPanel() {
+  rewardCatalog = await Game.getRewardsCatalog();
+  renderRewardAdminList();
+  renderPendingClaims();
+}
+
+function renderRewardAdminList() {
+  const list = document.getElementById('rewardAdminList');
+  if (!rewardCatalog.length) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text2);padding:1.5rem">No rewards added yet. Click "➕ Add Reward" to create one.</div>';
+    return;
+  }
+  list.innerHTML = rewardCatalog.map(r => {
+    const activeClaims = (r.claims || []).filter(c => c.status !== 'rejected').length;
+    const stockLabel = r.stock === 0 ? '∞ Unlimited' : `${Math.max(0, r.stock - activeClaims)} / ${r.stock} left`;
+    return `
+    <div class="lb-row" style="margin-bottom:0">
+      <div class="reward-robux-icon" style="width:36px;height:36px;font-size:1rem;flex-shrink:0">🎮</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600">${r.robux} Robux — ${r.title}</div>
+        <div style="font-size:.78rem;color:var(--text2)">⚡ ${r.xpCost.toLocaleString()} XP &nbsp;·&nbsp; Stock: ${stockLabel} &nbsp;·&nbsp; Claims: ${activeClaims}</div>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-shrink:0">
+        <button class="btn btn-sm btn-secondary" onclick="editReward('${r.id}')">✏️ Edit</button>
+        <button class="btn btn-sm btn-secondary" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="deleteAdminReward('${r.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPendingClaims() {
+  const list = document.getElementById('pendingClaimsList');
+  const pendingItems = [];
+  for (const r of rewardCatalog) {
+    for (const c of (r.claims || [])) {
+      if (c.status === 'pending') {
+        pendingItems.push({ ...c, rewardId: r.id, rewardTitle: r.title, robux: r.robux });
+      }
+    }
+  }
+  if (!pendingItems.length) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text2);font-size:.9rem">✅ No pending claims. All done!</div>';
+    return;
+  }
+  list.innerHTML = pendingItems.map(c => `
+    <div class="claim-row">
+      <div style="font-size:1.4rem;flex-shrink:0">🎮</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:.92rem">${c.player}</div>
+        <div style="font-size:.75rem;color:var(--text2)">${c.robux} Robux — ${c.rewardTitle} &nbsp;·&nbsp; ${new Date(c.date).toLocaleDateString('en-PH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div style="display:flex;gap:.4rem;flex-shrink:0">
+        <button class="btn btn-sm btn-primary" onclick="adminApproveClaim('${c.rewardId}','${c.player}')">✅ Approve</button>
+        <button class="btn btn-sm btn-secondary" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="adminRejectClaim('${c.rewardId}','${c.player}')">❌ Reject</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showRewardForm(reward = null) {
+  document.getElementById('rewardFormCard').style.display = 'block';
+  if (reward) {
+    editingRewardId = reward.id;
+    document.getElementById('rewardFormTitle').textContent = 'Edit Reward';
+    document.getElementById('rTitle').value = reward.title;
+    document.getElementById('rRobux').value = reward.robux;
+    document.getElementById('rXpCost').value = reward.xpCost;
+    document.getElementById('rStock').value = reward.stock;
+  } else {
+    editingRewardId = null;
+    document.getElementById('rewardFormTitle').textContent = 'New Reward';
+    document.getElementById('rTitle').value = '';
+    document.getElementById('rRobux').value = '';
+    document.getElementById('rXpCost').value = '';
+    document.getElementById('rStock').value = '0';
+  }
+}
+
+function hideRewardForm() {
+  document.getElementById('rewardFormCard').style.display = 'none';
+  editingRewardId = null;
+}
+
+function editReward(id) {
+  const r = rewardCatalog.find(x => x.id === id);
+  if (r) showRewardForm(r);
+}
+
+async function saveReward() {
+  const title = document.getElementById('rTitle').value.trim();
+  const robux = parseInt(document.getElementById('rRobux').value);
+  const xpCost = parseInt(document.getElementById('rXpCost').value);
+  const stock = parseInt(document.getElementById('rStock').value) || 0;
+
+  if (!title) return Game.showToast('Title is required');
+  if (!robux || robux < 1 || robux > 500) return Game.showToast('Robux must be 1–500');
+  if (!xpCost || xpCost < 1) return Game.showToast('XP cost must be at least 1');
+
+  const btn = document.getElementById('saveRewardBtn');
+  btn.textContent = '⏳ Saving...'; btn.disabled = true;
+
+  const existing = rewardCatalog.find(r => r.id === editingRewardId);
+  const reward = {
+    id: editingRewardId || ('rwrd_' + Date.now()),
+    title, robux, xpCost, stock,
+    claims: existing ? existing.claims : [],
+  };
+
+  try {
+    await Game.saveReward(reward);
+    Game.showToast('✅ Reward saved!');
+    hideRewardForm();
+    await loadRewardsPanel();
+  } catch(e) {
+    Game.showToast('❌ Failed to save reward');
+  }
+  btn.textContent = '💾 Save Reward'; btn.disabled = false;
+}
+
+async function deleteAdminReward(id) {
+  if (!confirm('Delete this reward? This will also remove all claim history for it.')) return;
+  try {
+    await Game.deleteReward(id);
+    Game.showToast('🗑️ Reward deleted');
+    await loadRewardsPanel();
+  } catch(e) {
+    Game.showToast('❌ Failed to delete');
+  }
+}
+
+async function adminApproveClaim(rewardId, playerName) {
+  try {
+    await Game.approveClaim(rewardId, playerName);
+    Game.showToast('✅ Claim approved for ' + playerName);
+    await loadRewardsPanel();
+  } catch(e) {
+    Game.showToast('❌ ' + (e.message || 'Failed'));
+  }
+}
+
+async function adminRejectClaim(rewardId, playerName) {
+  if (!confirm('Reject this claim? The student\'s XP will be refunded automatically.')) return;
+  try {
+    await Game.rejectClaim(rewardId, playerName);
+    Game.showToast('❌ Claim rejected. XP will be refunded on next visit.');
+    await loadRewardsPanel();
+  } catch(e) {
+    Game.showToast('❌ ' + (e.message || 'Failed'));
+  }
+}
+
 </script>
 </body>
 </html>

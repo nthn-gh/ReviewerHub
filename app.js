@@ -376,6 +376,128 @@ async function deleteCustomTopic(id) {
   await saveSharedData({ ...data, customTopics: topics });
 }
 
+// ---- Rewards Catalog ------------------------------------------
+
+async function getRewardsCatalog() {
+  if (!jsonbinConfigured()) return [];
+  try {
+    const data = await fetchSharedData();
+    return data.rewardsCatalog || [];
+  } catch { return []; }
+}
+
+async function saveReward(reward) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const catalog = data.rewardsCatalog || [];
+  const idx = catalog.findIndex(r => r.id === reward.id);
+  if (idx >= 0) catalog[idx] = reward; else catalog.push(reward);
+  await saveSharedData({ ...data, rewardsCatalog: catalog });
+}
+
+async function deleteReward(id) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const catalog = (data.rewardsCatalog || []).filter(r => r.id !== id);
+  await saveSharedData({ ...data, rewardsCatalog: catalog });
+}
+
+async function claimReward(rewardId) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const player = getPlayer();
+  if (!player) throw new Error('No player found');
+
+  const data = await fetchSharedData();
+  const catalog = data.rewardsCatalog || [];
+  const reward = catalog.find(r => r.id === rewardId);
+  if (!reward) throw new Error('Reward not found');
+
+  // Check if already claimed (pending or approved)
+  const existing = (reward.claims || []).find(c => c.player === player.name && c.status !== 'rejected');
+  if (existing) throw new Error('Already claimed');
+
+  // Check stock
+  const activeClaims = (reward.claims || []).filter(c => c.status !== 'rejected').length;
+  if (reward.stock > 0 && activeClaims >= reward.stock) throw new Error('Out of stock');
+
+  // Check XP
+  if (player.xp < reward.xpCost) throw new Error('Not enough XP');
+
+  // Deduct XP immediately
+  player.xp = Math.max(0, player.xp - reward.xpCost);
+  savePlayer(player);
+  updateLeaderboard(player);
+  pushToShared(player); // async, non-blocking
+
+  // Record claim
+  reward.claims = reward.claims || [];
+  reward.claims.push({
+    player: player.name,
+    date: new Date().toISOString(),
+    status: 'pending',
+    xpCost: reward.xpCost,
+    refunded: false,
+  });
+  await saveSharedData({ ...data, rewardsCatalog: catalog });
+  return player;
+}
+
+async function approveClaim(rewardId, playerName) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const catalog = data.rewardsCatalog || [];
+  const reward = catalog.find(r => r.id === rewardId);
+  if (!reward) throw new Error('Reward not found');
+  const claim = (reward.claims || []).find(c => c.player === playerName && c.status === 'pending');
+  if (!claim) throw new Error('Claim not found');
+  claim.status = 'approved';
+  await saveSharedData({ ...data, rewardsCatalog: catalog });
+}
+
+async function rejectClaim(rewardId, playerName) {
+  if (!jsonbinConfigured()) throw new Error('JSONBin not configured');
+  const data = await fetchSharedData();
+  const catalog = data.rewardsCatalog || [];
+  const reward = catalog.find(r => r.id === rewardId);
+  if (!reward) throw new Error('Reward not found');
+  const claim = (reward.claims || []).find(c => c.player === playerName && c.status === 'pending');
+  if (!claim) throw new Error('Claim not found');
+  claim.status = 'rejected';
+  claim.refunded = false; // Will be processed when student next visits rewards page
+  await saveSharedData({ ...data, rewardsCatalog: catalog });
+}
+
+async function processRefunds() {
+  // Called on rewards.html load — checks for rejected claims belonging to this
+  // player and refunds their XP automatically, then marks refunded=true.
+  if (!jsonbinConfigured()) return;
+  const player = getPlayer();
+  if (!player) return;
+  try {
+    const data = await fetchSharedData();
+    const catalog = data.rewardsCatalog || [];
+    let needsSave = false;
+
+    for (const reward of catalog) {
+      const claim = (reward.claims || []).find(
+        c => c.player === player.name && c.status === 'rejected' && !c.refunded
+      );
+      if (claim) {
+        player.xp += (claim.xpCost || reward.xpCost);
+        claim.refunded = true;
+        needsSave = true;
+      }
+    }
+
+    if (needsSave) {
+      savePlayer(player);
+      updateLeaderboard(player);
+      await saveSharedData({ ...data, rewardsCatalog: catalog });
+      pushToShared(player);
+    }
+  } catch { /* Silently fail — refund will retry next visit */ }
+}
+
 // Export to window
 window.Game = {
   getPlayer, savePlayer, createPlayer, ensurePlayer,
@@ -384,8 +506,11 @@ window.Game = {
   pushToShared, getSharedLeaderboard, resetSharedLeaderboard,
   syncLocalToShared,
   getCustomTopics, getAllTopics, saveCustomTopic, deleteCustomTopic,
+  getRewardsCatalog, saveReward, deleteReward,
+  claimReward, approveClaim, rejectClaim, processRefunds,
   getWeekKey, jsonbinConfigured,
   launchConfetti, showToast,
   renderLevelBadge, renderXPBar, getDifficultyClass, getBestScore,
   LEVELS, BADGES,
 };
+
