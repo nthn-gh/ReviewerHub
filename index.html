@@ -85,7 +85,9 @@
     <h2 style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:1rem">✏️ Change Your Name</h2>
     <input id="renameInput" type="text" placeholder="New name" maxlength="30"
       style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
-             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:.75rem;outline:none" />
+             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:.75rem;outline:none"
+      onfocus="this.style.borderColor='var(--purple-l)'"
+      onblur="this.style.borderColor='var(--border)'"/>
     <div style="display:flex;gap:.6rem">
       <button class="btn btn-secondary" style="flex:1" onclick="closeRenameModal()">Cancel</button>
       <button class="btn btn-primary" style="flex:1" onclick="submitRename()">Save</button>
@@ -182,6 +184,73 @@
 <script src="supabase-backend.js"></script>
 <script>
 // ---- Init -----------------------------------------------
+let player = null;
+let activeFilter = 'All';
+let allTopics = [];
+
+// ---- Mobile Menu ------------------------------------------
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileOverlay');
+  const btn = document.getElementById('navHamburger');
+  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
+  drawer.classList.add('open'); overlay.classList.add('open');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+  const btn = document.getElementById('navHamburger');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+function updateMobileDrawerPlayer() {
+  if (!player) return;
+  const dp = document.getElementById('mobileDrawerPlayer');
+  dp.style.display = 'flex';
+  document.getElementById('mobileDrawerAvatar').textContent = player.name.charAt(0).toUpperCase();
+  document.getElementById('mobileDrawerName').textContent = player.name;
+  document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
+}
+
+async function init() {
+  // #10: Show loading skeleton immediately before async fetch
+  document.getElementById('topicGrid').innerHTML = `
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:60%"></div></div>
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .15s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:70%"></div></div>
+    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .3s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:50%"></div></div>
+  `;
+
+  allTopics = await Game.getAllTopics();
+
+  player = await Game.loadAuth();
+  if (player) {
+    document.getElementById('nameModal').classList.remove('show');
+    setTimeout(() => document.getElementById('nameModal').style.display = 'none', 300);
+    renderPage();
+    // Check for any pending XP refunds from rejected reward claims
+    const prevXP = player.xp;
+    await Game.processRefunds();
+    player = await Game.loadAuth();
+    if (player && player.xp > prevXP) {
+      const refunded = player.xp - prevXP;
+      Game.showToast(`💸 +${refunded} XP refunded from a rejected reward claim!`, 5000);
+      renderPage();
+    }
+  } else {
+    const local = localStorage.getItem('rv_player');
+    if (local) {
+       const p = JSON.parse(local);
+       document.getElementById('nameInput').value = p.name || '';
+       document.getElementById('authNotice').textContent = "Sign up to securely save your local progress to the cloud!";
+    }
+    document.getElementById('nameModal').classList.add('show');
+    setTimeout(() => document.getElementById('nameInput').focus(), 300);
+  }
+  buildFilterBar();
+  renderTopics();
+}
 
 let authMode = 'signup';
 function switchAuthTab(mode) {
@@ -196,48 +265,87 @@ function switchAuthTab(mode) {
     document.getElementById('authBtn').textContent = 'Sign Up';
     document.getElementById('authName').style.display = 'block';
   } else {
-    const local = localStorage.getItem('rv_player');
-    if (local) {
-       const p = JSON.parse(local);
-       document.getElementById('authName').value = p.name || '';
-       document.getElementById('authNotice').textContent = "Sign up to securely save your local progress to the cloud!";
-    }
-    document.getElementById('nameModal').classList.add('show');
-    document.getElementById('heroSection').style.display = 'none';
+    document.getElementById('tabLogin').style.background = 'var(--purple-g)';
+    document.getElementById('tabLogin').style.color = '#fff';
+    document.getElementById('tabSignup').style.background = 'transparent';
+    document.getElementById('tabSignup').style.color = 'var(--text2)';
+    document.getElementById('authTitle').textContent = 'Welcome Back';
+    document.getElementById('authBtn').textContent = 'Log In';
+    document.getElementById('authName').style.display = 'none';
   }
-  buildFilterBar();
-  renderTopics();
 }
 
-// ---- Name Modal -----------------------------------------
-function submitName() {
-  const inp = document.getElementById('nameInput');
-  const name = inp.value.trim();
-  if (!name) {
-    document.getElementById('nameError').style.display = 'block';
-    inp.focus(); return;
+async function submitAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+  const errEl = document.getElementById('authError');
+  errEl.style.display = 'none';
+  
+  if (!email || !password) {
+    errEl.textContent = 'Email and password are required.';
+    errEl.style.display = 'block';
+    return;
   }
-  document.getElementById('nameError').style.display = 'none';
-  player = Game.createPlayer(name);
-  Game.savePlayer(player);
-  Game.updateLeaderboard(player);
-  // Sync new player to shared leaderboard if configured
-  Game.syncLocalToShared();
+  
+  const btn = document.getElementById('authBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+
+  try {
+    if (authMode === 'signup') {
+      if (!name) throw new Error('Display name is required for sign up.');
+      await Game.signUp(email, password, name);
+    } else {
+      await Game.logIn(email, password);
+    }
+    window.location.reload();
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = authMode === 'signup' ? 'Sign Up' : 'Log In';
+  }
 }
+
+function logOut() {
+    Game.logOut();
+}
+
+async function submitRename() {
+  const inp = document.getElementById('renameInput');
+  const newName = inp.value.trim().slice(0, 30);
+  if (!newName) return;
+  const btn = document.querySelector('#renameModal .btn-primary');
+  btn.textContent = 'Saving...'; btn.disabled = true;
+  try {
+    await Game.changeName(newName);
+    closeRenameModal();
+    renderPage();
+    Game.showToast(`Name updated to "${player.name}" ✅`);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.textContent = 'Save'; btn.disabled = false;
+  }
+}
+
 document.getElementById('renameInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitRename();
   if (e.key === 'Escape') closeRenameModal();
 });
 
-function closeNameModal() {
-  const m = document.getElementById('nameModal');
-  m.classList.remove('show');
-  setTimeout(() => m.style.display = 'none', 300);
+function closeRenameModal() {
+  document.getElementById('renameModal').classList.remove('show');
 }
 
-document.getElementById('nameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') submitName();
-});
+// #15: Change name via modal (replaces prompt() — better on mobile)
+function changeName() {
+  const inp = document.getElementById('renameInput');
+  inp.value = player?.name || '';
+  document.getElementById('renameModal').classList.add('show');
+  setTimeout(() => inp.select(), 150);
+}
 
 // ---- Render Page ----------------------------------------
 function renderPage() {
