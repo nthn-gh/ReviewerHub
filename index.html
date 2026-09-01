@@ -242,11 +242,11 @@ async function init() {
     const local = localStorage.getItem('rv_player');
     if (local) {
        const p = JSON.parse(local);
-       document.getElementById('nameInput').value = p.name || '';
+       document.getElementById('authName').value = p.name || '';
        document.getElementById('authNotice').textContent = "Sign up to securely save your local progress to the cloud!";
     }
     document.getElementById('nameModal').classList.add('show');
-    setTimeout(() => document.getElementById('nameInput').focus(), 300);
+    setTimeout(() => document.getElementById('authName').focus(), 300);
   }
   buildFilterBar();
   renderTopics();
