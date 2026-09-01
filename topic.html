@@ -242,6 +242,7 @@ async function init() {
 }
 
 function frameLoaded() {
+  _resizeCallCount = 0; // Fresh load — reset the resize safety counter
   document.getElementById('frameLoader').style.display = 'none';
 }
 
@@ -257,11 +258,11 @@ function onReviewerMessage(e) {
   if (!e.data || !e.data.type) return;
 
   if (e.data.type === 'RESIZE' && e.data.height) {
-    // Safety net: stop after 15 resize calls per page load.
+    // Safety net: stop after 40 resize calls per page load.
     // With the reviewer-helper.js fix this should never trigger,
     // but guards against any future reviewer with problematic CSS.
     _resizeCallCount++;
-    if (_resizeCallCount > 15) return;
+    if (_resizeCallCount > 40) return;
 
     const frame = document.getElementById('reviewerFrame');
     const newHeight = e.data.height + 20; // 20px padding
@@ -346,6 +347,7 @@ function showResultModal(score, total, timeSeconds, result) {
 
 function retryTopic() {
   scoreSubmitted = false;
+  _resizeCallCount = 0; // Reset so auto-resize works again after retry
   document.getElementById('resultModal').classList.remove('show');
   document.getElementById('reviewerFrame').src = topic.file;
   document.getElementById('frameLoader').style.display = 'flex';

@@ -65,10 +65,14 @@
     <div id="weekResetNotice" style="display:none;font-size:.82rem;color:var(--gold);margin-top:.3rem">🔄 Leaderboard was reset for a new week.</div>
   </div>
 
-  <!-- Teacher Reset -->
+  <!-- Teacher Reset — hidden by default, revealed by clicking "Teacher tools" -->
   <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+    <button class="btn btn-sm btn-secondary" onclick="toggleTeacherTools()"
+      style="font-size:.75rem;color:var(--muted);border-color:transparent;background:none">
+      🔑 Teacher tools
+    </button>
     <button class="btn btn-sm btn-secondary" onclick="teacherReset()" id="resetBtn"
-      style="font-size:.78rem;color:var(--red);border-color:rgba(239,68,68,.3)">
+      style="display:none;font-size:.78rem;color:var(--red);border-color:rgba(239,68,68,.3);margin-left:.5rem">
       🔒 Reset Leaderboard
     </button>
   </div>
@@ -132,6 +136,31 @@
 let player = null;
 let currentTab = 'overall';
 let allTopics = [];
+
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileOverlay');
+  const btn = document.getElementById('navHamburger');
+  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
+  drawer.classList.add('open'); overlay.classList.add('open');
+  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+  const btn = document.getElementById('navHamburger');
+  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+function updateMobileDrawerPlayer() {
+  if (!player) return;
+  const dp = document.getElementById('mobileDrawerPlayer');
+  dp.style.display = 'flex';
+  document.getElementById('mobileDrawerAvatar').textContent = player.name.charAt(0).toUpperCase();
+  document.getElementById('mobileDrawerName').textContent = player.name;
+  document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
+}
 
 async function init() {
   allTopics = await Game.getAllTopics();
@@ -302,6 +331,12 @@ function renderMyStats(sharedEntries) {
   document.getElementById('myTopics').textContent = Object.keys(player.scores).length;
   document.getElementById('myBadgesCount').textContent = player.badges.length;
   document.getElementById('myXPBarWrap').innerHTML = Game.renderXPBar(player);
+}
+
+// Toggle teacher tools visibility (Reset button)
+function toggleTeacherTools() {
+  const btn = document.getElementById('resetBtn');
+  btn.style.display = btn.style.display === 'none' ? '' : 'none';
 }
 
 // #1: Hash-based password comparison (never compares plain text)

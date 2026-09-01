@@ -83,6 +83,22 @@
   </div>
 </div>
 
+<!-- RENAME MODAL -->
+<div class="modal-overlay" id="renameModal">
+  <div class="modal" style="max-width:380px">
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:1rem">✏️ Change Your Name</h2>
+    <input id="renameInput" type="text" placeholder="New name" maxlength="30"
+      style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
+             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:.75rem;outline:none"
+      onfocus="this.style.borderColor='var(--purple-l)'"
+      onblur="this.style.borderColor='var(--border)'"/>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeRenameModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="submitRename()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN CONTENT -->
 <main>
   <!-- HERO / PLAYER STATS -->
@@ -157,6 +173,14 @@
   </div>
 </main>
 
+<!-- Discreet admin footer link -->
+<footer style="text-align:center;padding:2rem 1rem 1.5rem;margin-top:1rem">
+  <a href="admin.html" style="font-size:.72rem;color:var(--muted);opacity:.45;transition:opacity .2s"
+     onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='.45'">
+    🛠️ Teacher Admin
+  </a>
+</footer>
+
 <script src="topics.js?v=3"></script>
 <script src="app.js?v=3"></script>
 <script>
@@ -205,6 +229,15 @@ async function init() {
   if (player) {
     closeNameModal();
     renderPage();
+    // Check for any pending XP refunds from rejected reward claims
+    const prevXP = player.xp;
+    await Game.processRefunds();
+    player = Game.getPlayer();
+    if (player && player.xp > prevXP) {
+      const refunded = player.xp - prevXP;
+      Game.showToast(`💸 +${refunded} XP refunded from a rejected reward claim!`, 5000);
+      renderPage();
+    }
     // Auto-sync any pre-existing local scores to shared leaderboard
     Game.syncLocalToShared();
   } else {
@@ -234,16 +267,31 @@ function submitName() {
   Game.showToast(`Welcome, ${name}! 🎉 Start a topic to earn your first XP!`);
 }
 
-// #15: Change name feature
+// #15: Change name via modal (replaces prompt() — better on mobile)
 function changeName() {
-  const newName = prompt('Enter your new name:', player?.name || '');
-  if (!newName || !newName.trim()) return;
-  player.name = newName.trim().slice(0, 30);
+  const inp = document.getElementById('renameInput');
+  inp.value = player?.name || '';
+  document.getElementById('renameModal').classList.add('show');
+  setTimeout(() => inp.select(), 150);
+}
+function closeRenameModal() {
+  document.getElementById('renameModal').classList.remove('show');
+}
+function submitRename() {
+  const inp = document.getElementById('renameInput');
+  const newName = inp.value.trim().slice(0, 30);
+  if (!newName) return;
+  player.name = newName;
   Game.savePlayer(player);
   Game.updateLeaderboard(player);
+  closeRenameModal();
   renderPage();
   Game.showToast(`Name updated to "${player.name}" ✅`);
 }
+document.getElementById('renameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitRename();
+  if (e.key === 'Escape') closeRenameModal();
+});
 
 function closeNameModal() {
   const m = document.getElementById('nameModal');
@@ -278,7 +326,7 @@ function renderPage() {
 
   document.getElementById('heroXPBar').innerHTML = Game.renderXPBar(player);
 
-  buildFilterBar();
+  // buildFilterBar() is already called in init() — no need to call again here
   renderBadges();
   renderTopics();
   updateMobileDrawerPlayer();
