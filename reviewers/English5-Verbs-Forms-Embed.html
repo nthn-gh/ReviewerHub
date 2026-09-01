@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Language 5: Verbs &amp; Forms</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary:#2563EB;--primary-dark:#1D4ED8;--primary-light:#DBE8FE;
+  --accent:#F59E0B;--accent-dark:#D97706;--accent-light:#FEF0D5;
+  --green:#16A34A;--green-dark:#0F7A38;--green-light:#DCFAE6;
+  --red:#E23B3B;--red-light:#FCE1DE;
+  --violet:#8B5CF6;--violet-light:#EDE4FE;
+  --pink:#EC4899;--pink-light:#FCE4F0;
+  --bg-main:#F8FAFF;--card-bg:#ffffff;--text-main:#1A2233;--text-muted:#5B6479;
+  --border-color:#E1E8F5;
+  --shadow-sm:0 1px 2px 0 rgba(20,40,90,.06);
+  --shadow-md:0 4px 6px -1px rgba(20,40,90,.1),0 2px 4px -1px rgba(20,40,90,.06);
+  --shadow-lg:0 10px 20px -5px rgba(20,40,90,.18);
+  --radius:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Quicksand',sans-serif;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.section-tag,.tab-btn{font-family:'Baloo 2',sans-serif}
+/* iframe-safe body — NO min-height:100vh */
+body{background:var(--bg-main);color:var(--text-main);line-height:1.6}
+
+/* Header — position:relative (NOT sticky) so iframe auto-resize works */
+header{background:linear-gradient(135deg,#0F2A78 0%,#2563EB 55%,#5B9BFF 100%);color:#fff;padding:2rem 1.5rem 1.5rem;box-shadow:var(--shadow-md)}
+.hdr{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:.9rem}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.badge-subj{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;width:fit-content;color:#DBE8FE}
+.hdr-title{font-size:1.85rem;font-weight:800;line-height:1.2}
+.hdr-sub{color:#C9DDFF;font-size:.95rem;max-width:700px;font-family:'Quicksand',sans-serif}
+.xp-hud{background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:.7rem 1.1rem;display:flex;align-items:center;gap:.9rem;min-width:180px}
+.xp-icon{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;box-shadow:0 0 0 3px rgba(245,158,11,.3)}
+.xp-info{flex:1}
+.xp-label{font-size:.72rem;color:#C9DDFF;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.xp-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.1rem;color:#fff}
+.xp-track{width:100%;height:6px;background:rgba(255,255,255,.25);border-radius:10px;overflow:hidden;margin-top:4px}
+.xp-fill{height:100%;background:var(--accent);border-radius:10px;transition:width .4s ease;width:0%}
+
+/* Nav — position:relative (NOT sticky) */
+.nav-wrap{background:#fff;border-bottom:1px solid var(--border-color);box-shadow:var(--shadow-sm)}
+.nav-outer{max-width:1100px;margin:0 auto;position:relative}
+.nav-tabs{display:flex;flex-wrap:wrap;overflow-x:auto;scrollbar-width:none;padding:.25rem 1rem;justify-content:center}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:.85rem .8rem;border:none;background:none;font-size:.85rem;font-weight:700;color:var(--text-muted);cursor:pointer;white-space:nowrap;border-bottom:4px solid transparent;transition:all .2s ease;display:flex;align-items:center;gap:.4rem}
+.tab-btn:hover{color:var(--primary)}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.done-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:none}
+.tab-btn.visited .done-dot{display:inline-block}
+@media(max-width:900px){
+  .nav-tabs{flex-wrap:nowrap;justify-content:flex-start}
+  .nav-outer::before,.nav-outer::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none;z-index:2}
+  .nav-outer::before{left:0;background:linear-gradient(90deg,#fff 20%,transparent)}
+  .nav-outer::after{right:0;background:linear-gradient(270deg,#fff 20%,transparent)}
+}
+
+.container{max-width:1100px;margin:2rem auto 2.5rem;padding:0 1.5rem}
+.tab-content{display:none;animation:fadeIn .35s cubic-bezier(.16,1,.3,1)}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-hdr{margin-bottom:1.8rem;background:var(--card-bg);padding:1.5rem 1.8rem;border-radius:var(--radius);border:1px solid var(--border-color);box-shadow:var(--shadow-sm);border-left:8px solid var(--primary)}
+.section-tag{color:var(--primary);font-size:.83rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.sec-title{font-size:1.45rem;font-weight:800;color:var(--text-main);margin-top:.3rem}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.3rem;margin-bottom:1.8rem}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-bottom:1.8rem}
+
+.card{background:var(--card-bg);border-radius:var(--radius);border:1px solid var(--border-color);padding:1.4rem;box-shadow:var(--shadow-sm);transition:all .3s ease;display:flex;flex-direction:column}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:var(--primary-light)}
+.card-icon{width:46px;height:46px;border-radius:14px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.8rem}
+.card.orange .card-icon{background:var(--accent-light);color:var(--accent-dark)}
+.card.green .card-icon{background:var(--green-light);color:var(--green-dark)}
+.card.violet .card-icon{background:var(--violet-light);color:var(--violet)}
+.card-title{font-size:1rem;font-weight:800;margin-bottom:.5rem;color:var(--text-main)}
+.card-text{color:var(--text-muted);font-size:.92rem;line-height:1.6;flex-grow:1}
+.chip{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-weight:700;font-size:.83rem;padding:.3rem .7rem;border-radius:9px;margin:.18rem .18rem 0 0}
+
+.sbox{background:#F5F8FF;border:1px solid var(--border-color);border-radius:16px;padding:1.1rem 1.4rem;margin:1rem 0}
+.sbox-lbl{font-family:'Baloo 2',sans-serif;font-weight:700;color:var(--primary);font-size:.83rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+.stext{font-size:1.05rem;color:var(--text-main);margin-bottom:.5rem}
+.tag{font-weight:800;padding:.1rem .4rem;border-radius:6px}
+.tag-h{background:var(--accent-light);color:var(--accent-dark)}
+.tag-m{background:var(--primary-light);color:var(--primary-dark)}
+.tag-l{background:var(--violet-light);color:var(--violet)}
+.tag-s{background:var(--green-light);color:var(--green-dark)}
+.tag-o{background:var(--pink-light);color:var(--pink)}
+.brow{display:flex;gap:.6rem;align-items:center;font-size:.88rem;color:var(--text-muted);margin-top:.3rem;flex-wrap:wrap}
+
+.step{display:flex;gap:1rem;background:#fff;padding:1.05rem;border-radius:16px;border:1px solid var(--border-color);margin-bottom:.75rem}
+.step-n{width:34px;height:34px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Baloo 2',sans-serif;flex-shrink:0;font-size:.95rem}
+.step.orange .step-n{background:var(--accent)}
+.step.green .step-n{background:var(--green)}
+.step.red .step-n{background:var(--red)}
+.step h4{font-size:.98rem;color:var(--text-main);margin-bottom:.12rem}
+.step p{color:var(--text-muted);font-size:.88rem}
+
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.cmp-card{border-radius:16px;padding:1.1rem 1.3rem}
+.cmp-card.a{background:var(--green-light);border:2px solid var(--green)}
+.cmp-card.b{background:var(--pink-light);border:2px solid var(--pink)}
+.cmp-card h4{font-family:'Baloo 2',sans-serif;font-size:1.05rem;margin-bottom:.45rem}
+.cmp-card.a h4{color:var(--green-dark)}
+.cmp-card.b h4{color:var(--pink)}
+.cmp-card p{font-size:.88rem;color:var(--text-main)}
+@media(max-width:600px){.cmp{grid-template-columns:1fr}}
+
+.sense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-top:1rem}
+.sense-item{background:#fff;border:2px solid var(--border-color);border-radius:16px;padding:1rem;text-align:center}
+.semoji{font-size:1.7rem;margin-bottom:.35rem}
+.sname{font-family:'Baloo 2',sans-serif;font-weight:800;color:var(--text-main);font-size:.9rem}
+.swords{font-size:.8rem;color:var(--text-muted);margin-top:.25rem}
+
+/* Game */
+.game-panel{background:#fff;border:2px solid var(--border-color);border-radius:20px;padding:1.5rem;box-shadow:var(--shadow-md)}
+.game-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;flex-wrap:wrap;gap:.6rem}
+.game-hdr h3{font-size:1.15rem;color:var(--primary-dark)}
+.stat-pill{background:var(--primary-light);color:var(--primary-dark);font-weight:800;font-family:'Baloo 2',sans-serif;padding:.38rem .85rem;border-radius:10px;font-size:.88rem}
+.word-bank{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1.2rem;min-height:48px;padding:.85rem;background:#F5F8FF;border-radius:14px;border:2px dashed var(--border-color)}
+.wpill{background:#fff;border:2px solid var(--primary);color:var(--primary-dark);font-weight:700;padding:.45rem .95rem;border-radius:10px;cursor:pointer;font-size:.92rem;transition:all .15s ease;box-shadow:0 2px 0 var(--primary)}
+.wpill:hover{transform:translateY(-2px)}
+.wpill.sel{background:var(--primary);color:#fff}
+.bucket-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem}
+.bucket{border:2px solid var(--border-color);border-radius:14px;padding:.85rem;min-height:95px;text-align:center;cursor:pointer;transition:all .15s ease;background:#FAFBFF}
+.bucket:hover{border-color:var(--primary);background:var(--primary-light)}
+.bname{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:.45rem}
+.bwords{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center}
+.placed{background:var(--green);color:#fff;font-size:.76rem;font-weight:700;padding:.22rem .5rem;border-radius:7px}
+.gfeedback{margin-top:1rem;padding:.85rem 1.1rem;border-radius:12px;font-weight:700;text-align:center;display:none;font-family:'Baloo 2',sans-serif}
+.gfeedback.show{display:block;animation:fadeIn .3s ease}
+.gfeedback.ok{background:var(--green-light);color:var(--green-dark)}
+.gfeedback.no{background:var(--red-light);color:var(--red)}
+.reset-btn{margin-top:.9rem;background:var(--accent);color:#fff;border:none;padding:.65rem 1.3rem;border-radius:12px;font-weight:700;font-family:'Baloo 2',sans-serif;cursor:pointer;font-size:.9rem;box-shadow:0 3px 0 var(--accent-dark)}
+
+/* Form styles */
+.form-mock{background:#fff;border:2px solid var(--border-color);border-radius:16px;padding:1.2rem 1.4rem;margin:1rem 0}
+.flbl{font-family:'Baloo 2',sans-serif;font-weight:700;color:var(--text-muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.fval{background:#F5F8FF;border:1px solid var(--border-color);border-radius:8px;padding:.5rem .75rem;font-size:.92rem;color:var(--text-main);margin-bottom:.85rem}
+.frow{display:flex;gap:.75rem;flex-wrap:wrap}
+.frow>div{flex:1;min-width:110px}
+.err-chip{display:inline-flex;align-items:center;gap:.35rem;background:var(--red-light);color:var(--red);font-weight:700;font-size:.83rem;padding:.38rem .75rem;border-radius:10px;margin:.2rem .2rem 0 0}
+.term-card{background:#fff;border:1px solid var(--border-color);border-radius:14px;padding:1rem 1.2rem;box-shadow:var(--shadow-sm)}
+.tname{font-family:'Baloo 2',sans-serif;font-weight:800;color:var(--primary-dark);font-size:.93rem}
+.tdef{color:var(--text-muted);font-size:.86rem;margin-top:.2rem}
+
+/* Quiz */
+.quiz-card{background:var(--card-bg);border-radius:var(--radius);border:1px solid var(--border-color);padding:2rem;box-shadow:var(--shadow-lg);max-width:820px;margin:0 auto}
+.quiz-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px dashed var(--border-color);flex-wrap:wrap;gap:.6rem}
+.streak-badge{display:flex;align-items:center;gap:.4rem;background:var(--accent-light);color:var(--accent-dark);font-weight:800;font-family:'Baloo 2',sans-serif;padding:.38rem .85rem;border-radius:12px;font-size:.9rem}
+.prog-bar{width:100%;height:10px;background:var(--border-color);border-radius:20px;overflow:hidden;margin-bottom:1.4rem}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent) 0%,var(--primary) 100%);transition:width .4s ease}
+.qtag{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-weight:700;font-size:.73rem;text-transform:uppercase;letter-spacing:.05em;padding:.28rem .65rem;border-radius:8px;margin-bottom:.65rem}
+.qtext{font-size:1.15rem;font-weight:700;margin-bottom:1.6rem;color:var(--text-main);line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:.85rem}
+.opt{padding:.95rem 1.2rem;border:2px solid var(--border-color);border-radius:16px;background:var(--card-bg);text-align:left;font-size:.96rem;font-weight:600;color:var(--text-main);cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:space-between}
+.opt:hover{border-color:var(--primary);background:var(--primary-light);transform:scale(1.01)}
+.opt.ok{border-color:var(--green);background:var(--green-light);color:#0F4A28}
+.opt.no{border-color:var(--red);background:var(--red-light);color:#7A2C25}
+.quiz-foot{margin-top:1.6rem;display:flex;justify-content:flex-end}
+.btn-next{background:var(--primary);color:#fff;padding:.85rem 1.7rem;border:none;border-radius:14px;font-weight:700;font-size:.98rem;cursor:pointer;display:inline-flex;align-items:center;gap:.6rem;box-shadow:0 4px 0 var(--primary-dark);font-family:'Baloo 2',sans-serif;transition:background .2s ease}
+.btn-next:hover{background:var(--primary-dark)}
+.expl{margin-top:1.4rem;padding:1.2rem;border-radius:16px;background:#F5F8FF;font-size:.93rem;color:#223055;display:none;border-left:5px solid var(--primary);animation:fadeIn .3s ease}
+
+/* XP toast */
+.ptost{position:fixed;top:16px;right:16px;background:var(--accent);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:800;padding:.55rem 1.1rem;border-radius:12px;box-shadow:var(--shadow-lg);z-index:500;opacity:0;transform:translateY(-8px);transition:all .3s ease;pointer-events:none;font-size:.92rem}
+.ptost.show{opacity:1;transform:translateY(0)}
+
+/* Results */
+.results-box{text-align:center;padding:2rem 1rem}
+.score-circle{width:140px;height:140px;border-radius:50%;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:800;font-family:'Baloo 2',sans-serif;margin:0 auto 1.3rem;border:8px solid var(--primary);box-shadow:var(--shadow-md)}
+.badge-row{display:flex;justify-content:center;gap:.9rem;flex-wrap:wrap;margin:1.2rem 0}
+.ebadge{background:var(--accent-light);border:2px solid var(--accent);border-radius:16px;padding:.85rem 1rem;text-align:center;min-width:95px}
+.ebadge i{font-size:1.5rem;color:var(--accent-dark);display:block;margin-bottom:.35rem}
+.ebadge span{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.78rem;color:var(--accent-dark)}
+
+@media(max-width:768px){
+  .hdr-title{font-size:1.45rem}
+  .quiz-card{padding:1.2rem}
+  .opt{padding:.82rem;font-size:.9rem}
+  .tab-btn{padding:.75rem .65rem;font-size:.8rem}
+}
+@media(max-width:480px){
+  .hdr-top{flex-direction:column}
+  .xp-hud{width:100%}
+  .hdr-title{font-size:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<div class="ptost" id="ptost">+10 XP!</div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-top">
+      <div>
+        <span class="badge-subj"><i class="fa-solid fa-book-open"></i> Language 5 &middot; Reviewer</span>
+        <h1 class="hdr-title">Verbs &amp; Forms Quest</h1>
+        <p class="hdr-sub">Helping, linking, sense, transitive &amp; intransitive verbs &mdash; plus filling out forms accurately.</p>
+      </div>
+      <div class="xp-hud">
+        <div class="xp-icon"><i class="fa-solid fa-star"></i></div>
+        <div class="xp-info">
+          <div class="xp-label">Lesson XP</div>
+          <div class="xp-val" id="xpVal">0 XP</div>
+          <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <div class="nav-outer">
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn active" onclick="goTab('t-verbs',this)"><i class="fa-solid fa-bolt"></i> Verbs<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-helping',this)"><i class="fa-solid fa-hands-holding"></i> Helping<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-linking',this)"><i class="fa-solid fa-link"></i> Linking<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-sense',this)"><i class="fa-solid fa-eye"></i> Sense<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-trans',this)"><i class="fa-solid fa-arrow-right-arrow-left"></i> Trans/Intrans<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-game',this)"><i class="fa-solid fa-shapes"></i> Verb Sorter<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-forms',this)"><i class="fa-solid fa-file-signature"></i> Forms<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-review',this)"><i class="fa-solid fa-book"></i> Review<span class="done-dot"></span></button>
+      <button class="tab-btn" onclick="goTab('t-quiz',this)"><i class="fa-solid fa-trophy"></i> Boss Quiz</button>
+    </nav>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TAB: VERBS -->
+<section id="t-verbs" class="tab-content active">
+  <div class="sec-hdr">
+    <span class="section-tag">I. Verbs</span>
+    <h2 class="sec-title">What Is a Verb?</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">A <strong>verb</strong> is a word that tells about an <strong>action</strong>, <strong>condition</strong>, or <strong>state</strong>.</p>
+  </div>
+  <div class="card" style="margin-bottom:1.3rem">
+    <h3 class="card-title">Examples of Verbs</h3>
+    <div><span class="chip">run</span><span class="chip">jump</span><span class="chip">write</span><span class="chip">sing</span><span class="chip">is</span><span class="chip">are</span><span class="chip">seem</span><span class="chip">smell</span><span class="chip">feel</span><span class="chip">taste</span></div>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Verbs Have Different Functions</h3>
+    <p class="card-text">Some verbs show an action, while others help another verb, connect the subject to information about it, or describe what we experience through our senses. In this reviewer, we'll explore all these verb types!</p>
+  </div>
+</section>
+
+<!-- TAB: HELPING -->
+<section id="t-helping" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">II&ndash;IV. Helping Verbs</span>
+    <h2 class="sec-title">What Is a Helping Verb?</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">A <strong>helping verb</strong> works together with a main verb to express an action, condition, or time. Also called <strong>auxiliary verbs</strong>.</p>
+  </div>
+  <div class="card orange" style="margin-bottom:1.3rem">
+    <h3 class="card-title">Common Helping Verbs</h3>
+    <div><span class="chip">am</span><span class="chip">is</span><span class="chip">are</span><span class="chip">was</span><span class="chip">were</span><span class="chip">has</span><span class="chip">have</span><span class="chip">had</span><span class="chip">do</span><span class="chip">does</span><span class="chip">did</span></div>
+  </div>
+  <div class="sec-hdr" style="border-left-color:var(--accent);padding:1.2rem 1.5rem;margin-bottom:1rem">
+    <span class="section-tag" style="color:var(--accent-dark)"><i class="fa-solid fa-magnifying-glass"></i> III. How to Identify a Helping Verb</span>
+    <p style="color:var(--text-muted);margin-top:.4rem;font-size:.93rem">Look for a verb that is helping another verb in the sentence.</p>
+  </div>
+  <div class="sbox">
+    <div class="sbox-lbl">Example</div>
+    <div class="stext">Maria <span class="tag tag-h">is</span> <span class="tag tag-m">reading</span> a book.</div>
+    <div class="brow"><span class="tag tag-h">is</span> = helping verb &nbsp;&bull;&nbsp; <span class="tag tag-m">reading</span> = main verb</div>
+  </div>
+  <div class="sbox">
+    <div class="sbox-lbl">Another Example</div>
+    <div class="stext">The students <span class="tag tag-h">were</span> <span class="tag tag-m">preparing</span> their projects.</div>
+    <div class="brow"><span class="tag tag-h">were</span> = helping verb &nbsp;&bull;&nbsp; <span class="tag tag-m">preparing</span> = main verb</div>
+  </div>
+  <div class="sec-hdr" style="padding:1.2rem 1.5rem;margin-top:1.3rem;margin-bottom:1rem">
+    <span class="section-tag"><i class="fa-solid fa-list"></i> IV. Common Helping Verbs in Action</span>
+  </div>
+  <div class="grid3">
+    <div class="card"><h3 class="card-title">AM</h3><p class="card-text">I <strong>am</strong> studying.</p></div>
+    <div class="card"><h3 class="card-title">IS</h3><p class="card-text">She <strong>is</strong> writing.</p></div>
+    <div class="card"><h3 class="card-title">ARE</h3><p class="card-text">They <strong>are</strong> playing.</p></div>
+    <div class="card"><h3 class="card-title">WAS</h3><p class="card-text">He <strong>was</strong> sleeping.</p></div>
+    <div class="card"><h3 class="card-title">WERE</h3><p class="card-text">We <strong>were</strong> talking.</p></div>
+    <div class="card"><h3 class="card-title">HAS / HAVE / HAD</h3><p class="card-text">She <strong>has</strong> finished. They <strong>have</strong> completed. He <strong>had</strong> arrived early.</p></div>
+  </div>
+</section>
+
+<!-- TAB: LINKING -->
+<section id="t-linking" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">V&ndash;VIII. Linking Verbs</span>
+    <h2 class="sec-title">What Is a Linking Verb?</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">A <strong>linking verb</strong> connects the subject to a word or phrase that <strong>describes or identifies</strong> the subject. It does NOT show action on an object.</p>
+  </div>
+  <div class="sbox">
+    <div class="sbox-lbl">Example</div>
+    <div class="stext"><span class="tag tag-s">Maria</span> is <span class="tag tag-l">happy</span>.</div>
+    <div class="brow"><span class="tag tag-s">Maria</span> = subject &nbsp;&bull;&nbsp; <strong>is</strong> = linking verb &nbsp;&bull;&nbsp; <span class="tag tag-l">happy</span> = describes Maria</div>
+  </div>
+  <div class="grid2" style="margin-top:1.3rem">
+    <div class="card violet">
+      <h3 class="card-title">Forms of "Be"</h3>
+      <div><span class="chip">am</span><span class="chip">is</span><span class="chip">are</span><span class="chip">was</span><span class="chip">were</span><span class="chip">be</span><span class="chip">being</span><span class="chip">been</span></div>
+    </div>
+    <div class="card violet">
+      <h3 class="card-title">Other Linking Verbs</h3>
+      <div><span class="chip">seem</span><span class="chip">become</span><span class="chip">appear</span><span class="chip">remain</span><span class="chip">feel</span><span class="chip">look</span><span class="chip">sound</span><span class="chip">taste</span><span class="chip">smell</span></div>
+    </div>
+  </div>
+  <div class="sbox"><div class="stext"><span class="tag tag-s">I</span> am <span class="tag tag-l">happy</span>.</div><p style="font-size:.86rem;color:var(--text-muted);margin-top:.4rem"><em>am</em> connects <em>I</em> to <em>happy</em>.</p></div>
+  <div class="sbox"><div class="stext">The <span class="tag tag-s">flowers</span> were <span class="tag tag-l">beautiful</span>.</div><p style="font-size:.86rem;color:var(--text-muted);margin-top:.4rem"><em>were</em> connects <em>flowers</em> to <em>beautiful</em>.</p></div>
+  <div class="sbox"><div class="stext">The <span class="tag tag-s">boy</span> became <span class="tag tag-l">sleepy</span>.</div></div>
+  <div class="sec-hdr" style="border-left-color:var(--red);padding:1.2rem 1.5rem;margin-top:1.3rem;margin-bottom:.5rem">
+    <span class="section-tag" style="color:var(--red)"><i class="fa-solid fa-scale-balanced"></i> VIII. Helping vs. Linking Verb</span>
+  </div>
+  <div class="cmp">
+    <div class="cmp-card a"><h4>Helping Verb</h4><p>She <strong>is</strong> singing.<br><em>"is" helps the verb "singing"</em></p></div>
+    <div class="cmp-card b"><h4>Linking Verb</h4><p>She <strong>is</strong> happy.<br><em>"is" connects "she" to "happy"</em></p></div>
+  </div>
+  <div class="card" style="background:var(--primary-light);border:none">
+    <p class="card-text" style="color:var(--primary-dark);font-weight:700">Remember: Helping verb &rarr; helps another verb. Linking verb &rarr; connects the subject to information about it.</p>
+  </div>
+</section>
+
+<!-- TAB: SENSE -->
+<section id="t-sense" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">IX&ndash;XV. Sense Verbs</span>
+    <h2 class="sec-title">What Are Sense Verbs?</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">Sense verbs are verbs connected to the <strong>five senses</strong>.</p>
+  </div>
+  <div class="sense-grid">
+    <div class="sense-item"><div class="semoji">&#128065;&#65039;</div><div class="sname">Sight</div><div class="swords">see, look, watch</div></div>
+    <div class="sense-item"><div class="semoji">&#128066;</div><div class="sname">Hearing</div><div class="swords">hear, listen</div></div>
+    <div class="sense-item"><div class="semoji">&#128067;</div><div class="sname">Smell</div><div class="swords">smell</div></div>
+    <div class="sense-item"><div class="semoji">&#128069;</div><div class="sname">Taste</div><div class="swords">taste</div></div>
+    <div class="sense-item"><div class="semoji">&#9995;</div><div class="sname">Touch</div><div class="swords">feel</div></div>
+  </div>
+  <div class="grid2" style="margin-top:1.4rem">
+    <div class="card"><h3 class="card-title">&#128065;&#65039; Sight</h3><p class="card-text">I <strong>see</strong> a bird in the tree. She <strong>looks</strong> at the painting. We <strong>watched</strong> the movie.</p></div>
+    <div class="card"><h3 class="card-title">&#128066; Hearing</h3><p class="card-text">I <strong>hear</strong> music outside. Please <strong>listen</strong> to the teacher.<br><strong>Note:</strong> "Hear" = receiving a sound; "Listen" = intentionally paying attention.</p></div>
+    <div class="card"><h3 class="card-title">&#128067; Smell</h3><p class="card-text">The flowers <strong>smell</strong> wonderful. The food <strong>smells</strong> delicious.</p></div>
+    <div class="card"><h3 class="card-title">&#128069; Taste</h3><p class="card-text">The soup <strong>tastes</strong> delicious. The fruit <strong>tastes</strong> sweet.</p></div>
+    <div class="card"><h3 class="card-title">&#9995; Touch / Feel</h3><p class="card-text">The blanket <strong>feels</strong> soft. The water <strong>feels</strong> cold.</p></div>
+  </div>
+</section>
+
+<!-- TAB: TRANSITIVE -->
+<section id="t-trans" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">XVI&ndash;XXIII. Transitive &amp; Intransitive</span>
+    <h2 class="sec-title">Direct Objects &amp; Verb Types</h2>
+  </div>
+  <div class="card" style="margin-bottom:1.3rem">
+    <h3 class="card-title">XVI. Transitive Verb</h3>
+    <p class="card-text">A transitive verb needs a <strong>direct object</strong> to complete its meaning. The action is performed by the subject <em>on</em> something or someone.</p>
+    <div style="margin-top:.6rem"><span class="chip">Subject + Verb + Object</span></div>
+  </div>
+  <div class="sbox">
+    <div class="sbox-lbl">Example</div>
+    <div class="stext"><span class="tag tag-s">Ana</span> <span class="tag tag-m">opened</span> <span class="tag tag-o">the door</span>.</div>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-top:.4rem">Opened <em>what</em>? &rarr; the door. Therefore "opened" is transitive.</p>
+  </div>
+  <div class="grid2" style="margin-top:1rem">
+    <div class="sbox"><div class="stext">The boy <span class="tag tag-m">kicked</span> <span class="tag tag-o">the ball</span>.</div></div>
+    <div class="sbox"><div class="stext">Maria <span class="tag tag-m">read</span> <span class="tag tag-o">the book</span>.</div></div>
+    <div class="sbox"><div class="stext">She <span class="tag tag-m">bought</span> <span class="tag tag-o">a new bag</span>.</div></div>
+    <div class="sbox"><div class="stext">The teacher <span class="tag tag-m">checked</span> <span class="tag tag-o">the papers</span>.</div></div>
+  </div>
+  <div class="sec-hdr" style="border-left-color:var(--green);padding:1.2rem 1.5rem;margin-top:1rem;margin-bottom:1rem">
+    <span class="section-tag" style="color:var(--green-dark)"><i class="fa-solid fa-circle-minus"></i> XIX&ndash;XX. Intransitive Verbs</span>
+    <p style="color:var(--text-muted);margin-top:.4rem;font-size:.93rem">An intransitive verb does <strong>not</strong> need a direct object. The action stands on its own.</p>
+  </div>
+  <div class="grid2">
+    <div class="sbox"><div class="stext">The baby <span class="tag tag-m">slept</span>.</div><p style="font-size:.86rem;color:var(--text-muted)">Slept what? &rarr; No direct object.</p></div>
+    <div class="sbox"><div class="stext">The birds <span class="tag tag-m">flew</span>.</div></div>
+    <div class="sbox"><div class="stext">The children <span class="tag tag-m">laughed</span>.</div></div>
+    <div class="sbox"><div class="stext">The dog <span class="tag tag-m">barked</span>.</div></div>
+  </div>
+  <div class="cmp" style="margin-top:1rem">
+    <div class="cmp-card a"><h4>Transitive</h4><p>Needs a direct object.<br>"The boy kicked <u>the ball</u>."</p></div>
+    <div class="cmp-card b"><h4>Intransitive</h4><p>No direct object.<br>"The boy slept."</p></div>
+  </div>
+  <div class="sec-hdr" style="padding:1.2rem 1.5rem;margin-top:1rem;margin-bottom:1rem">
+    <span class="section-tag"><i class="fa-solid fa-shuffle"></i> XXII&ndash;XXIII. Same Verb, Different Uses</span>
+  </div>
+  <div class="grid2">
+    <div class="sbox"><div class="sbox-lbl">Twisted — Transitive</div><div class="stext">She <span class="tag tag-m">twisted</span> <span class="tag tag-o">the rope</span>.</div></div>
+    <div class="sbox"><div class="sbox-lbl">Twisted — Intransitive</div><div class="stext">The rope <span class="tag tag-m">twisted</span>.</div></div>
+  </div>
+</section>
+
+<!-- TAB: VERB SORTER GAME -->
+<section id="t-game" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">Mini-Game</span>
+    <h2 class="sec-title">&#127918; Verb Sorter Challenge</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">Tap a word, then tap the bucket where it belongs. Sort them all to earn bonus XP!</p>
+  </div>
+  <div class="game-panel">
+    <div class="game-hdr">
+      <h3><i class="fa-solid fa-flask"></i> Sort the Verbs!</h3>
+      <div style="display:flex;gap:.6rem">
+        <span class="stat-pill" id="gOk">&#10003; 0</span>
+        <span class="stat-pill" id="gNo">&#10007; 0</span>
+      </div>
+    </div>
+    <div class="word-bank" id="wBank"></div>
+    <div class="bucket-grid">
+      <div class="bucket" onclick="dropIn('Helping')"><div class="bname" style="color:var(--accent-dark)">Helping</div><div class="bwords" id="b-Helping"></div></div>
+      <div class="bucket" onclick="dropIn('Linking')"><div class="bname" style="color:var(--violet)">Linking</div><div class="bwords" id="b-Linking"></div></div>
+      <div class="bucket" onclick="dropIn('Sense')"><div class="bname" style="color:var(--primary)">Sense</div><div class="bwords" id="b-Sense"></div></div>
+    </div>
+    <div class="gfeedback" id="gFeed"></div>
+    <button class="reset-btn" onclick="resetGame()"><i class="fa-solid fa-rotate-right"></i> Reset Game</button>
+  </div>
+</section>
+
+<!-- TAB: FORMS -->
+<section id="t-forms" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">XXX&ndash;XXXVII. Filling Out Forms</span>
+    <h2 class="sec-title">What Is a Form?</h2>
+    <p style="color:var(--text-muted);margin-top:.5rem;font-size:.97rem">A <strong>form</strong> is a document that asks for information, used to collect data in an organized way.</p>
+  </div>
+  <div class="card" style="margin-bottom:1.3rem">
+    <h3 class="card-title">Examples of Forms</h3>
+    <div><span class="chip">Personal information sheets</span><span class="chip">Registration forms</span><span class="chip">School forms</span><span class="chip">Application forms</span><span class="chip">Permission slips</span></div>
+  </div>
+  <div class="sec-hdr" style="padding:1.2rem 1.5rem;margin-bottom:1rem">
+    <span class="section-tag"><i class="fa-solid fa-check-double"></i> XXXI. Steps to Fill Out a Form Accurately</span>
+  </div>
+  <div class="step"><div class="step-n">1</div><div><h4>Read the labels carefully</h4><p>Understand what information is being requested.</p></div></div>
+  <div class="step"><div class="step-n">2</div><div><h4>Write the correct information</h4><p>Do not guess.</p></div></div>
+  <div class="step"><div class="step-n">3</div><div><h4>Follow the required format</h4><p>Some fields need a specific format (e.g. dates).</p></div></div>
+  <div class="step"><div class="step-n">4</div><div><h4>Check your spelling</h4><p>Make sure names and places are spelled correctly.</p></div></div>
+  <div class="step"><div class="step-n">5</div><div><h4>Review before submitting</h4><p>Look for missing or incorrect information.</p></div></div>
+  <div class="sec-hdr" style="padding:1.2rem 1.5rem;margin-top:1.3rem;margin-bottom:1rem">
+    <span class="section-tag"><i class="fa-solid fa-signature"></i> XXXIII. Writing Your Name</span>
+    <p style="color:var(--text-muted);margin-top:.4rem;font-size:.93rem">When a form asks: Last Name &ndash; First Name &ndash; Middle Initial</p>
+  </div>
+  <div class="form-mock">
+    <div class="flbl">If the complete name is: Maria Santos Cruz</div>
+    <div class="frow">
+      <div><div class="flbl">Last Name</div><div class="fval">Santos</div></div>
+      <div><div class="flbl">First Name</div><div class="fval">Maria</div></div>
+      <div><div class="flbl">M.I.</div><div class="fval">C.</div></div>
+    </div>
+  </div>
+  <div class="sec-hdr" style="padding:1.2rem 1.5rem;margin-top:1rem;margin-bottom:1rem">
+    <span class="section-tag"><i class="fa-solid fa-calendar"></i> XXXIV. Date of Birth Format</span>
+  </div>
+  <div class="form-mock">
+    <div class="flbl">If date is January 15, 2015 — format: MM/DD/YYYY</div>
+    <div class="fval" style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:1.1rem">01 / 15 / 2015</div>
+    <p style="font-size:.83rem;color:var(--text-muted)">MM = Month &nbsp;&bull;&nbsp; DD = Day &nbsp;&bull;&nbsp; YYYY = Year</p>
+  </div>
+  <div class="sec-hdr" style="border-left-color:var(--red);padding:1.2rem 1.5rem;margin-top:1.3rem;margin-bottom:1rem">
+    <span class="section-tag" style="color:var(--red)"><i class="fa-solid fa-triangle-exclamation"></i> XXXVII. Common Mistakes</span>
+  </div>
+  <div class="card">
+    <div>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Leaving required fields blank</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Writing in the wrong space</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Incorrect date format</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Misspelling names</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Giving incomplete information</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Guessing information</span>
+      <span class="err-chip"><i class="fa-solid fa-xmark"></i> Forgetting to sign</span>
+    </div>
+  </div>
+</section>
+
+<!-- TAB: REVIEW -->
+<section id="t-review" class="tab-content">
+  <div class="sec-hdr">
+    <span class="section-tag">XXXVIII&ndash;XLI. Summary</span>
+    <h2 class="sec-title">Important Terms &amp; Quick Memory Guide</h2>
+  </div>
+  <div class="grid2" style="margin-bottom:1.5rem">
+    <div class="term-card"><div class="tname">HELPING VERB</div><div class="tdef">A verb that works with another verb (auxiliary verb).</div></div>
+    <div class="term-card"><div class="tname">LINKING VERB</div><div class="tdef">Connects the subject to information describing or identifying it.</div></div>
+    <div class="term-card"><div class="tname">SENSE VERB</div><div class="tdef">A verb related to one of the five senses.</div></div>
+    <div class="term-card"><div class="tname">TRANSITIVE VERB</div><div class="tdef">A verb that takes a direct object.</div></div>
+    <div class="term-card"><div class="tname">INTRANSITIVE VERB</div><div class="tdef">A verb that does not take a direct object.</div></div>
+    <div class="term-card"><div class="tname">DIRECT OBJECT</div><div class="tdef">The person or thing receiving the action of a transitive verb.</div></div>
+    <div class="term-card"><div class="tname">FORM</div><div class="tdef">A document used to collect information.</div></div>
+    <div class="term-card"><div class="tname">PERSONAL INFORMATION</div><div class="tdef">Details about a person: name, age, address, date of birth.</div></div>
+  </div>
+  <div class="sec-hdr" style="border-left-color:var(--accent);padding:1.2rem 1.5rem;margin-bottom:1rem">
+    <span class="section-tag" style="color:var(--accent-dark)"><i class="fa-solid fa-route"></i> Easy Way to Remember</span>
+  </div>
+  <div class="step orange"><div class="step-n">1</div><div><h4>HELPING</h4><p>Helps another verb</p></div></div>
+  <div class="step"><div class="step-n">2</div><div><h4>LINKING</h4><p>Links the subject to information</p></div></div>
+  <div class="step green"><div class="step-n">3</div><div><h4>SENSE</h4><p>Connects to the senses</p></div></div>
+  <div class="step red"><div class="step-n">4</div><div><h4>TRANSITIVE</h4><p>Transfers action to an object</p></div></div>
+  <div class="step"><div class="step-n" style="background:var(--violet)">5</div><div><h4>INTRANSITIVE</h4><p>Action does not transfer to an object</p></div></div>
+  <div class="card" style="margin-top:1.4rem;background:var(--primary-light);border:none">
+    <h3 class="card-title" style="color:var(--primary-dark)">&#11088; Final Reminder for Forms</h3>
+    <p class="card-text" style="color:var(--primary-dark);font-weight:600">READ carefully &rarr; WRITE correctly &rarr; CHECK spelling &rarr; REVIEW &rarr; SUBMIT.</p>
+  </div>
+</section>
+
+<!-- TAB: BOSS QUIZ -->
+<section id="t-quiz" class="tab-content">
+  <div class="quiz-card">
+    <div id="qbody">
+      <div class="quiz-hdr">
+        <span style="font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;color:var(--primary)" id="qcount">Question 1 of 30</span>
+        <span class="streak-badge" id="qstreak">&#128293; Streak: 0</span>
+        <span style="font-family:'Baloo 2',sans-serif;font-size:1.05rem;font-weight:700;background:var(--primary-light);color:var(--text-main);padding:.38rem .95rem;border-radius:12px" id="qscore">Score: 0</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <span class="qtag" id="qtag">Verbs</span>
+      <h3 class="qtext" id="qtext">Loading...</h3>
+      <div class="opts" id="qopts"></div>
+      <div class="expl" id="qexpl"></div>
+      <div class="quiz-foot">
+        <button class="btn-next" id="qnext" onclick="nextQ()" style="display:none">Next Question <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+    <div id="qresults" class="results-box" style="display:none">
+      <div class="score-circle" id="finalCircle">0/30</div>
+      <h2 style="font-family:'Baloo 2',sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:.45rem;color:var(--primary-dark)" id="rhead">Quest Complete!</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;font-size:1.05rem" id="rsub">You finished the Boss Quiz.</p>
+      <div class="badge-row" id="rbadges"></div>
+      <button class="btn-next" onclick="restartQ()"><i class="fa-solid fa-rotate-right"></i> Try Again</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.container -->
+
+<script src="../reviewer-helper.js"></script>
+<script>
+/* ===== XP ===== */
+let totalXP = 0;
+const visited = new Set();
+function awardXP(n) {
+  totalXP += n;
+  document.getElementById('xpVal').textContent = totalXP + ' XP';
+  document.getElementById('xpFill').style.width = Math.min((totalXP % 200) / 200 * 100, 100) + '%';
+  const t = document.getElementById('ptost');
+  t.textContent = '+' + n + ' XP!';
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 1200);
+}
+
+function goTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (!visited.has(id) && id !== 't-quiz') {
+    visited.add(id);
+    btn.classList.add('visited');
+    awardXP(15);
+  }
+  if (id === 't-quiz' && !quizStartTime) quizStartTime = Date.now();
+}
+
+/* ===== VERB SORTER GAME ===== */
+const WORDS = [
+  {w:'is',b:'Helping'},{w:'was',b:'Helping'},{w:'has',b:'Helping'},{w:'did',b:'Helping'},
+  {w:'seem',b:'Linking'},{w:'become',b:'Linking'},{w:'appear',b:'Linking'},{w:'remain',b:'Linking'},
+  {w:'look',b:'Sense'},{w:'smell',b:'Sense'},{w:'taste',b:'Sense'},{w:'listen',b:'Sense'}
+];
+let selWord = null, gOk = 0, gNo = 0;
+const placed = new Set();
+
+function shuffle(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[r[i], r[j]] = [r[j], r[i]]; }
+  return r;
+}
+
+function renderGame() {
+  const bk = document.getElementById('wBank');
+  bk.innerHTML = '';
+  shuffle(WORDS).forEach(item => {
+    if (placed.has(item.w)) return;
+    const p = document.createElement('div');
+    p.className = 'wpill'; p.textContent = item.w;
+    p.onclick = () => { document.querySelectorAll('.wpill').forEach(x => x.classList.remove('sel')); p.classList.add('sel'); selWord = item.w; };
+    bk.appendChild(p);
+  });
+  document.getElementById('gOk').textContent = '\u2713 ' + gOk;
+  document.getElementById('gNo').textContent = '\u2717 ' + gNo;
+}
+
+function dropIn(bucket) {
+  if (!selWord) return;
+  const item = WORDS.find(w => w.w === selWord);
+  const fb = document.getElementById('gFeed');
+  fb.classList.remove('show', 'ok', 'no');
+  if (item.b === bucket) {
+    gOk++;
+    placed.add(selWord);
+    const sp = document.createElement('span');
+    sp.className = 'placed'; sp.textContent = selWord;
+    document.getElementById('b-' + bucket).appendChild(sp);
+    fb.textContent = '\u2705 Correct! "' + selWord + '" is a ' + bucket + ' verb.';
+    fb.classList.add('show', 'ok');
+    awardXP(5);
+    if (placed.size === WORDS.length) setTimeout(() => { fb.textContent = '\uD83C\uDF89 All sorted! Bonus +25 XP!'; awardXP(25); }, 500);
+  } else {
+    gNo++;
+    fb.textContent = '\u274C Not quite \u2014 "' + selWord + '" is not a ' + bucket + ' verb. Try again!';
+    fb.classList.add('show', 'no');
+  }
+  selWord = null;
+  renderGame();
+}
+
+function resetGame() {
+  placed.clear(); gOk = 0; gNo = 0;
+  ['Helping','Linking','Sense'].forEach(b => document.getElementById('b-' + b).innerHTML = '');
+  document.getElementById('gFeed').classList.remove('show');
+  renderGame();
+}
+renderGame();
+
+/* ===== BOSS QUIZ ===== */
+const QD = [
+  {tag:'Verbs',q:'What is a verb?',opts:['A word that names a person or place','A word that tells about an action, condition, or state','A word that describes a noun','A word that connects two sentences'],a:1,exp:'A verb is a word that tells about an action, condition, or state.'},
+  {tag:'Helping Verbs',q:'What is a helping verb also called?',opts:['A main verb','An auxiliary verb','A linking verb','A sense verb'],a:1,exp:'Helping verbs are also called auxiliary verbs.'},
+  {tag:'Helping Verbs',q:"In 'Maria is reading a book,' which word is the helping verb?",opts:['Maria','is','reading','book'],a:1,exp:"'Is' is the helping verb that helps the main verb 'reading.'"},
+  {tag:'Helping Verbs',q:"In 'The students were preparing their projects,' what is the main verb?",opts:['students','were','preparing','projects'],a:2,exp:"'Preparing' is the main verb; 'were' is the helping verb."},
+  {tag:'Helping Verbs',q:'Which of the following is a common helping verb?',opts:['run','has','smell','feel'],a:1,exp:'Common helping verbs include am, is, are, was, were, has, have, had, do, does, did.'},
+  {tag:'Linking Verbs',q:'What does a linking verb do?',opts:['Shows a physical action','Connects the subject to information that describes or identifies it','Always needs a direct object','Describes the five senses'],a:1,exp:'A linking verb connects the subject to a word or phrase that describes or identifies the subject.'},
+  {tag:'Linking Verbs',q:"In 'Maria is happy,' what does 'is' do?",opts:["Helps the verb happy","Connects Maria to the description happy","Shows an action","Names the subject"],a:1,exp:"The linking verb 'is' connects Maria to the description 'happy.'"},
+  {tag:'Linking Verbs',q:'Which of the following is a linking verb (not a form of "be")?',opts:['run','seem','did','watch'],a:1,exp:'Other linking verbs include seem, become, appear, remain, feel, look, sound, taste, and smell.'},
+  {tag:'Linking Verbs',q:"In 'The boy became sleepy,' what does 'became' connect?",opts:['Boy to sleepy','Boy to became','Sleepy to the action','Nothing'],a:0,exp:"'Became' connects 'boy' to the description 'sleepy.'"},
+  {tag:'Helping vs Linking',q:"In 'She is singing,' is 'is' a helping or linking verb?",opts:['Helping verb','Linking verb','Both','Neither'],a:0,exp:"In 'She is singing,' 'is' is a helping verb because it helps the main verb 'singing.'"},
+  {tag:'Helping vs Linking',q:"In 'She is happy,' is 'is' a helping or linking verb?",opts:['Helping verb','Linking verb','Both','Neither'],a:1,exp:"In 'She is happy,' 'is' is a linking verb because it connects 'she' to 'happy.'"},
+  {tag:'Sense Verbs',q:'Sense verbs are connected to what?',opts:['Direct objects','The five senses','Helping verbs','Forms'],a:1,exp:'Sense verbs are connected to the five senses: sight, hearing, smell, taste, and touch.'},
+  {tag:'Sense Verbs',q:'Which verbs relate to the sense of sight?',opts:['hear, listen','see, look, watch','taste, smell','feel, touch'],a:1,exp:'Verbs related to seeing include see, look, and watch.'},
+  {tag:'Sense Verbs',q:"What is the difference between 'hear' and 'listen'?",opts:['They mean exactly the same thing','Hear = receiving a sound; listen = intentionally paying attention','Hear is for smell; listen is for sight','There is no difference'],a:1,exp:"'Hear' usually refers to receiving a sound; 'listen' means intentionally paying attention."},
+  {tag:'Sense Verbs',q:'Which verb relates to the sense of touch?',opts:['see','hear','feel','taste'],a:2,exp:"The verb 'feel' describes the sense of touch."},
+  {tag:'Transitive Verbs',q:'What is a transitive verb?',opts:['A verb that does not need an object','A verb that needs a direct object to complete its meaning','A verb connected to the senses','A verb that helps another verb'],a:1,exp:'A transitive verb needs a direct object to complete its meaning.'},
+  {tag:'Transitive Verbs',q:"In 'Ana opened the door,' what is the direct object?",opts:['Ana','opened','the door','none'],a:2,exp:"Opened what? The door. Therefore, 'the door' is the direct object."},
+  {tag:'Transitive Verbs',q:'What questions help you find the direct object?',opts:['Where? or When?','What? or Whom?','Why? or How?','Who? or Which?'],a:1,exp:"After identifying the verb, ask 'What?' or 'Whom?' to find the direct object."},
+  {tag:'Transitive Verbs',q:"In 'The teacher checked the papers,' what is the direct object?",opts:['The teacher','checked','the papers','none'],a:2,exp:"Checked what? The papers. 'The papers' is the direct object."},
+  {tag:'Intransitive Verbs',q:'What is an intransitive verb?',opts:['A verb that always needs a direct object','A verb that does not need a direct object to complete its meaning','A verb connected to the five senses','A verb that helps another verb'],a:1,exp:'An intransitive verb does not need a direct object — the action stands on its own.'},
+  {tag:'Intransitive Verbs',q:'Which sentence uses an intransitive verb?',opts:['The boy kicked the ball.','The baby slept.','Maria read the book.','She bought a new bag.'],a:1,exp:"'The baby slept' is complete without a direct object, making 'slept' intransitive."},
+  {tag:'Trans vs Intrans',q:"In 'The rope twisted,' is 'twisted' transitive or intransitive?",opts:['Transitive, because it has an object','Intransitive, because there is no direct object','Both at the same time','Neither'],a:1,exp:"In 'The rope twisted,' there is no direct object, so 'twisted' is intransitive."},
+  {tag:'Trans vs Intrans',q:"In 'She twisted the rope,' is 'twisted' transitive or intransitive?",opts:['Transitive, because "the rope" is the direct object','Intransitive','Both','Neither'],a:0,exp:"In 'She twisted the rope,' 'the rope' is the direct object, making 'twisted' transitive."},
+  {tag:'Forms',q:'What is a form?',opts:['A type of verb','A document that asks for information','A type of sentence','A punctuation mark'],a:1,exp:'A form is a document that asks for information.'},
+  {tag:'Forms',q:"For 'Maria Santos Cruz' as Last Name - First Name - M.I., how is it written?",opts:['Maria | Santos | C.','Santos | Maria | C.','Cruz | Maria | S.','Santos | Cruz | M.'],a:1,exp:'Santos (Last Name) | Maria (First Name) | C. (Middle Initial).'},
+  {tag:'Forms',q:"If a form specifies MM/DD/YYYY and the date is January 15, 2015, how should it be written?",opts:['15/01/2015','2015/01/15','01/15/2015','15-Jan-2015'],a:2,exp:'MM/DD/YYYY = Month/Day/Year, so January 15, 2015 is 01/15/2015.'},
+  {tag:'Forms',q:'What is a signature?',opts:["A printed form of your name","A person's handwritten name or usual identifying mark","The date you were born","Your school's name"],a:1,exp:"A signature is a person's handwritten name or usual identifying mark."},
+  {tag:'Forms',q:'Which of the following is a common mistake when filling out forms?',opts:['Reviewing before submitting','Leaving required fields blank','Writing information accurately','Checking your spelling'],a:1,exp:'Leaving required fields blank is a common mistake to avoid.'},
+  {tag:'Forms',q:'What should you do FIRST when completing a form?',opts:['Sign immediately','Read the labels carefully','Guess the information','Skip difficult sections'],a:1,exp:'Read the labels carefully first so you understand what information is being requested.'},
+  {tag:'Review',q:"Which memory guide matches 'TRANSITIVE'?",opts:['Helps another verb','Links the subject to information','Transfers action to an object','Connects to the senses'],a:2,exp:'TRANSITIVE verbs transfer action to an object (they need a direct object).'}
+];
+
+let qi = 0, score = 0, streak = 0, maxStreak = 0, answered = false;
+let quizStartTime = null;
+
+function loadQ() {
+  answered = false;
+  const q = QD[qi];
+  document.getElementById('qcount').textContent = 'Question ' + (qi + 1) + ' of ' + QD.length;
+  document.getElementById('qscore').textContent = 'Score: ' + score;
+  document.getElementById('qtag').textContent = q.tag;
+  document.getElementById('qtext').textContent = q.q;
+  document.getElementById('qstreak').textContent = '\uD83D\uDD25 Streak: ' + streak;
+  document.getElementById('progFill').style.width = (qi / QD.length * 100) + '%';
+  const opts = document.getElementById('qopts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span>' + o + '</span><i class="fa-regular fa-circle"></i>';
+    b.onclick = () => pick(i, b);
+    opts.appendChild(b);
+  });
+  document.getElementById('qexpl').style.display = 'none';
+  document.getElementById('qnext').style.display = 'none';
+}
+
+function pick(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const q = QD[qi];
+  const all = document.querySelectorAll('.opt');
+  if (idx === q.a) {
+    score++; streak++; maxStreak = Math.max(maxStreak, streak);
+    btn.classList.add('ok');
+    btn.querySelector('i').className = 'fa-solid fa-circle-check';
+    awardXP(10 + (streak >= 3 ? 5 : 0));
+  } else {
+    streak = 0;
+    btn.classList.add('no');
+    btn.querySelector('i').className = 'fa-solid fa-circle-xmark';
+    all[q.a].classList.add('ok');
+    all[q.a].querySelector('i').className = 'fa-solid fa-circle-check';
+  }
+  document.getElementById('qstreak').textContent = '\uD83D\uDD25 Streak: ' + streak;
+  document.getElementById('qscore').textContent = 'Score: ' + score;
+  const ex = document.getElementById('qexpl');
+  ex.innerHTML = '<strong>Explanation:</strong> ' + q.exp;
+  ex.style.display = 'block';
+  document.getElementById('qnext').style.display = 'inline-flex';
+}
+
+function nextQ() {
+  qi++;
+  if (qi < QD.length) loadQ();
+  else showResults();
+}
+
+function showResults() {
+  document.getElementById('qbody').style.display = 'none';
+  document.getElementById('qresults').style.display = 'block';
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('finalCircle').textContent = score + '/' + QD.length;
+
+  const pct = score / QD.length;
+  document.getElementById('rhead').textContent = pct >= .85 ? '\uD83C\uDFC6 Verb Master!' : pct >= .6 ? '\uD83C\uDF1F Great Adventurer!' : '\uD83D\uDCD8 Keep Questing!';
+  document.getElementById('rsub').textContent = pct >= .85 ? "Incredible! You've conquered verbs and forms!" : pct >= .6 ? 'Nice work! Review the tabs above to become a Verb Master.' : 'Every hero needs practice \u2014 revisit the tabs and try again!';
+
+  const br = document.getElementById('rbadges');
+  br.innerHTML = '';
+  const bList = [];
+  if (score === QD.length) bList.push({icon:'fa-crown',lbl:'Perfect Score'});
+  if (maxStreak >= 5) bList.push({icon:'fa-fire',lbl:maxStreak + ' Streak'});
+  if (visited.size >= 7) bList.push({icon:'fa-compass',lbl:'Explorer'});
+  if (pct >= .85) bList.push({icon:'fa-medal',lbl:'Verb Expert'});
+  bList.forEach(b => {
+    const d = document.createElement('div');
+    d.className = 'ebadge';
+    d.innerHTML = '<i class="fa-solid ' + b.icon + '"></i><span>' + b.lbl + '</span>';
+    br.appendChild(d);
+  });
+
+  awardXP(score * 2);
+
+  // ---- ReviewerHub: report result to parent ----
+  const elapsed = quizStartTime ? Math.round((Date.now() - quizStartTime) / 1000) : 0;
+  window.parent.postMessage({ type: 'QUIZ_COMPLETE', score: score, total: QD.length, timeSeconds: elapsed }, '*');
+}
+
+function restartQ() {
+  qi = 0; score = 0; streak = 0; maxStreak = 0;
+  quizStartTime = Date.now();
+  document.getElementById('qresults').style.display = 'none';
+  document.getElementById('qbody').style.display = 'block';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

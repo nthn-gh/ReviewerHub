@@ -37,4 +37,15 @@ window.TOPICS = [
     color: "#f59e0b",
     icon: "🇵🇭",
   },
+  {
+    id: "english5-verbs-forms",
+    title: "Verbs & Forms Quest",
+    subject: "English",
+    description: "Helping, linking, sense, transitive & intransitive verbs — plus filling out forms accurately.",
+    difficulty: "Medium",
+    questions: 30,
+    file: "reviewers/English5-Verbs-Forms-Embed.html",
+    color: "#2563EB",
+    icon: "📝",
+  },
 ];
