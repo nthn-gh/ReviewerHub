@@ -316,7 +316,7 @@ function onReviewerMessage(e) {
 
 
 // ---- Core submit logic -----------------------------------
-function triggerSubmit(score, total, timeSeconds) {
+async function triggerSubmit(score, total, timeSeconds) {
   if (scoreSubmitted) return;
   scoreSubmitted = true;
   clearInterval(timerInterval);
