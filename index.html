@@ -392,6 +392,8 @@ function relativeDate(isoString) {
 
 function topicCardHTML(t) {
   const best = player ? Game.getBestScore(player, t.id) : null;
+  const attempts = player ? Game.getAttempts(player, t.id) : 0;
+  const locked = player ? Game.isAttemptLimitReached(player, t.id) : false;
   const diffClass = Game.getDifficultyClass(t.difficulty);
   const scoreData = player?.scores?.[t.id];
   const lastPlayed = scoreData ? relativeDate(scoreData.date) : null;
@@ -399,10 +401,21 @@ function topicCardHTML(t) {
     ? `Best: <span>${best}%</span>${lastPlayed ? ` <span style="color:var(--muted);font-size:.72rem">· ${lastPlayed}</span>` : ''}`
     : `<span style="color:var(--text2)">Not yet played</span>`;
 
+  const attemptsLabel = `<span style="font-size:.72rem;color:${locked ? 'var(--red)' : 'var(--text2)'};margin-left:.35rem">
+    ${locked ? '🔒' : '📋'} ${attempts}/${Game.MAX_ATTEMPTS} attempts</span>`;
+
+  const actionBtn = locked
+    ? `<button class="btn btn-secondary btn-sm" style="width:100%;margin-top:.5rem;opacity:.5;cursor:not-allowed;color:var(--red)" disabled>
+        🔒 Max Attempts Reached
+      </button>`
+    : `<button class="btn btn-primary btn-sm" style="width:100%;margin-top:.5rem">
+        ${best !== null ? '🔄 Retry' : '▶ Start'} Reviewer
+      </button>`;
+
   return `
-  <div class="card topic-card" style="--card-color:${t.color}"
-       onclick="goToTopic('${t.id}')" role="button" tabindex="0"
-       onkeydown="if(event.key==='Enter')goToTopic('${t.id}')">
+  <div class="card topic-card" style="--card-color:${t.color}${locked ? ';opacity:.75' : ''}"
+       onclick="${locked ? 'showLockedToast()' : `goToTopic('${t.id}')`}" role="button" tabindex="0"
+       onkeydown="if(event.key==='Enter')${locked ? 'showLockedToast()' : `goToTopic('${t.id}')`}">
     <div class="topic-icon">${t.icon}</div>
     <div class="topic-badge" style="color:${t.color};border-color:${t.color}33">
       ${t.subject}
@@ -410,13 +423,15 @@ function topicCardHTML(t) {
     <div class="topic-title">${t.title}</div>
     <div class="topic-desc">${t.description}</div>
     <div class="topic-footer">
-      <div class="topic-best">${bestLabel}</div>
+      <div class="topic-best">${bestLabel}${attemptsLabel}</div>
       <span class="difficulty-badge diff-${diffClass}">${t.difficulty}</span>
     </div>
-    <button class="btn btn-primary btn-sm" style="width:100%;margin-top:.5rem">
-      ${best !== null ? '🔄 Retry' : '▶ Start'} Reviewer
-    </button>
+    ${actionBtn}
   </div>`;
+}
+
+function showLockedToast() {
+  Game.showToast('🔒 You have used all your attempts for this reviewer.');
 }
 
 function goToTopic(id) {

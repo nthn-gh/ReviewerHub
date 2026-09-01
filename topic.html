@@ -224,9 +224,35 @@ async function init() {
   diffEl.textContent = topic.difficulty;
   diffEl.className = 'difficulty-badge diff-' + Game.getDifficultyClass(topic.difficulty);
 
+  const attempts = Game.getAttempts(player, topic.id);
   const best = Game.getBestScore(player, topic.id);
-  document.getElementById('myBest').textContent = best !== null ? `Your best: ${best}%` : 'Not yet played';
+  document.getElementById('myBest').textContent = best !== null
+    ? `Your best: ${best}%  ·  ${attempts}/${Game.MAX_ATTEMPTS} attempts used`
+    : `0/${Game.MAX_ATTEMPTS} attempts used`;
 
+  // ---- ATTEMPT LIMIT GATE ----
+  if (Game.isAttemptLimitReached(player, topic.id)) {
+    // Replace the iframe area with a locked notice
+    const wrap = document.querySelector('.reviewer-frame-wrap');
+    wrap.innerHTML = `
+      <div style="padding:4rem 2rem;text-align:center;color:var(--text2)">
+        <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;color:var(--white);margin-bottom:.5rem">
+          Maximum Attempts Reached
+        </div>
+        <div style="font-size:.95rem;margin-bottom:1.5rem">
+          You've used both attempts for this reviewer.<br>
+          Your best score: <strong style="color:var(--purple-l)">${best !== null ? best + '%' : '—'}</strong>
+        </div>
+        <a href="index.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:.5rem">
+          ← Back to Topics
+        </a>
+      </div>`;
+    clearInterval(timerInterval);
+    document.getElementById('timerDisplay').style.display = 'none';
+    updateMobileDrawerPlayer();
+    return; // Don't start the timer or load the iframe
+  }
 
   // Load iframe (reset resize counter for each fresh load)
   _resizeCallCount = 0;
@@ -342,10 +368,30 @@ function showResultModal(score, total, timeSeconds, result) {
       }).join('');
   }
 
+  // Show attempt count and conditionally show/hide Try Again
+  const attemptsUsed = result.attempts || Game.getAttempts(player, topic.id);
+  const limitReached = attemptsUsed >= Game.MAX_ATTEMPTS;
+  const retryBtn = document.querySelector('#resultModal .btn-secondary');
+  if (retryBtn) {
+    if (limitReached) {
+      retryBtn.outerHTML = `<div style="font-size:.82rem;color:var(--red);background:rgba(239,68,68,.1);
+        border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.6rem 1rem;text-align:center">
+        🔒 Max attempts reached (${attemptsUsed}/${Game.MAX_ATTEMPTS})
+      </div>`;
+    } else {
+      retryBtn.textContent = `🔄 Try Again (${attemptsUsed}/${Game.MAX_ATTEMPTS} used)`;
+    }
+  }
+
   document.getElementById('resultModal').classList.add('show');
 }
 
 function retryTopic() {
+  // Safety guard — shouldn't be callable after limit, but protect just in case
+  if (Game.isAttemptLimitReached(player, topic.id)) {
+    Game.showToast('🔒 You have used all your attempts for this reviewer.');
+    return;
+  }
   scoreSubmitted = false;
   _resizeCallCount = 0; // Reset so auto-resize works again after retry
   document.getElementById('resultModal').classList.remove('show');

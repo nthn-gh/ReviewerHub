@@ -107,6 +107,17 @@ function checkBadges(player, result) {
   return earned;
 }
 
+// ---- Attempt Limit ----------------------------------------
+const MAX_ATTEMPTS = 2; // Students may take each quiz at most this many times
+
+function getAttempts(player, topicId) {
+  return player?.scores?.[topicId]?.attempts || 0;
+}
+
+function isAttemptLimitReached(player, topicId) {
+  return getAttempts(player, topicId) >= MAX_ATTEMPTS;
+}
+
 // ---- Submit Score -----------------------------------------
 function submitScore(topicId, score, total, timeSeconds) {
   let player = getPlayer();
@@ -116,10 +127,13 @@ function submitScore(topicId, score, total, timeSeconds) {
   const prev = player.scores[topicId];
   const wasRetry = !!prev;
   const xpEarned = calcXP(score, total);
+  const prevAttempts = prev?.attempts || 0;
 
-  // Update score record (keep best)
+  // Update score record (always keep best pct, always increment attempts)
   if (!prev || pct > prev.pct) {
-    player.scores[topicId] = { score, total, pct, timeSeconds, date: new Date().toISOString() };
+    player.scores[topicId] = { score, total, pct, timeSeconds, date: new Date().toISOString(), attempts: prevAttempts + 1 };
+  } else {
+    player.scores[topicId].attempts = prevAttempts + 1;
   }
 
   player.xp += xpEarned;
@@ -134,8 +148,9 @@ function submitScore(topicId, score, total, timeSeconds) {
   savePlayer(player);
   updateLeaderboard(player);
 
-  return { xpEarned, leveledUp, newBadges, newLevel: newLevelObj, pct };
+  return { xpEarned, leveledUp, newBadges, newLevel: newLevelObj, pct, attempts: player.scores[topicId].attempts };
 }
+
 
 // ---- Weekly Reset Helper ----------------------------------
 function getWeekKey() {
@@ -511,6 +526,7 @@ window.Game = {
   getWeekKey, jsonbinConfigured,
   launchConfetti, showToast,
   renderLevelBadge, renderXPBar, getDifficultyClass, getBestScore,
+  getAttempts, isAttemptLimitReached, MAX_ATTEMPTS,
   LEVELS, BADGES,
 };
 
