@@ -24,6 +24,7 @@
       <div class="nav-avatar" id="navAvatar">?</div>
       <span class="nav-player-text" id="navName">Player</span>
       <span class="nav-player-text" id="navXP" style="color:var(--purple-l);font-size:.8rem">0 XP</span>
+      <button onclick="logOut()" style="background:none;border:none;color:var(--red);cursor:pointer;margin-left:.5rem;font-size:.78rem;font-weight:700" title="Log Out">Log Out</button>
     </div>
     <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -56,30 +57,25 @@
   </div>
 </div>
 
-<!-- NAME ENTRY MODAL -->
+<!-- AUTH MODAL -->
 <div class="modal-overlay show" id="nameModal">
-  <div class="modal">
-    <div style="text-align:center;margin-bottom:1.5rem">
-      <div style="font-size:3rem;margin-bottom:.75rem">🎮</div>
-      <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.25rem,5vw,1.6rem);font-weight:800;margin-bottom:.4rem">Welcome to ReviewerHub!</h1>
-      <p style="color:var(--text2);font-size:.9rem">Enter your name to start earning XP and badges.</p>
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:3rem;margin-bottom:.5rem">🚀</div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:1.5rem" id="authTitle">Create an Account</h2>
+
+    <div style="display:flex;gap:.5rem;margin-bottom:1.5rem;background:var(--bg3);padding:.4rem;border-radius:12px">
+      <button class="btn btn-sm" id="tabSignup" style="flex:1;background:var(--purple-g);color:#fff" onclick="switchAuthTab('signup')">Sign Up</button>
+      <button class="btn btn-sm" id="tabLogin" style="flex:1;background:transparent;color:var(--text2)" onclick="switchAuthTab('login')">Log In</button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:1rem">
-      <input id="nameInput" type="text" placeholder="Your name (e.g. Juan Dela Cruz)"
-        style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
-               background:var(--bg3);color:var(--white);font-size:1rem;width:100%;
-               outline:none;transition:border-color var(--transition);font-family:'Inter',sans-serif"
-        onfocus="this.style.borderColor='var(--purple-l)'"
-        onblur="this.style.borderColor='var(--border)'"
-        maxlength="30"/>
-      <p id="nameError" style="color:var(--red);font-size:.8rem;display:none">Please enter your name to continue.</p>
-      <button class="btn btn-primary btn-lg" onclick="submitName()" id="startBtn">
-        🚀 Let's Go!
-      </button>
-    </div>
-    <p style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:1.2rem">
-      No account needed — your progress is saved on this device.
-    </p>
+
+    <input type="email" id="authEmail" placeholder="Email address" class="form-input" style="width:100%;margin-bottom:1rem;padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--white)" />
+    <input type="password" id="authPassword" placeholder="Password (min 6 chars)" class="form-input" style="width:100%;margin-bottom:1rem;padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--white)" />
+    <input type="text" id="authName" placeholder="Your Display Name" class="form-input" style="width:100%;margin-bottom:1.5rem;padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--white)" maxlength="30" />
+
+    <button class="btn btn-primary btn-lg" id="authBtn" style="width:100%;justify-content:center" onclick="submitAuth()">Sign Up</button>
+    
+    <div id="authError" style="color:var(--red);font-size:.85rem;margin-top:1rem;display:none"></div>
+    <p style="font-size:.8rem;color:var(--text2);margin-top:1rem" id="authNotice">Your progress will be securely saved to the cloud.</p>
   </div>
 </div>
 
@@ -89,9 +85,7 @@
     <h2 style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:1rem">✏️ Change Your Name</h2>
     <input id="renameInput" type="text" placeholder="New name" maxlength="30"
       style="padding:.85rem 1.1rem;border-radius:10px;border:1px solid var(--border);
-             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:.75rem;outline:none"
-      onfocus="this.style.borderColor='var(--purple-l)'"
-      onblur="this.style.borderColor='var(--border)'"/>
+             background:var(--bg3);color:var(--white);font-size:1rem;width:100%;margin-bottom:.75rem;outline:none" />
     <div style="display:flex;gap:.6rem">
       <button class="btn btn-secondary" style="flex:1" onclick="closeRenameModal()">Cancel</button>
       <button class="btn btn-primary" style="flex:1" onclick="submitRename()">Save</button>
@@ -182,67 +176,34 @@
 </footer>
 
 <script src="topics.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="app.js?v=4"></script>
+<script src="supabase-backend.js"></script>
 <script>
 // ---- Init -----------------------------------------------
-let player = null;
-let activeFilter = 'All';
-let allTopics = [];
 
-// ---- Mobile Menu ------------------------------------------
-function toggleMobileMenu() {
-  const drawer = document.getElementById('mobileDrawer');
-  const overlay = document.getElementById('mobileOverlay');
-  const btn = document.getElementById('navHamburger');
-  if (drawer.classList.contains('open')) { closeMobileMenu(); return; }
-  drawer.classList.add('open'); overlay.classList.add('open');
-  btn.classList.add('open'); btn.setAttribute('aria-expanded','true');
-  document.body.style.overflow = 'hidden';
-}
-function closeMobileMenu() {
-  document.getElementById('mobileDrawer').classList.remove('open');
-  document.getElementById('mobileOverlay').classList.remove('open');
-  const btn = document.getElementById('navHamburger');
-  btn.classList.remove('open'); btn.setAttribute('aria-expanded','false');
-  document.body.style.overflow = '';
-}
-function updateMobileDrawerPlayer() {
-  if (!player) return;
-  const dp = document.getElementById('mobileDrawerPlayer');
-  dp.style.display = 'flex';
-  document.getElementById('mobileDrawerAvatar').textContent = player.name.charAt(0).toUpperCase();
-  document.getElementById('mobileDrawerName').textContent = player.name;
-  document.getElementById('mobileDrawerXP').textContent = player.xp + ' XP';
-}
-
-async function init() {
-  // #10: Show loading skeleton immediately before async fetch
-  document.getElementById('topicGrid').innerHTML = `
-    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:60%"></div></div>
-    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .15s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:70%"></div></div>
-    <div class="card" style="padding:1.5rem;opacity:.4;animation:pulse 1.5s infinite .3s"><div style="height:1.5rem;border-radius:6px;background:var(--glass-b);margin-bottom:.75rem"></div><div style="height:.8rem;border-radius:6px;background:var(--glass-b);width:50%"></div></div>
-  `;
-
-  allTopics = await Game.getAllTopics();
-
-  player = Game.getPlayer();
-  if (player) {
-    closeNameModal();
-    renderPage();
-    // Check for any pending XP refunds from rejected reward claims
-    const prevXP = player.xp;
-    await Game.processRefunds();
-    player = Game.getPlayer();
-    if (player && player.xp > prevXP) {
-      const refunded = player.xp - prevXP;
-      Game.showToast(`💸 +${refunded} XP refunded from a rejected reward claim!`, 5000);
-      renderPage();
-    }
-    // Auto-sync any pre-existing local scores to shared leaderboard
-    Game.syncLocalToShared();
+let authMode = 'signup';
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('authError').style.display = 'none';
+  if (mode === 'signup') {
+    document.getElementById('tabSignup').style.background = 'var(--purple-g)';
+    document.getElementById('tabSignup').style.color = '#fff';
+    document.getElementById('tabLogin').style.background = 'transparent';
+    document.getElementById('tabLogin').style.color = 'var(--text2)';
+    document.getElementById('authTitle').textContent = 'Create an Account';
+    document.getElementById('authBtn').textContent = 'Sign Up';
+    document.getElementById('authName').style.display = 'block';
   } else {
+    const local = localStorage.getItem('rv_player');
+    if (local) {
+       const p = JSON.parse(local);
+       document.getElementById('authName').value = p.name || '';
+       document.getElementById('authNotice').textContent = "Sign up to securely save your local progress to the cloud!";
+    }
     document.getElementById('nameModal').classList.add('show');
-    setTimeout(() => document.getElementById('nameInput').focus(), 300);
+    document.getElementById('heroSection').style.display = 'none';
   }
   buildFilterBar();
   renderTopics();
@@ -262,31 +223,6 @@ function submitName() {
   Game.updateLeaderboard(player);
   // Sync new player to shared leaderboard if configured
   Game.syncLocalToShared();
-  closeNameModal();
-  renderPage();
-  Game.showToast(`Welcome, ${name}! 🎉 Start a topic to earn your first XP!`);
-}
-
-// #15: Change name via modal (replaces prompt() — better on mobile)
-function changeName() {
-  const inp = document.getElementById('renameInput');
-  inp.value = player?.name || '';
-  document.getElementById('renameModal').classList.add('show');
-  setTimeout(() => inp.select(), 150);
-}
-function closeRenameModal() {
-  document.getElementById('renameModal').classList.remove('show');
-}
-function submitRename() {
-  const inp = document.getElementById('renameInput');
-  const newName = inp.value.trim().slice(0, 30);
-  if (!newName) return;
-  player.name = newName;
-  Game.savePlayer(player);
-  Game.updateLeaderboard(player);
-  closeRenameModal();
-  renderPage();
-  Game.showToast(`Name updated to "${player.name}" ✅`);
 }
 document.getElementById('renameInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitRename();

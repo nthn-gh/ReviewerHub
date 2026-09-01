@@ -156,7 +156,10 @@
 </div>
 
 <script src="topics.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="app.js?v=4"></script>
+<script src="supabase-backend.js"></script>
 <script>
 let topic = null;
 let player = null;
@@ -193,7 +196,7 @@ function updateMobileDrawerPlayer() {
 
 // ---- Init -----------------------------------------------
 async function init() {
-  player = Game.getPlayer();
+  player = await Game.loadAuth();
   if (!player) { window.location.href = 'index.html'; return; }
 
   const allTopics = await Game.getAllTopics();
@@ -319,7 +322,7 @@ function triggerSubmit(score, total, timeSeconds) {
   clearInterval(timerInterval);
 
   const result = Game.submitScore(topic.id, score, total, timeSeconds);
-  player = Game.getPlayer();
+  player = await Game.loadAuth();
   // Push to shared leaderboard (async, non-blocking)
   Game.pushToShared(player);
 
