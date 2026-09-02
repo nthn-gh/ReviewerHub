@@ -54,7 +54,7 @@ window.TOPICS = [
     subject: "Science",
     description: "Learn about properties of matter, phase changes, and particles!",
     difficulty: "Medium",
-    questions: 30,
+    questions: 34,
     file: "reviewers/grade5-science-matter.html",
     color: "#10b981",
     icon: "🧪",

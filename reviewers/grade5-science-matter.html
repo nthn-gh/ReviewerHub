@@ -137,6 +137,15 @@
     <strong>The "Why":</strong> Gas particles are zooming freely in all directions, so they will spread out to fill whatever room or balloon they are in. Because there is <strong>so much empty space</strong> between the zooming particles, you can easily squeeze them closer together into a smaller space!</p>
   </div>
 
+  <div class="alert" style="background: rgba(217,119,6,0.1); border-color: #d97706; margin-top: 1rem;">
+    <div class="alert-title" style="color: #d97706;">🍯 What is Viscosity?</div>
+    <p>When we talk about liquids flowing, we use a special word: <strong>Viscosity</strong> (thickness or stickiness). It measures a liquid's <strong>resistance</strong> (how hard it fights) to flow.</p>
+    <ul>
+      <li><strong>High Viscosity:</strong> Liquids that are very thick and flow slowly. The particles have high <strong>internal friction</strong> (they rub together and stick a lot). <br><em>Examples: Honey, syrup, peanut butter.</em></li>
+      <li><strong>Low Viscosity:</strong> Liquids that are thin and flow very fast. The particles have very little friction (they slide past each other easily). <br><em>Examples: Water, milk, apple juice.</em></li>
+    </ul>
+  </div>
+
   <h2>🔥❄️ 3. Phase Changes (Temperature Magic)</h2>
   <p>Matter changes state when the <strong>temperature</strong> changes. Temperature acts like an energy dial!</p>
   <ul>
@@ -325,7 +334,11 @@
     { q: "Why can gases be compressed easily?", choices: ["Because they have no mass.", "Because they are invisible.", "Because they are light.", "Because there is lots of empty space between the particles."], correct: 3, exp: "The large gaps between gas particles mean you can push them closer together." },
     { q: "When you see droplets of water on the outside of a cold glass of lemonade, what phase change is happening?", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 3, exp: "Water vapor (gas) in the warm air hits the cold glass and condenses into liquid drops." },
     { q: "Which state of matter has particles that slide and slip past each other?", choices: ["Solid", "Liquid", "Gas", "Diamond"], correct: 1, exp: "Liquid particles are close together but unorganized, allowing them to flow and slide." },
-    { q: "If you leave a puddle of water out in the hot sun, it disappears. This is an example of...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 2, exp: "The sun adds heat to the liquid puddle, causing it to evaporate into a gas." }
+    { q: "If you leave a puddle of water out in the hot sun, it disappears. This is an example of...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 2, exp: "The sun adds heat to the liquid puddle, causing it to evaporate into a gas." },
+    { q: "What scientific word describes how 'thick' a liquid is and how much it resists flowing?", choices: ["Volume", "Mass", "Compressibility", "Viscosity"], correct: 3, exp: "Viscosity measures a liquid's resistance (how hard it fights) to flow!" },
+    { q: "Which of these liquids has HIGH viscosity (flows very slowly)?", choices: ["Water", "Honey", "Milk", "Apple Juice"], correct: 1, exp: "Honey is very thick and has high internal friction, meaning it has high viscosity." },
+    { q: "Situational: You are having a race pouring water and syrup down a slide. Why does the water win the race?", choices: ["Because water has lower viscosity.", "Because water has higher viscosity.", "Because water is a gas.", "Because water has less mass."], correct: 0, exp: "Water has lower viscosity, meaning it has very little internal friction and flows much faster than sticky syrup!" },
+    { q: "Situational: You try to squish a water balloon, but it won't compress into a smaller size. Why not?", choices: ["Because the rubber is too strong.", "Because liquids have high viscosity.", "Because liquid particles are already touching and cannot be squeezed closer.", "Because water turns into a solid when you squeeze it."], correct: 2, exp: "Liquids have a fixed volume. Their particles are already touching, so they are not easily compressible!" }
   ];
 
   let current = 0, score = 0, answered = false, startTime = 0;
