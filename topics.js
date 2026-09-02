@@ -48,4 +48,15 @@ window.TOPICS = [
     color: "#2563EB",
     icon: "📝",
   },
+  {
+    id: "grade5-science-matter",
+    title: "Matter & Its Secrets",
+    subject: "Science",
+    description: "Learn about properties of matter, phase changes, and particles!",
+    difficulty: "Medium",
+    questions: 5,
+    file: "reviewers/grade5-science-matter.html",
+    color: "#10b981",
+    icon: "🧪",
+  },
 ];
