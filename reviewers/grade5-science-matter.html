@@ -147,41 +147,34 @@
   </ul>
   
   <style>
-    .phase-change-guide { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; background: rgba(255,255,255,0.05); padding: 2rem 1rem; border-radius: 12px; border: 2px dashed rgba(255,255,255,0.2); margin-bottom: 2rem; width: 100%; }
-    .phase-step { display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; max-width: 600px; }
-    .mobile-only { display: none; }
-    @media(max-width: 600px) { 
-      .phase-step { flex-direction: column; } 
-      .phase-arrows { margin: 1rem 0; width: 100%; } 
-      .desktop-only { display: none; }
-      .mobile-only { display: inline; }
-    }
-    .state-badge { border: 3px solid #3b82f6; border-radius: 12px; padding: 1rem; font-size: 1.4rem; font-weight: 800; color: #fff; text-align: center; min-width: 140px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .phase-scroll-wrapper { width: 100%; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2rem; }
+    .phase-change-guide { display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: flex-start; background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; border: 2px dashed rgba(255,255,255,0.2); min-width: 650px; }
+    .state-badge { border: 3px solid #3b82f6; border-radius: 12px; padding: 1rem; font-size: 1.4rem; font-weight: 800; color: #fff; text-align: center; min-width: 140px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); flex-shrink: 0; }
     .state-badge.solid { border-color: #3b82f6; background: #1e3a8a; }
     .state-badge.liquid { border-color: #06b6d4; background: #164e63; }
     .state-badge.gas { border-color: #f43f5e; background: #881337; }
-    .phase-arrows { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; align-items: center; width: 100%; }
+    .phase-arrows { display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; min-width: 170px; }
     .arrow-path { display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; padding: 0.6rem 1rem; border-radius: 8px; width: 100%; text-align: center; }
     .arrow-hot { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef4444; }
     .arrow-cold { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f6; }
   </style>
   
-  <div class="phase-change-guide">
-    <div class="phase-step">
+  <div class="phase-scroll-wrapper">
+    <div class="phase-change-guide">
       <div class="state-badge solid">🧊 Solid<br><span style="font-size: 0.9rem; color:#93c5fd; font-weight: 500;">(like Ice)</span></div>
+      
       <div class="phase-arrows">
-         <div class="arrow-path arrow-hot">Heat up! <span class="desktop-only">➔</span><span class="mobile-only">⬇</span> Melts 🫠</div>
-         <div class="arrow-path arrow-cold"><span class="desktop-only">🠔</span><span class="mobile-only">⬆</span> Cool down! Freezes 🥶</div>
+         <div class="arrow-path arrow-hot">Heat up! ➔ Melts 🫠</div>
+         <div class="arrow-path arrow-cold">🠔 Cool down! Freezes 🥶</div>
       </div>
+      
       <div class="state-badge liquid">💧 Liquid<br><span style="font-size: 0.9rem; color:#67e8f9; font-weight: 500;">(like Water)</span></div>
-    </div>
-  
-    <div class="phase-step">
-      <div class="state-badge liquid">💧 Liquid<br><span style="font-size: 0.9rem; color:#67e8f9; font-weight: 500;">(like Water)</span></div>
+
       <div class="phase-arrows">
-         <div class="arrow-path arrow-hot">Heat up! <span class="desktop-only">➔</span><span class="mobile-only">⬇</span> Evaporates ♨️</div>
-         <div class="arrow-path arrow-cold"><span class="desktop-only">🠔</span><span class="mobile-only">⬆</span> Cool down! Condenses 🌧️</div>
+         <div class="arrow-path arrow-hot">Heat up! ➔ Evaporates ♨️</div>
+         <div class="arrow-path arrow-cold">🠔 Cool down! Condenses 🌧️</div>
       </div>
+      
       <div class="state-badge gas">☁️ Gas<br><span style="font-size: 0.9rem; color:#fda4af; font-weight: 500;">(like Steam)</span></div>
     </div>
   </div>
