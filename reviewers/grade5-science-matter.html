@@ -12,6 +12,7 @@
   h1, h2, h3{font-family:'Outfit',sans-serif;font-weight:800;color:#a78bfa;margin-bottom:1rem;margin-top:2rem;}
   h1{font-size: 2rem;}
   h2{font-size: 1.5rem; color: #22d3ee;}
+  h3{font-size: 1.25rem; color: #f472b6; margin-top: 1.5rem;}
   p{margin-bottom: 1rem; color: #cbd5e1;}
   ul {margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1;}
   table {width: 100%; border-collapse: collapse; margin-bottom: 2rem; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;}
@@ -22,6 +23,19 @@
   .alert p {margin-bottom: 0;}
   .alert ul {margin-bottom: 0;}
   .mermaid {background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;}
+  
+  /* Particle Visualizer CSS */
+  .particle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  @media(max-width: 768px) { .particle-grid { grid-template-columns: 1fr; } }
+  .particle-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+  .particle-box h4 { font-family: 'Outfit', sans-serif; color: #f8fafc; margin-bottom: 1rem; font-size: 1.2rem; }
+  .container-sim { width: 100%; max-width: 200px; aspect-ratio: 1; background: rgba(0,0,0,0.3); border-radius: 8px; position: relative; overflow: hidden; border: 2px solid #64748b; margin: 0 auto; }
+  .dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; position: absolute; box-shadow: 0 0 5px rgba(34,211,238,0.8); }
+  
+  /* Animations for Particles */
+  @keyframes wiggle { 0% {transform: translate(0,0);} 25% {transform: translate(1px,-1px);} 50% {transform: translate(-1px,1px);} 75% {transform: translate(-1px,-1px);} 100% {transform: translate(1px,1px);} }
+  @keyframes float { 0% { transform: translate(0, 0); } 33% { transform: translate(20px, -30px); } 66% { transform: translate(-20px, -10px); } 100% { transform: translate(0, 0); } }
+  .gas-dot { animation: float 4s infinite alternate ease-in-out; }
   
   /* Quiz Styles */
   #quiz-container {display:none; margin-top: 2rem; border-top: 2px solid rgba(255,255,255,0.1); padding-top: 2rem;}
@@ -74,99 +88,107 @@
   <h1>🌟 Grade 5 Science: The Secrets of Matter!</h1>
   <p>Welcome to your ultimate guide on <strong>Matter</strong>! Everything around you—the chair you're sitting on, the water you drink, and even the air you breathe—is made of matter.</p>
 
-  <h2>🔬 1. Properties of Matter & Particle Arrangement</h2>
-  <p>Everything in the universe is made of tiny, invisible building blocks called <strong>particles</strong>. How they are arranged decides if something is a Solid, Liquid, or Gas.</p>
+  <h2>📏 1. What Exactly IS Matter?</h2>
+  <p>For something to be called "matter," it must have two special properties:</p>
+  <ul>
+    <li><strong>Mass (⚖️):</strong> This is how much "stuff" is inside an object. We usually measure it in grams (g) or kilograms (kg). <br><em>Example: A bowling ball has much more mass than a balloon, even if they look like they are the same size!</em></li>
+    <li><strong>Volume (📦):</strong> This is how much space an object takes up. <br><em>Example: A fully blown-up balloon has more volume than a tiny heavy marble.</em></li>
+  </ul>
+
+  <h2>🔬 2. Properties of Matter & Particle Arrangement</h2>
+  <p>Everything is made of tiny, invisible building blocks called <strong>particles</strong>. Let's look at how they are arranged in Solids, Liquids, and Gases.</p>
+  
+  <div class="particle-grid">
+    <div class="particle-box">
+      <h4>Solid 🧊</h4>
+      <div class="container-sim" id="sim-solid"></div>
+      <p style="font-size: 0.85rem; margin-top: 0.5rem; color:#cbd5e1;">Tightly packed together. They only wiggle (vibrate) in place.</p>
+    </div>
+    <div class="particle-box">
+      <h4>Liquid 💧</h4>
+      <div class="container-sim" id="sim-liquid"></div>
+      <p style="font-size: 0.85rem; margin-top: 0.5rem; color:#cbd5e1;">Close together, but they slip and flow past each other at the bottom.</p>
+    </div>
+    <div class="particle-box">
+      <h4>Gas ☁️</h4>
+      <div class="container-sim" id="sim-gas"></div>
+      <p style="font-size: 0.85rem; margin-top: 0.5rem; color:#cbd5e1;">Spread very far apart, zooming everywhere quickly!</p>
+    </div>
+  </div>
   
   <table>
     <tr>
       <th>State</th>
-      <th>Particle Arrangement 🔍</th>
       <th>Shape & Volume 📦</th>
+      <th>Can it be squished? (Compressed) 🗜️</th>
     </tr>
     <tr>
       <td><strong>Solid</strong></td>
-      <td><strong>Tightly packed</strong> in a neat pattern. They only wiggle (vibrate). Cannot be compressed.</td>
-      <td><strong>Fixed Shape</strong><br><strong>Fixed Volume</strong></td>
+      <td><strong>Fixed Shape</strong> & <strong>Fixed Volume</strong></td>
+      <td><strong>No.</strong> Particles are already packed as tight as possible.</td>
     </tr>
     <tr>
       <td><strong>Liquid</strong></td>
-      <td><strong>Close together but disorganized.</strong> They slip and slide. Cannot be compressed.</td>
-      <td><strong>Indefinite Shape</strong> (takes shape of container)<br><strong>Fixed Volume</strong></td>
+      <td><strong>Indefinite Shape</strong> (takes shape of container) & <strong>Fixed Volume</strong></td>
+      <td><strong>No.</strong> Particles are still too close together.</td>
     </tr>
     <tr>
       <td><strong>Gas</strong></td>
-      <td><strong>Spread very far apart</strong> and zooming around super fast! Can be compressed easily!</td>
-      <td><strong>Indefinite Shape</strong><br><strong>Indefinite Volume</strong> (expands to fill container)</td>
+      <td><strong>Indefinite Shape</strong> & <strong>Indefinite Volume</strong> (expands to fill container)</td>
+      <td><strong>Yes!</strong> Lots of empty space between particles.</td>
     </tr>
   </table>
 
-  <div class="alert">
-    <div class="alert-title">💡 Imagine this:</div>
-    <ul>
-      <li><strong>Solids:</strong> Students sitting quietly in assigned desks.</li>
-      <li><strong>Liquids:</strong> Students walking around during an activity.</li>
-      <li><strong>Gases:</strong> Students running freely on the playground!</li>
-    </ul>
-  </div>
-
-  <h2>🔥❄️ 2. Phase Changes & Temperature</h2>
-  <p>Matter changes state when the <strong>temperature</strong> changes. It's like an energy dial!</p>
+  <h2>🔥❄️ 3. Phase Changes (Temperature Magic)</h2>
+  <p>Matter changes state when the <strong>temperature</strong> changes. Temperature acts like an energy dial!</p>
   <ul>
-    <li>📈 <strong>Adding Heat:</strong> Gives particles energy. They move faster and spread apart (Expansion).</li>
-    <li>📉 <strong>Removing Heat:</strong> Takes energy away. Particles slow down and pack closer (Contraction).</li>
+    <li>📈 <strong>Adding Heat (Warming up):</strong> Gives particles energy. They move faster and spread apart (Expansion).</li>
+    <li>📉 <strong>Removing Heat (Cooling down):</strong> Takes energy away. Particles slow down and pack closer (Contraction).</li>
   </ul>
   
-  <p><strong>The Core Changes:</strong></p>
-  <ul>
-    <li>🫠 <strong>Melting (Solid ➡️ Liquid):</strong> Adding heat makes solid particles vibrate fast enough to break out of their pattern.</li>
-    <li>🧊 <strong>Freezing (Liquid ➡️ Solid):</strong> Removing heat slows liquid particles until they lock into a fixed pattern.</li>
-    <li>♨️ <strong>Evaporation (Liquid ➡️ Gas):</strong> Adding lots of heat makes particles break away completely and zoom away.</li>
-    <li>🌧️ <strong>Condensation (Gas ➡️ Liquid):</strong> Removing heat cools zooming gas particles until they clump together into drops.</li>
-  </ul>
-
-  <div class="mermaid">
-    graph LR
-    classDef solid fill:#a2d2ff,stroke:#000,stroke-width:2px,color:black;
-    classDef liquid fill:#bde0fe,stroke:#000,stroke-width:2px,color:black;
-    classDef gas fill:#ffc8dd,stroke:#000,stroke-width:2px,color:black;
-    
-    S((Solid 🧊)):::solid
-    L((Liquid 💧)):::liquid
-    G((Gas ☁️)):::gas
-    
-    S -- "♨️ Melting (Add Heat)" --> L
-    L -- "❄️ Freezing (Remove Heat)" --> S
-    L -- "♨️ Evaporation (Add Heat)" --> G
-    G -- "❄️ Condensation (Remove Heat)" --> L
+  <div class="alert" style="background: rgba(255,255,255,0.05); border-color: #cbd5e1;">
+    <div class="alert-title" style="color: #cbd5e1;">Simple Phase Change Guide:</div>
+    <div class="mermaid">
+      flowchart LR
+      S[Solid 🧊]
+      L[Liquid 💧]
+      G[Gas ☁️]
+      
+      S --"♨️ Add Heat<br>(Melting)"--> L
+      L --"❄️ Remove Heat<br>(Freezing)"--> S
+      
+      L --"♨️ Add Heat<br>(Evaporation)"--> G
+      G --"❄️ Remove Heat<br>(Condensation)"--> L
+      
+      style S fill:#a2d2ff,stroke:#3b82f6,stroke-width:2px,color:black,font-weight:bold
+      style L fill:#bde0fe,stroke:#3b82f6,stroke-width:2px,color:black,font-weight:bold
+      style G fill:#ffc8dd,stroke:#f43f5e,stroke-width:2px,color:black,font-weight:bold
+    </div>
   </div>
 
-  <h2>⚛️ 3. Zooming In! What are Particles?</h2>
+  <h2>⚛️ 4. Zooming In! Meet the Molecules</h2>
   <p>Particles have specific names:</p>
   <ul>
-    <li><strong>Atoms:</strong> The single building blocks (like a LEGO brick).</li>
-    <li><strong>Molecules:</strong> Atoms stuck together.</li>
+    <li><strong>Atoms:</strong> The single basic building blocks (like a single LEGO brick).</li>
+    <li><strong>Molecules:</strong> Two or more atoms stuck together (like a LEGO model).</li>
     <li><strong>Compounds:</strong> Molecules made of <em>different types</em> of atoms.</li>
   </ul>
 
-  <p><strong>The Water Molecule (H₂O):</strong></p>
-  <p>Water is a compound. <strong>H</strong> stands for Hydrogen (there are 2), and <strong>O</strong> stands for Oxygen (there is 1).</p>
+  <h3>Famous Molecules You Should Know!</h3>
   
   <div class="alert" style="background: rgba(59,130,246,0.1); border-color: #3b82f6;">
-    <div class="alert-title" style="color: #3b82f6;">🐭 The Mickey Mouse Trick</div>
-    <p>A water molecule looks like Mickey Mouse! The big face is the Oxygen atom, and the two little ears are the Hydrogen atoms.</p>
+    <div class="alert-title" style="color: #3b82f6;">💧 Water (H₂O)</div>
+    <p>Water is made of <strong>2 Hydrogen (H)</strong> atoms and <strong>1 Oxygen (O)</strong> atom. <br><em>Trick: A water molecule looks like Mickey Mouse! The big face is Oxygen, and the two little ears are Hydrogen.</em></p>
   </div>
 
-  <div class="mermaid">
-    graph TD
-    classDef oxygen fill:#ff4d4d,stroke:#000,stroke-width:2px,color:white;
-    classDef hydrogen fill:#e6e6e6,stroke:#000,stroke-width:2px,color:black;
-    
-    O((Oxygen 'O')):::oxygen
-    H1((Hydrogen 'H')):::hydrogen
-    H2((Hydrogen 'H')):::hydrogen
-    
-    H1 --- O
-    H2 --- O
+  <div class="alert" style="background: rgba(16,185,129,0.1); border-color: #10b981;">
+    <div class="alert-title" style="color: #10b981;">🌿 Carbon Dioxide (CO₂)</div>
+    <p>This is the gas we breathe out and plants use for food! It has <strong>1 Carbon (C)</strong> atom and <strong>2 Oxygen (O)</strong> atoms.</p>
+  </div>
+
+  <div class="alert" style="background: rgba(245,158,11,0.1); border-color: #f59e0b;">
+    <div class="alert-title" style="color: #f59e0b;">🧂 Salt (NaCl)</div>
+    <p>The stuff you put on french fries! Its scientific name is Sodium Chloride. It's made of <strong>1 Sodium (Na)</strong> atom and <strong>1 Chlorine (Cl)</strong> atom.</p>
   </div>
 
   <button class="start-quiz-btn" onclick="startQuiz()">Take the Practice Quiz! 📝</button>
@@ -177,9 +199,9 @@
   <div id="quizArea">
     <div class="meta">
       <span>🔬 Matter & Secrets Quiz</span>
-      <span id="qCounter">Question 1 / 5</span>
+      <span id="qCounter">Question 1 / 7</span>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
     <div class="question" id="questionText">Loading...</div>
     <div class="choices" id="choicesArea"></div>
     <div class="feedback" id="feedbackEl"></div>
@@ -189,7 +211,7 @@
   <div id="resultsArea" style="display:none">
     <div class="score-display">
       <div style="font-size:3rem;margin-bottom:.5rem" id="resultEmoji">🎉</div>
-      <div class="score-big" id="finalScore">0/5</div>
+      <div class="score-big" id="finalScore">0/7</div>
       <div class="score-label" id="finalMsg">Here's your score!</div>
       <div style="font-size:.85rem;color:#64748b;margin-bottom:1.5rem" id="finalSub"></div>
       <button class="play-again" onclick="restartQuiz()">🔄 Review Again & Retry</button>
@@ -200,24 +222,67 @@
 <script>
   mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
 
+  // Generate Particle Visualizations
+  window.addEventListener('DOMContentLoaded', () => {
+    // Solid (Wiggling tight grid)
+    const solid = document.getElementById('sim-solid');
+    let solidHTML = '<div style="display:flex; flex-wrap:wrap; width:84px; height:84px; margin: 50px auto; align-content:center; gap: 2px;">';
+    for(let i=0; i<36; i++) {
+      solidHTML += `<div class="dot" style="position:relative; animation: wiggle ${Math.random()*0.5 + 0.5}s infinite alternate;"></div>`;
+    }
+    solid.innerHTML = solidHTML + '</div>';
+
+    // Liquid (Loose at bottom)
+    const liquid = document.getElementById('sim-liquid');
+    let liquidHTML = '';
+    for(let i=0; i<36; i++) {
+      const x = Math.random() * 85 + 5; 
+      const y = Math.random() * 40 + 55; // Bottom area
+      liquidHTML += `<div class="dot" style="left:${x}%; top:${y}%;"></div>`;
+    }
+    liquid.innerHTML = liquidHTML;
+
+    // Gas (Scattered everywhere, floating)
+    const gas = document.getElementById('sim-gas');
+    let gasHTML = '';
+    for(let i=0; i<15; i++) {
+      const x = Math.random() * 85 + 5;
+      const y = Math.random() * 85 + 5;
+      gasHTML += `<div class="dot gas-dot" style="left:${x}%; top:${y}%; animation-delay: -${Math.random()*4}s"></div>`;
+    }
+    gas.innerHTML = gasHTML;
+  });
+
   const questions = [
     {
-      q: "You take a hot shower and the bathroom mirror gets foggy. What phase change is happening on the cold mirror?",
+      q: "What do we call the amount of 'stuff' inside an object?",
+      choices: ["Volume", "Mass", "Temperature", "Matter"],
+      correct: 1,
+      exp: "Mass is how much 'stuff' (or matter) is inside an object, usually measured in grams."
+    },
+    {
+      q: "A blown-up balloon takes up a lot of space. This means it has a large...",
+      choices: ["Mass", "Weight", "Volume", "Atom"],
+      correct: 2,
+      exp: "Volume is the amount of space an object takes up."
+    },
+    {
+      q: "You take a hot shower and the bathroom mirror gets foggy. What phase change is happening?",
       choices: ["Evaporation", "Condensation", "Melting", "Freezing"],
       correct: 1,
       exp: "Condensation! The cold mirror removes heat from the steam (gas), turning it back into liquid water drops."
     },
     {
-      q: "Why can you squeeze a balloon full of air into a smaller shape, but you can't squeeze a solid rock?",
-      choices: ["Gases have a lot of empty space between particles.", "Rocks are made of stronger atoms.", "Gases do not have any mass.", "Solids expand when you squeeze them."],
+      q: "Why can you squeeze a balloon full of air, but not a solid rock?",
+      choices: ["Gases have empty space between particles.", "Rocks are made of stronger atoms.", "Gases do not have any mass.", "Solids expand when you squeeze them."],
       correct: 0,
-      exp: "Gases have lots of empty space between particles, so they can be compressed. Solids are already packed tightly."
+      exp: "Gases have lots of empty space between particles, so they can be compressed. Solids are packed tightly."
     },
     {
-      q: "What do the 'H' and the 'O' stand for in water's chemical formula (H₂O)?",
-      choices: ["Helium and Oxygen", "Heat and Ozone", "Hydrogen and Oxygen", "Hydrogen and Ozone"],
+      q: "What atoms are found in Carbon Dioxide (CO₂)?",
+      choices: ["1 Carbon, 1 Oxygen", "2 Carbon, 2 Oxygen", "1 Carbon, 2 Oxygen", "2 Carbon, 1 Oxygen"],
       correct: 2,
-      exp: "H stands for Hydrogen (2 atoms), and O stands for Oxygen (1 atom)!"
+      exp: "The 'C' stands for 1 Carbon, and the 'O₂' means there are 2 Oxygen atoms!"
     },
     {
       q: "True or False: Gases do not have any mass or weight because you cannot see them.",
@@ -226,7 +291,7 @@
       exp: "False! Gases are made of particles (matter), so they definitely have mass and take up space, even if they are invisible."
     },
     {
-      q: "True or False: When liquid water freezes into solid ice, it turns into a completely different chemical.",
+      q: "True or False: When liquid water freezes into ice, it turns into a completely different chemical.",
       choices: ["True", "False"],
       correct: 1,
       exp: "False! Freezing is just a phase change. Ice is still H₂O, the particles are just moving slower and locked in place."
