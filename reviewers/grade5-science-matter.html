@@ -268,48 +268,36 @@
   });
 
   const questions = [
-    {
-      q: "What do we call the amount of 'stuff' inside an object?",
-      choices: ["Volume", "Mass", "Temperature", "Matter"],
-      correct: 1,
-      exp: "Mass is how much 'stuff' (or matter) is inside an object, usually measured in grams."
-    },
-    {
-      q: "A blown-up balloon takes up a lot of space. This means it has a large...",
-      choices: ["Mass", "Weight", "Volume", "Atom"],
-      correct: 2,
-      exp: "Volume is the amount of space an object takes up."
-    },
-    {
-      q: "You take a hot shower and the bathroom mirror gets foggy. What phase change is happening?",
-      choices: ["Evaporation", "Condensation", "Melting", "Freezing"],
-      correct: 1,
-      exp: "Condensation! The cold mirror removes heat from the steam (gas), turning it back into liquid water drops."
-    },
-    {
-      q: "Why can you squeeze a balloon full of air, but not a solid rock?",
-      choices: ["Gases have empty space between particles.", "Rocks are made of stronger atoms.", "Gases do not have any mass.", "Solids expand when you squeeze them."],
-      correct: 0,
-      exp: "Gases have lots of empty space between particles, so they can be compressed. Solids are packed tightly."
-    },
-    {
-      q: "What atoms are found in Carbon Dioxide (CO₂)?",
-      choices: ["1 Carbon, 1 Oxygen", "2 Carbon, 2 Oxygen", "1 Carbon, 2 Oxygen", "2 Carbon, 1 Oxygen"],
-      correct: 2,
-      exp: "The 'C' stands for 1 Carbon, and the 'O₂' means there are 2 Oxygen atoms!"
-    },
-    {
-      q: "True or False: Gases do not have any mass or weight because you cannot see them.",
-      choices: ["True", "False"],
-      correct: 1,
-      exp: "False! Gases are made of particles (matter), so they definitely have mass and take up space, even if they are invisible."
-    },
-    {
-      q: "True or False: When liquid water freezes into ice, it turns into a completely different chemical.",
-      choices: ["True", "False"],
-      correct: 1,
-      exp: "False! Freezing is just a phase change. Ice is still H₂O, the particles are just moving slower and locked in place."
-    }
+    { q: "What do we call the amount of 'stuff' inside an object?", choices: ["Volume", "Mass", "Temperature", "Matter"], correct: 1, exp: "Mass is how much 'stuff' (or matter) is inside an object, usually measured in grams." },
+    { q: "A blown-up balloon takes up a lot of space. This means it has a large...", choices: ["Mass", "Weight", "Volume", "Atom"], correct: 2, exp: "Volume is the amount of space an object takes up." },
+    { q: "You take a hot shower and the bathroom mirror gets foggy. What phase change is happening?", choices: ["Evaporation", "Condensation", "Melting", "Freezing"], correct: 1, exp: "Condensation! The cold mirror removes heat from the steam (gas), turning it back into liquid water drops." },
+    { q: "Why can you squeeze a balloon full of air, but not a solid rock?", choices: ["Gases have empty space between particles.", "Rocks are made of stronger atoms.", "Gases do not have any mass.", "Solids expand when you squeeze them."], correct: 0, exp: "Gases have lots of empty space between particles, so they can be compressed. Solids are packed tightly." },
+    { q: "What atoms are found in Carbon Dioxide (CO₂)?", choices: ["1 Carbon, 1 Oxygen", "2 Carbon, 2 Oxygen", "1 Carbon, 2 Oxygen", "2 Carbon, 1 Oxygen"], correct: 2, exp: "The 'C' stands for 1 Carbon, and the 'O₂' means there are 2 Oxygen atoms!" },
+    { q: "True or False: Gases do not have any mass or weight because you cannot see them.", choices: ["True", "False"], correct: 1, exp: "False! Gases are made of particles (matter), so they definitely have mass and take up space, even if they are invisible." },
+    { q: "True or False: When liquid water freezes into ice, it turns into a completely different chemical.", choices: ["True", "False"], correct: 1, exp: "False! Freezing is just a phase change. Ice is still H₂O, the particles are just moving slower and locked in place." },
+    { q: "Which state of matter has a fixed shape and fixed volume?", choices: ["Solid", "Liquid", "Gas", "Plasma"], correct: 0, exp: "A solid keeps its own shape and takes up a fixed amount of space." },
+    { q: "Which state of matter takes the shape of its container but keeps the same volume?", choices: ["Solid", "Liquid", "Gas", "Atom"], correct: 1, exp: "Liquids can flow to take the shape of the container they are poured into." },
+    { q: "Which state of matter expands to fill the entire container?", choices: ["Solid", "Liquid", "Gas", "Molecule"], correct: 2, exp: "Gas particles spread out to fill whatever space they are in." },
+    { q: "What do we call the tiny building blocks that make up all matter?", choices: ["Crumbs", "Cells", "Particles / Atoms", "Drops"], correct: 2, exp: "Everything is made of tiny particles called atoms!" },
+    { q: "The process of a liquid turning into a solid is called...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 1, exp: "When a liquid loses heat, it freezes into a solid." },
+    { q: "The process of a solid turning into a liquid is called...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 0, exp: "When a solid gains heat, it melts into a liquid." },
+    { q: "The process of a liquid turning into a gas is called...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 2, exp: "When a liquid gains lots of heat, it evaporates into a gas." },
+    { q: "Which of these is an example of a solid?", choices: ["Apple juice", "Ice cube", "The air we breathe", "Rain"], correct: 1, exp: "An ice cube has a fixed shape and volume." },
+    { q: "Which of these is an example of a gas?", choices: ["A wooden block", "Milk", "Steam from a kettle", "Sand"], correct: 2, exp: "Steam is water in its gas phase." },
+    { q: "What happens to particles when you ADD heat to a solid?", choices: ["They stop moving.", "They slow down and pack tighter.", "They move faster and spread apart.", "They turn into a completely new element."], correct: 2, exp: "Adding heat gives particles energy to move faster and spread out!" },
+    { q: "What happens to particles when you REMOVE heat from a liquid?", choices: ["They disappear.", "They slow down and pack closer together.", "They start zooming around.", "They change into a gas."], correct: 1, exp: "Removing heat takes energy away, making particles slow down." },
+    { q: "True or False: Particles in a solid do not move at all.", choices: ["True", "False"], correct: 1, exp: "False! Particles in a solid are packed tight, but they still wiggle (vibrate) in place." },
+    { q: "In the formula H₂O, what does the 'H' stand for?", choices: ["Helium", "Heat", "Hydrogen", "Hover"], correct: 2, exp: "The H stands for Hydrogen!" },
+    { q: "Which molecule is known as the gas that plants use to make food?", choices: ["Water (H₂O)", "Oxygen (O₂)", "Carbon Dioxide (CO₂)", "Salt (NaCl)"], correct: 2, exp: "Plants take in Carbon Dioxide to make food during photosynthesis." },
+    { q: "Sodium Chloride (NaCl) is the scientific name for what common household item?", choices: ["Sugar", "Salt", "Baking Soda", "Vinegar"], correct: 1, exp: "NaCl is table salt!" },
+    { q: "Everything around us that has mass and takes up space is called...", choices: ["Energy", "Matter", "Light", "Sound"], correct: 1, exp: "Matter is anything that has mass and volume (takes up space)." },
+    { q: "If I pour water from a tall thin glass into a short wide bowl, what changes?", choices: ["The volume of the water", "The mass of the water", "The shape of the water", "The weight of the water"], correct: 2, exp: "Liquids take the shape of their container, so the shape changes!" },
+    { q: "If I pour water from a tall thin glass into a short wide bowl, what stays the same?", choices: ["The shape", "The volume (amount of space it takes up)", "The container", "The temperature"], correct: 1, exp: "Even though the shape changes, it is still the exact same amount (volume) of water." },
+    { q: "True or False: You can easily compress (squish) a solid block of wood into a smaller space.", choices: ["True", "False"], correct: 1, exp: "False! Solids cannot be compressed because their particles are already packed as tightly as possible." },
+    { q: "Why can gases be compressed easily?", choices: ["Because they have no mass.", "Because they are invisible.", "Because they are light.", "Because there is lots of empty space between the particles."], correct: 3, exp: "The large gaps between gas particles mean you can push them closer together." },
+    { q: "When you see droplets of water on the outside of a cold glass of lemonade, what phase change is happening?", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 3, exp: "Water vapor (gas) in the warm air hits the cold glass and condenses into liquid drops." },
+    { q: "Which state of matter has particles that slide and slip past each other?", choices: ["Solid", "Liquid", "Gas", "Diamond"], correct: 1, exp: "Liquid particles are close together but unorganized, allowing them to flow and slide." },
+    { q: "If you leave a puddle of water out in the hot sun, it disappears. This is an example of...", choices: ["Melting", "Freezing", "Evaporation", "Condensation"], correct: 2, exp: "The sun adds heat to the liquid puddle, causing it to evaporate into a gas." }
   ];
 
   let current = 0, score = 0, answered = false, startTime = 0;
