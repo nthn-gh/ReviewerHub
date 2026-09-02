@@ -147,9 +147,15 @@
   </ul>
   
   <style>
-    .phase-change-guide { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; background: rgba(255,255,255,0.05); padding: 2rem 1rem; border-radius: 12px; border: 2px dashed rgba(255,255,255,0.2); margin-bottom: 2rem; }
+    .phase-change-guide { display: flex; flex-direction: column; gap: 1.5rem; align-items: center; background: rgba(255,255,255,0.05); padding: 2rem 1rem; border-radius: 12px; border: 2px dashed rgba(255,255,255,0.2); margin-bottom: 2rem; width: 100%; }
     .phase-step { display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; max-width: 600px; }
-    @media(max-width: 600px) { .phase-step { flex-direction: column; } .phase-arrows { margin: 1rem 0; } }
+    .mobile-only { display: none; }
+    @media(max-width: 600px) { 
+      .phase-step { flex-direction: column; } 
+      .phase-arrows { margin: 1rem 0; width: 100%; } 
+      .desktop-only { display: none; }
+      .mobile-only { display: inline; }
+    }
     .state-badge { border: 3px solid #3b82f6; border-radius: 12px; padding: 1rem; font-size: 1.4rem; font-weight: 800; color: #fff; text-align: center; min-width: 140px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     .state-badge.solid { border-color: #3b82f6; background: #1e3a8a; }
     .state-badge.liquid { border-color: #06b6d4; background: #164e63; }
@@ -164,8 +170,8 @@
     <div class="phase-step">
       <div class="state-badge solid">🧊 Solid<br><span style="font-size: 0.9rem; color:#93c5fd; font-weight: 500;">(like Ice)</span></div>
       <div class="phase-arrows">
-         <div class="arrow-path arrow-hot">Heat up! ➔ Melts 🫠</div>
-         <div class="arrow-path arrow-cold">🠔 Cool down! ➔ Freezes 🥶</div>
+         <div class="arrow-path arrow-hot">Heat up! <span class="desktop-only">➔</span><span class="mobile-only">⬇</span> Melts 🫠</div>
+         <div class="arrow-path arrow-cold"><span class="desktop-only">🠔</span><span class="mobile-only">⬆</span> Cool down! Freezes 🥶</div>
       </div>
       <div class="state-badge liquid">💧 Liquid<br><span style="font-size: 0.9rem; color:#67e8f9; font-weight: 500;">(like Water)</span></div>
     </div>
@@ -173,26 +179,42 @@
     <div class="phase-step">
       <div class="state-badge liquid">💧 Liquid<br><span style="font-size: 0.9rem; color:#67e8f9; font-weight: 500;">(like Water)</span></div>
       <div class="phase-arrows">
-         <div class="arrow-path arrow-hot">Heat up! ➔ Evaporates ♨️</div>
-         <div class="arrow-path arrow-cold">🠔 Cool down! ➔ Condenses 🌧️</div>
+         <div class="arrow-path arrow-hot">Heat up! <span class="desktop-only">➔</span><span class="mobile-only">⬇</span> Evaporates ♨️</div>
+         <div class="arrow-path arrow-cold"><span class="desktop-only">🠔</span><span class="mobile-only">⬆</span> Cool down! Condenses 🌧️</div>
       </div>
       <div class="state-badge gas">☁️ Gas<br><span style="font-size: 0.9rem; color:#fda4af; font-weight: 500;">(like Steam)</span></div>
     </div>
   </div>
 
-  <h2>⚛️ 4. Zooming In! Meet the Molecules</h2>
-  <p>Particles have specific names:</p>
-  <ul>
-    <li><strong>Atoms:</strong> The single basic building blocks (like a single LEGO brick).</li>
-    <li><strong>Molecules:</strong> Two or more atoms stuck together (like a LEGO model).</li>
-    <li><strong>Compounds:</strong> Molecules made of <em>different types</em> of atoms.</li>
-  </ul>
+  <h2>⚛️ 4. Zooming In! Inside the Atom!</h2>
+  <p>Even though atoms are the tiny building blocks of everything, they are actually made of even smaller pieces! Think of it like a tiny solar system.</p>
+  
+  <div class="particle-grid">
+    <div class="particle-box" style="border-color: #ef4444; background: rgba(239,68,68,0.1);">
+      <h4 style="color: #ef4444;">➕ Protons</h4>
+      <p style="font-size: 0.95rem; color:#f8fafc;">They have a <strong>Positive</strong> charge and live right in the center (the nucleus).</p>
+    </div>
+    <div class="particle-box" style="border-color: #94a3b8; background: rgba(148,163,184,0.1);">
+      <h4 style="color: #cbd5e1;">⚪ Neutrons</h4>
+      <p style="font-size: 0.95rem; color:#f8fafc;">They have <strong>No charge</strong> (they are neutral) and live in the center with the protons.</p>
+    </div>
+    <div class="particle-box" style="border-color: #3b82f6; background: rgba(59,130,246,0.1);">
+      <h4 style="color: #3b82f6;">➖ Electrons</h4>
+      <p style="font-size: 0.95rem; color:#f8fafc;">They have a <strong>Negative</strong> charge and zoom around the outside of the center super fast!</p>
+    </div>
+  </div>
 
-  <h3>Famous Molecules You Should Know!</h3>
+  <h2>🧪 5. Meet the Molecules & Compounds</h2>
+  <p>When atoms stick together, they form molecules and compounds! Here are some famous ones:</p>
   
   <div class="alert" style="background: rgba(59,130,246,0.1); border-color: #3b82f6;">
     <div class="alert-title" style="color: #3b82f6;">💧 Water (H₂O)</div>
     <p>Water is made of <strong>2 Hydrogen (H)</strong> atoms and <strong>1 Oxygen (O)</strong> atom. <br><em>Trick: A water molecule looks like Mickey Mouse! The big face is Oxygen, and the two little ears are Hydrogen.</em></p>
+  </div>
+
+  <div class="alert" style="background: rgba(168,85,247,0.1); border-color: #a855f7;">
+    <div class="alert-title" style="color: #a855f7;">🌬️ Oxygen Gas (O₂)</div>
+    <p>This is the gas we need to breathe to survive! It's simply made of <strong>2 Oxygen (O)</strong> atoms stuck together.</p>
   </div>
 
   <div class="alert" style="background: rgba(16,185,129,0.1); border-color: #10b981;">
@@ -203,6 +225,11 @@
   <div class="alert" style="background: rgba(245,158,11,0.1); border-color: #f59e0b;">
     <div class="alert-title" style="color: #f59e0b;">🧂 Salt (NaCl)</div>
     <p>The stuff you put on french fries! Its scientific name is Sodium Chloride. It's made of <strong>1 Sodium (Na)</strong> atom and <strong>1 Chlorine (Cl)</strong> atom.</p>
+  </div>
+
+  <div class="alert" style="background: rgba(236,72,153,0.1); border-color: #ec4899;">
+    <div class="alert-title" style="color: #ec4899;">🍬 Sugar / Glucose (C₆H₁₂O₆)</div>
+    <p>This big molecule gives our bodies energy! It's made of <strong>6 Carbons, 12 Hydrogens, and 6 Oxygens</strong> all attached together.</p>
   </div>
 
   <button class="start-quiz-btn" onclick="startQuiz()">Take the Practice Quiz! 📝</button>
