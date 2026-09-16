@@ -59,4 +59,15 @@ window.TOPICS = [
     color: "#10b981",
     icon: "🧪",
   },
+  {
+    id: "english-context-clues",
+    title: "Context Clues Detective",
+    subject: "English",
+    description: "Learn to use context clues to figure out the meaning of unfamiliar words.",
+    difficulty: "Medium",
+    questions: 25,
+    file: "reviewers/english-context-clues.html",
+    color: "#eab308",
+    icon: "🔎",
+  }
 ];

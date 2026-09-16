@@ -29,6 +29,7 @@ const BADGES = [
   { id:'speedster',    label:'Speed Run!',      icon:'⚡', desc:'Finish a reviewer in under 60 seconds' },
   { id:'high_scorer',  label:'High Achiever',   icon:'🏆', desc:'Score 90%+ on any topic' },
   { id:'master_level', label:'Master Level',    icon:'👑', desc:'Reach Master level' },
+  { id:'context_detective', label:'Context Detective', icon:'🔎', desc:'Complete the Context Clues reviewer' },
 ];
 
 // ---- Core Helpers -----------------------------------------
@@ -103,6 +104,7 @@ function checkBadges(player, result) {
   if (result.timeSeconds && result.timeSeconds < 60) award('speedster');
   if (result.wasRetry && pct >= 50) award('comeback');
   if (player.level >= 6) award('master_level');
+  if (result.topicId === 'english-context-clues') award('context_detective');
 
   return earned;
 }
@@ -144,7 +146,7 @@ function submitScore(topicId, score, total, timeSeconds) {
   player.level = newLevelObj.level;
   const leveledUp = player.level > prevLevel;
 
-  const newBadges = checkBadges(player, { score, total, timeSeconds, wasRetry });
+  const newBadges = checkBadges(player, { score, total, timeSeconds, wasRetry, topicId });
   savePlayer(player);
   updateLeaderboard(player);
 
