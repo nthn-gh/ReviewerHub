@@ -40,10 +40,54 @@
   .score-label{color:#64748b;font-size:.95rem;margin:.5rem 0 1.5rem}
   .play-again{padding:.7rem 2rem;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a855f7);
     color:#fff;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;font-size:1rem}
+  
+  /* Study Area Styles */
+  .study-area { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+  .study-area h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.8rem; margin-bottom: 1rem; color: #a855f7; }
+  .study-area h3 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #22d3ee; }
+  .study-area p, .study-area li { font-size: 1rem; line-height: 1.6; margin-bottom: 0.5rem; color: #cbd5e1; }
+  .study-area ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+  .study-area strong { color: #f8fafc; }
+  .start-btn { display: block; width: 100%; text-align: center; padding: 1rem; border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; font-size: 1.1rem; cursor: pointer; border: none; font-family: 'Outfit', sans-serif; margin-top: 2rem; transition: transform 0.2s; }
+  .start-btn:hover { transform: translateY(-2px); }
 </style>
 </head>
 <body>
-<div id="quizArea">
+<div id="studyArea" class="study-area">
+  <h1>✨ QUICK REVIEWER: Context Clues</h1>
+  <p><strong>🔎 CONTEXT CLUES</strong> – words, phrases, or sentences around an unfamiliar word that help you figure out its meaning.</p>
+  <p><strong>🧠 Remember:</strong> 👀 LOOK → 💭 THINK → 💡 INFER → ✅ CHECK</p>
+  
+  <h3>📌 TYPES OF CONTEXT CLUES</h3>
+  <ul>
+    <li><strong>📖 DENOTATION</strong> – the literal or dictionary meaning of a word.</li>
+    <li><strong>💭 CONNOTATION</strong> – the feeling, idea, or association connected to a word.</li>
+    <li><strong>🔗 ANALOGY</strong> – compares two things with a similar relationship.<br><em>Example: Teacher : Student :: Coach : Athlete</em></li>
+    <li><strong>👤 APPOSITIVE</strong> – a noun or phrase beside another noun that gives more information about it.<br><em>Example: Maria, a kind learner, helped her classmates.</em></li>
+    <li><strong>🧩 GENERAL GIST/SENSE</strong> – use the overall meaning of the sentence or passage.</li>
+    <li><strong>✏️ PUNCTUATION</strong> – commas, dashes, parentheses, and colons may provide explanations or additional information.</li>
+  </ul>
+
+  <h3>📖 WORDS TO REVIEW</h3>
+  <ul>
+    <li><strong>🐘 Enormous</strong> – very big</li>
+    <li><strong>🙏 Grateful</strong> – thankful</li>
+    <li><strong>💧 Slippery</strong> – wet or smooth and difficult to walk or hold</li>
+    <li><strong>⚠️ Cautious</strong> – careful to avoid danger</li>
+    <li><strong>⏱️ Brief</strong> – short</li>
+    <li><strong>🐶 Playful</strong> – fond of playing</li>
+    <li><strong>🥛 Fragile</strong> – easily broken</li>
+    <li><strong>❓ Curious</strong> – wanting to know or learn something</li>
+    <li><strong>🤝 Generous</strong> – willing to give or share</li>
+    <li><strong>🤫 Silent</strong> – quiet; making no sound</li>
+  </ul>
+
+  <p><strong>🌟 TEST TIP:</strong> Read the whole sentence, find the clues, think about the meaning, and choose an answer that makes sense in the sentence.</p>
+
+  <button class="start-btn" onclick="startQuiz()">Start Quiz 🚀</button>
+</div>
+
+<div id="quizArea" style="display:none">
   <div class="meta">
     <span>🧠 Context Clues</span>
     <span id="qCounter">Question 1 / 25</span>
@@ -159,9 +203,16 @@ function showResults() {
 
 function restartQuiz() {
   current = 0; score = 0; startTime = Date.now();
-  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('studyArea').style.display = 'block';
+  document.getElementById('quizArea').style.display = 'none';
   document.getElementById('resultsArea').style.display = 'none';
   loadQuestion();
+}
+
+function startQuiz() {
+  document.getElementById('studyArea').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  startTime = Date.now();
 }
 
 loadQuestion();
