@@ -69,5 +69,16 @@ window.TOPICS = [
     file: "reviewers/english-context-clues.html",
     color: "#eab308",
     icon: "🔎",
+  },
+  {
+    id: "early-filipino-culture",
+    title: "Early Filipino Culture",
+    subject: "Araling Panlipunan",
+    description: "Learn about the rich culture, clothing, art, and architecture of early Filipinos.",
+    difficulty: "Medium",
+    questions: 10,
+    file: "reviewers/early-filipino-culture.html",
+    color: "#f59e0b",
+    icon: "🏺",
   }
 ];
