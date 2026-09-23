@@ -80,5 +80,16 @@ window.TOPICS = [
     file: "reviewers/early-filipino-culture.html",
     color: "#f59e0b",
     icon: "🏺",
+  },
+  {
+    id: "english-verb-tenses",
+    title: "Tense of a Verb",
+    subject: "English",
+    description: "Learn about Simple Present, Simple Past, and Simple Future tenses.",
+    difficulty: "Easy",
+    questions: 10,
+    file: "reviewers/english-verb-tenses.html",
+    color: "#3b82f6",
+    icon: "📝",
   }
 ];

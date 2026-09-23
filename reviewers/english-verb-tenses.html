@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Verb Tenses Reviewer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Inter:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0f1528;color:#f8fafc;min-height:100vh;padding:1.5rem}
+  h2{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:.5rem}
+  .progress-bar{height:8px;border-radius:999px;background:rgba(255,255,255,0.08);margin-bottom:1.5rem;overflow:hidden}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#7c3aed,#22d3ee);transition:width .5s ease}
+  .question{font-size:1.05rem;font-weight:500;margin-bottom:1.25rem;line-height:1.5}
+  .choices{display:flex;flex-direction:column;gap:.65rem}
+  .choice-btn{
+    padding:.85rem 1.1rem;border-radius:10px;border:1px solid rgba(255,255,255,0.1);
+    background:rgba(255,255,255,0.05);color:#f8fafc;font-size:.95rem;
+    cursor:pointer;text-align:left;transition:all .2s ease;font-family:'Inter',sans-serif;
+  }
+  .choice-btn:hover:not(:disabled){background:rgba(124,58,237,0.25);border-color:rgba(124,58,237,0.5)}
+  .choice-btn.correct{background:rgba(16,185,129,0.2);border-color:#10b981;color:#10b981}
+  .choice-btn.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ef4444}
+  .choice-btn:disabled{cursor:not-allowed}
+  .feedback{margin-top:1rem;padding:.75rem 1rem;border-radius:8px;font-size:.9rem;font-weight:500;display:none}
+  .feedback.show{display:block}
+  .feedback.correct{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
+  .feedback.wrong{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)}
+  .next-btn{
+    margin-top:1.25rem;padding:.7rem 1.75rem;border-radius:10px;
+    background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;
+    font-weight:700;font-size:.95rem;cursor:pointer;border:none;display:none;
+    font-family:'Outfit',sans-serif;transition:transform .2s;
+  }
+  .next-btn:hover{transform:translateY(-2px)}
+  .next-btn.show{display:inline-flex;align-items:center;gap:.4rem}
+  .meta{display:flex;justify-content:space-between;font-size:.82rem;color:#64748b;margin-bottom:.75rem}
+  .score-display{text-align:center;padding:2rem 1rem}
+  .score-big{font-family:'Outfit',sans-serif;font-size:4rem;font-weight:900;color:#a78bfa}
+  .score-label{color:#64748b;font-size:.95rem;margin:.5rem 0 1.5rem}
+  .play-again{padding:.7rem 2rem;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a855f7);
+    color:#fff;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;font-size:1rem}
+  
+  /* Study Area Styles */
+  .study-area { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+  .study-area h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(1.4rem, 5vw, 1.8rem); margin-bottom: 1rem; color: #a855f7; line-height: 1.2; }
+  .study-area h3 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #22d3ee; text-transform: uppercase; letter-spacing: 0.05em; }
+  .study-area p, .study-area li { font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.75rem; color: #cbd5e1; }
+  .study-area ul { margin-left: 1.2rem; margin-bottom: 1.5rem; }
+  .study-area li { margin-bottom: 0.5rem; padding-left: 0.2rem; }
+  .study-area strong { color: #f8fafc; }
+  .start-btn { display: block; width: 100%; text-align: center; padding: 1rem; border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; font-size: 1.1rem; cursor: pointer; border: none; font-family: 'Outfit', sans-serif; margin-top: 1.5rem; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3); }
+
+  @media (max-width: 480px) {
+    body { padding: 1rem; }
+    .study-area { padding: 1.25rem; }
+    .study-area ul { margin-left: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div id="studyArea" class="study-area">
+  <h1>✨ QUICK REVIEWER: Tense of a Verb</h1>
+  <p><strong>📝 TENSE OF A VERB</strong> – tells when an action happens.</p>
+  
+  <h3>🟢 SIMPLE PRESENT</h3>
+  <p>An action that happens regularly, repeatedly, or is a fact.</p>
+  <p><strong>✨ Examples:</strong><br>👧 She reads every night.<br>👦 They play after class.</p>
+  <p><strong>🔑 Common clues:</strong> always, usually, often, sometimes, every day, every week</p>
+  <p><strong>⚠️ Rule:</strong> For he, she, it, usually add -s/-es.</p>
+  <ul>
+    <li>👉 study → studies</li>
+    <li>👉 watch → watches</li>
+    <li>👉 play → plays</li>
+  </ul>
+
+  <h3>🔵 SIMPLE PAST</h3>
+  <p>An action that already happened or was completed.</p>
+  <p><strong>✨ Examples:</strong><br>📖 She studied last night.<br>🏫 We visited the library yesterday.</p>
+  <p><strong>🔑 Common clues:</strong> yesterday, last night, last week, ago, earlier, before</p>
+  <p><strong>✏️ Regular verbs:</strong> usually add -ed:<br>👉 walk → walked<br>👉 clean → cleaned</p>
+  <p><strong>⚠️ Irregular verbs:</strong><br>👉 go → went<br>👉 eat → ate<br>👉 see → saw<br>👉 write → wrote<br>👉 take → took</p>
+
+  <h3>🟣 SIMPLE FUTURE</h3>
+  <p>An action that will happen in the future.</p>
+  <p><strong>📌 Rule:</strong> will + base form of the verb</p>
+  <p><strong>✨ Examples:</strong><br>📚 I will study tonight.<br>🏫 They will visit the museum tomorrow.</p>
+  <p><strong>🔑 Common clues:</strong> tomorrow, later, soon, next week, next month, next year</p>
+  <p><strong>⚠️ Remember:</strong> After WILL, always use the BASE FORM.<br>✅ She will study. (❌ She will studies.)<br>✅ He will play. (❌ He will played.)</p>
+
+  <h3>🧠 QUICK GUIDE</h3>
+  <ul>
+    <li><strong>🟢 PRESENT</strong> → happens NOW / REGULARLY</li>
+    <li><strong>🔵 PAST</strong> → happened BEFORE</li>
+    <li><strong>🟣 FUTURE</strong> → will happen LATER</li>
+  </ul>
+  <p><strong>📌 Example:</strong><br>🟢 I walk to school every day.<br>🔵 I walked to school yesterday.<br>🟣 I will walk to school tomorrow.</p>
+
+  <p><strong>⭐ REMEMBER!</strong> 👀 Look for time clues. ✏️ Change the verb correctly. 📝 Make sure the sentence still makes sense.</p>
+  <p>🏆 <strong>PRESENT</strong> = NOW/REGULAR<br>🏆 <strong>PAST</strong> = BEFORE<br>🏆 <strong>FUTURE</strong> = WILL HAPPEN</p>
+
+  <button class="start-btn" onclick="startQuiz()">Start Quiz 🚀</button>
+</div>
+
+<div id="quizArea" style="display:none">
+  <div class="meta">
+    <span>🧠 Verb Tenses</span>
+    <span id="qCounter">Question 1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+  <h2 id="questionText">Loading...</h2>
+  <div class="choices" id="choicesArea"></div>
+  <div class="feedback" id="feedbackEl"></div>
+  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next ›</button>
+</div>
+<div id="resultsArea" style="display:none">
+  <div class="score-display">
+    <div style="font-size:3rem;margin-bottom:.5rem" id="resultEmoji">🎉</div>
+    <div class="score-big" id="finalScore">0/10</div>
+    <div class="score-label" id="finalMsg">Here's your score!</div>
+    <div style="font-size:.85rem;color:#64748b;margin-bottom:1.5rem" id="finalSub"></div>
+    <button class="play-again" onclick="restartQuiz()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {q:"What tense tells when an action happens regularly, repeatedly, or is a fact?", choices:["Simple Past","Simple Present","Simple Future","None of the above"], correct:1, exp:"Simple Present is for actions that happen regularly or are facts."},
+  {q:"Which time clue is common for the Simple Past tense?", choices:["Tomorrow","Every day","Yesterday","Next week"], correct:2, exp:"Yesterday tells us the action already happened."},
+  {q:"What is the correct Simple Future form of the verb 'study'?", choices:["will studies","will studied","will study","will studying"], correct:2, exp:"After WILL, always use the BASE FORM of the verb."},
+  {q:"If the subject is 'he', 'she', or 'it', what do we usually add to the verb in the Simple Present tense?", choices:["-ed","-ing","-s/-es","Nothing"], correct:2, exp:"For he, she, it in the Simple Present, usually add -s/-es."},
+  {q:"Which sentence is in the Simple Past tense?", choices:["She reads every night.","We visited the library yesterday.","I will walk to school tomorrow.","They play after class."], correct:1, exp:"'visited' and 'yesterday' show it already happened."},
+  {q:"What is the past tense of the irregular verb 'go'?", choices:["goed","goes","went","going"], correct:2, exp:"The past tense of the irregular verb 'go' is 'went'."},
+  {q:"Choose the correct verb: 'She _____ every night.'", choices:["reads","readed","will read","read"], correct:0, exp:"'Every night' is a clue for Simple Present, and for 'She' we add -s."},
+  {q:"Choose the correct verb: 'I _____ to school tomorrow.'", choices:["walks","walked","will walk","walking"], correct:2, exp:"'Tomorrow' is a clue for Simple Future (will + base form)."},
+  {q:"What is the past tense of the irregular verb 'write'?", choices:["writed","wrote","written","writes"], correct:1, exp:"The past tense of 'write' is 'wrote'."},
+  {q:"Choose the correct verb: 'They _____ the museum tomorrow.'", choices:["visited","visits","will visit","will visited"], correct:2, exp:"'Tomorrow' indicates Future tense, so we use 'will visit' (will + base form)."}
+];
+
+let current = 0, score = 0, answered = false, startTime = Date.now();
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  document.getElementById('qCounter').textContent = `Question ${current+1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = ((current+1)/questions.length*100)+'%';
+  document.getElementById('questionText').textContent = q.q;
+  const fb = document.getElementById('feedbackEl');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  const area = document.getElementById('choicesArea');
+  area.innerHTML = q.choices.map((c,i) =>
+    `<button class="choice-btn" onclick="selectAnswer(${i})" id="choice-${i}">${String.fromCharCode(65+i)}. ${c}</button>`
+  ).join('');
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const fb = document.getElementById('feedbackEl');
+
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+
+  if (idx === q.correct) {
+    score++;
+    document.getElementById('choice-'+idx).className = 'choice-btn correct';
+    fb.className = 'feedback correct show';
+    fb.textContent = '✅ Correct! ' + q.exp;
+  } else {
+    document.getElementById('choice-'+idx).className = 'choice-btn wrong';
+    document.getElementById('choice-'+q.correct).className = 'choice-btn correct';
+    fb.className = 'feedback wrong show';
+    fb.textContent = '❌ Not quite. ' + q.exp;
+  }
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) showResults();
+  else loadQuestion();
+}
+
+function showResults() {
+  const timeSeconds = Math.round((Date.now() - startTime) / 1000);
+  const pct = Math.round(score/questions.length*100);
+  document.getElementById('quizArea').style.display = 'none';
+  document.getElementById('resultsArea').style.display = 'block';
+  document.getElementById('finalScore').textContent = score + '/' + questions.length;
+  const emoji = pct===100?'🏆':pct>=80?'🌟':pct>=60?'👍':'📖';
+  const msg = pct===100?'Perfect Score!':pct>=80?'Excellent work!':pct>=60?'Good job!':'Keep studying!';
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('finalMsg').textContent = msg;
+  document.getElementById('finalSub').textContent = `You answered ${score} out of ${questions.length} correctly.`;
+
+  // Send score to parent
+  try {
+    window.parent.postMessage({ type:'QUIZ_COMPLETE', score, total:questions.length, timeSeconds, topicId: 'english-verb-tenses' }, '*');
+  } catch(e) {}
+}
+
+function restartQuiz() {
+  current = 0; score = 0; startTime = Date.now();
+  document.getElementById('studyArea').style.display = 'block';
+  document.getElementById('quizArea').style.display = 'none';
+  document.getElementById('resultsArea').style.display = 'none';
+  loadQuestion();
+}
+
+function startQuiz() {
+  document.getElementById('studyArea').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  startTime = Date.now();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
